@@ -16,6 +16,7 @@
     body { font-family: 'Geologica', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
     .screen { display: none; }
     .screen.active { display: block; }
+    #auth-screen.active { display: flex; flex-direction: column; }
 
     nav { background: var(--navy); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 58px; position: sticky; top: 0; z-index: 100; }
     .nav-logo { font-family: 'Unbounded', sans-serif; font-size: 21px; font-weight: 800; color: #fff; letter-spacing: -0.5px; cursor: pointer; }
@@ -253,7 +254,7 @@
 </div>
 
 <!-- AUTH -->
-<div id="auth-screen" style="display:none">
+<div id="auth-screen" class="screen">
   <div class="auth-wrap">
     <div class="auth-box">
       <div class="auth-logo">tam<span>ox</span></div>
@@ -629,9 +630,8 @@ let adminCurrentTab = 'stats';
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
     (async () => {
       if (session?.user) {
-        // If there's pending profile data (after email confirmation), create it first
-      
-        const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+        await createProfileIfNeeded(session.user.id);
+        const { data } = await supabase.from('profiles').select('*').eq('uid', session.user.id).maybeSingle();
         if (data) {
           setProfile(data);
           showMain();
@@ -668,13 +668,13 @@ function setProfile(p) {
 
 function showAuth() {
   document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = '';
+  document.getElementById('auth-screen').classList.add('active');
   document.getElementById('main-screen').classList.remove('active');
 }
 
 function showMain() {
   document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('auth-screen').classList.remove('active');
   document.getElementById('main-screen').classList.add('active');
   loadAds(true);
 }
@@ -767,10 +767,10 @@ async function createProfileIfNeeded(authUid) {
   const pending = sessionStorage.getItem('pendingProfile');
   if (!pending) return;
   const { name, email, cls, avatarSeed } = JSON.parse(pending);
-  const { data: existing } = await supabase.from('profiles').select('id').eq('auth_uid', authUid).maybeSingle();
+  const { data: existing } = await supabase.from('profiles').select('id').eq('uid', authUid).maybeSingle();
   if (existing) { sessionStorage.removeItem('pendingProfile'); return; }
   const { data: profileData, error: profileErr } = await supabase.from('profiles')
-    .insert({ auth_uid: authUid, name, email, class: cls, coins: 100, avatar_seed: avatarSeed, is_admin: false })
+    .insert({ uid: authUid, name, email, class: cls, coins: 100, avatar_seed: avatarSeed, is_admin: false })
     .select().single();
   if (!profileErr && profileData) {
     sessionStorage.removeItem('pendingProfile');
@@ -791,13 +791,34 @@ function showErr(el, msg) {
 // ══════════════════════════════════════════════
 // ADS
 // ══════════════════════════════════════════════
-async function loadAds() {
-    // Нам плевать на ошибки, нам нужно просто включить экран
-    console.log("Принудительный запуск входа...");
+async function loadAds(reset = false) {
+  if (reset) { currentPage = 0; allAds = []; allLoaded = false; }
+  if (allLoaded) return;
 
-    document.getElementById('loading-screen').style.display = 'none';
+  const PAGE_SIZE = 20;
+  const sortVal = document.getElementById('sort-select')?.value || 'new';
+  let query = supabase.from('ads')
+    .select('*, author:profiles!ads_author_id_fkey(name, avatar_seed, class)', { count: 'exact' })
+    .neq('status', 'deleted')
+    .range(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE - 1);
 
-    document.getElementById('auth-screen').style.display = 'flex';
+  if (sortVal === 'cheap') query = query.order('coins', { ascending: true });
+  else if (sortVal === 'expensive') query = query.order('coins', { ascending: false });
+  else query = query.order('created_at', { ascending: false });
+
+  const { data, error, count } = await query;
+  if (error) { console.error('loadAds error', error); return; }
+
+  if (reset) allAds = data || [];
+  else allAds = [...allAds, ...(data || [])];
+
+  if (count !== null) totalAdsCount = count;
+  allLoaded = !data || data.length < PAGE_SIZE;
+  currentPage++;
+
+  document.getElementById('load-more-btn').style.display = allLoaded ? 'none' : 'block';
+  updateStats();
+  renderAds();
 }
 function renderAds() {
   const searchQ = document.getElementById('search-input').value.toLowerCase();
@@ -1493,10 +1514,9 @@ async function sendChatMsg() {
   if (error) { showToast('Ошибка отправки сообщения'); input.value = text; }
 }
 
-async function doSignUp() {
+async function doRegister() {
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
-    const errEl = document.getElementById('reg-err'); // проверь, есть ли такой ID для ошибок
     const btn = document.getElementById('reg-btn');
 
     if (!email || password.length < 6) {
@@ -1504,7 +1524,6 @@ async function doSignUp() {
         return;
     }
 
-    // Блокируем кнопку, чтобы не было "заспамил"
     btn.disabled = true;
     const originalText = btn.textContent;
     btn.textContent = "Регистрация...";
@@ -1518,15 +1537,17 @@ async function doSignUp() {
         alert("Ошибка от базы: " + error.message);
         btn.disabled = false;
         btn.textContent = originalText;
-    } else {
-        alert("Успех! Теперь попробуй войти под этими данными.");
-        btn.textContent = "Готово!";
-        // Переключаем на экран входа через пару секунд
-        setTimeout(() => {
-            showAuth('login'); 
-            btn.disabled = false;
-            btn.textContent = originalText;
-        }, 2000);
+        return; // Это чтобы код не шел дальше при ошибке!
+    } 
+
+    // ЕСЛИ ВСЁ ХОРОШО:
+    alert("Успех! Теперь войдите под своим аккаунтом.");
+    btn.disabled = false;
+    btn.textContent = originalText;
+    
+    // ПЕРЕКЛЮЧАЕМ НА ВКЛАДКУ ВХОДА (чтобы не было каши)
+    if (typeof switchAuthTab === 'function') {
+        switchAuthTab('login');
     }
 }
 // ══════════════════════════════════════════════
