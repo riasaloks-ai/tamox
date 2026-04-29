@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tamox — школьная доска объявлений</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Geologica:wght@300;400;500;600&display=swap');
+
+    :root {
+      --bg: #f5f3ee; --card: #fff; --navy: #1a2744; --accent: #ff5c35;
+      --gold: #ffba00; --green: #1db87a; --text: #1a1a1a;
+      --muted: #888; --border: #e3e0d8; --escrow: #2d6cdf;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Geologica', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    #auth-screen.active { display: flex; flex-direction: column; }
+
+    nav { background: var(--navy); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 58px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: 'Unbounded', sans-serif; font-size: 21px; font-weight: 800; color: #fff; letter-spacing: -0.5px; cursor: pointer; }
+    .nav-logo span { color: var(--accent); }
+    .nav-right { display: flex; gap: 8px; align-items: center; }
+    .nav-coin-badge { display: flex; align-items: center; gap: 6px; background: rgba(255,186,0,0.15); border: 1px solid rgba(255,186,0,0.3); border-radius: 999px; padding: 5px 14px; font-size: 13px; font-weight: 700; color: var(--gold); cursor: pointer; }
+    .btn-sm { padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; border: none; transition: background 0.15s; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: #e0441e; }
+    .btn-outline { background: transparent; color: #aab3cc; border: 1px solid #3a4d6e; }
+    .btn-outline:hover { color: #fff; background: rgba(255,255,255,0.08); }
+    .btn-admin { background: rgba(255,186,0,0.18); color: var(--gold); border: 1px solid rgba(255,186,0,0.4); }
+    .btn-admin:hover { background: rgba(255,186,0,0.3); }
+
+    .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--navy); }
+    .auth-box { background: var(--card); border-radius: 20px; padding: 2.2rem; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .auth-logo { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy); text-align: center; margin-bottom: 0.3rem; }
+    .auth-logo span { color: var(--accent); }
+    .auth-sub { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 1.8rem; }
+    .auth-tabs { display: flex; background: var(--bg); border-radius: 10px; padding: 4px; margin-bottom: 1.4rem; gap: 4px; }
+    .auth-tab { flex: 1; text-align: center; padding: 8px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); transition: all 0.15s; }
+    .auth-tab.active { background: var(--card); color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 14px; outline: none; font-family: 'Geologica', sans-serif; color: var(--text); background: var(--bg); transition: border-color 0.15s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); background: #fff; }
+    .form-group textarea { resize: vertical; min-height: 75px; }
+    .btn-full { width: 100%; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Geologica', sans-serif; border: none; background: var(--accent); color: #fff; transition: background 0.15s; }
+    .btn-full:hover { background: #e0441e; }
+    .btn-full:disabled { background: #ccc; cursor: not-allowed; }
+    .auth-switch { text-align: center; font-size: 13px; color: var(--muted); margin-top: 1rem; }
+    .auth-switch a { color: var(--accent); cursor: pointer; font-weight: 600; }
+    .auth-info { background: #fff8f0; border: 1px solid #ffe0cc; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #a04000; margin-bottom: 1rem; line-height: 1.5; }
+    .form-err { font-size: 12px; color: var(--accent); margin-bottom: 0.8rem; background: #fff0ed; border: 1px solid #ffcfbf; padding: 8px 12px; border-radius: 8px; display: none; }
+    .form-err.show { display: block; }
+
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hero { background: var(--navy); padding: 2.5rem 1.5rem 3.5rem; text-align: center; position: relative; overflow: hidden; }
+    .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 38px; background: var(--bg); border-radius: 38px 38px 0 0; }
+    .hero-badge { display: inline-block; background: rgba(255,92,53,0.2); color: var(--accent); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 14px; border-radius: 999px; margin-bottom: 1rem; border: 1px solid rgba(255,92,53,0.35); }
+    .hero h1 { font-family: 'Unbounded', sans-serif; font-size: 2rem; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 0.7rem; }
+    .hero h1 em { color: var(--accent); font-style: normal; }
+    .hero p { font-size: 14px; color: #aab3cc; max-width: 420px; margin: 0 auto 1.8rem; line-height: 1.6; }
+    .hero-search { display: flex; max-width: 500px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.25); }
+    .hero-search input { flex: 1; border: none; outline: none; padding: 13px 18px; font-size: 14px; font-family: 'Geologica', sans-serif; color: var(--text); }
+    .hero-search button { background: var(--accent); color: #fff; border: none; padding: 0 22px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .section-title { font-family: 'Unbounded', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy); }
+
+    .stats-bar { display: flex; background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin: 2rem auto 1.8rem; max-width: 600px; }
+    .stat-item { flex: 1; text-align: center; padding: 1rem; border-right: 1px solid var(--border); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: 'Unbounded', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--navy); }
+    .stat-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    .filters-bar { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .filter-label { font-size: 12px; font-weight: 600; color: var(--navy); }
+    .filter-select { border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 12px; font-family: 'Geologica', sans-serif; color: var(--text); outline: none; background: var(--bg); cursor: pointer; }
+    .filter-select:focus { border-color: var(--accent); }
+    .cats-scroll { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .cat-pill { background: var(--card); border: 1.5px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--navy); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .cat-pill:hover { border-color: var(--accent); }
+    .cat-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .feed-tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
+    .feed-tab { padding: 7px 18px; border-radius: 999px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: var(--card); color: var(--navy); transition: all 0.15s; }
+    .feed-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+    .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 13px; margin-bottom: 1.5rem; }
+    .ad-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s; position: relative; }
+    .ad-card:hover { border-color: #c8c4bb; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .ad-card-img { width: 100%; height: 130px; object-fit: cover; display: block; background: #f0f0f0; }
+    .ad-card-body { padding: 1rem; }
+    .ad-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 9px; }
+    .ad-emoji { font-size: 26px; width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ad-meta { flex: 1; min-width: 0; }
+    .ad-cat-tag { display: inline-block; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 999px; margin-bottom: 4px; }
+    .ad-title { font-size: 13.5px; font-weight: 600; color: var(--navy); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ad-desc { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 9px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .ad-footer { display: flex; align-items: center; justify-content: space-between; }
+    .ad-price { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: #b38600; }
+    .ad-price small { font-size: 9px; color: var(--muted); font-family: 'Geologica', sans-serif; font-weight: 400; display: block; }
+    .ad-info { display: flex; gap: 6px; align-items: flex-end; flex-direction: column; }
+    .ad-author { font-size: 11px; color: var(--muted); }
+    .ad-time { font-size: 10px; color: var(--muted); }
+    .badge-new { position: absolute; top: 10px; left: 10px; background: var(--accent); color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 999px; z-index: 2; }
+    .badge-hot { position: absolute; top: 10px; left: 10px; background: var(--gold); color: #1a1a1a; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 999px; z-index: 2; }
+    .badge-escrow { position: absolute; top: 10px; left: 10px; background: var(--escrow); color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 999px; z-index: 2; }
+    .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 2; backdrop-filter: blur(4px); }
+    .fav-btn:hover { transform: scale(1.1); }
+    .empty-state { grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--muted); }
+    .empty-state .big { font-size: 44px; margin-bottom: 0.7rem; }
+
+    .load-more-btn { display: block; margin: 0 auto 2rem; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 30px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; color: var(--navy); transition: all 0.15s; }
+    .load-more-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 1rem; }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--card); border-radius: 18px; padding: 1.8rem; width: 100%; max-width: 460px; max-height: 92vh; overflow-y: auto; transform: scale(0.95) translateY(20px); transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1); }
+    .overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-wide { max-width: 580px; }
+    .modal-title { font-family: 'Unbounded', sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 1.3rem; }
+    .modal-btns { display: flex; gap: 10px; margin-top: 1.2rem; }
+    .btn-cancel { flex: 1; background: var(--bg); color: var(--navy); border: 1.5px solid var(--border); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; }
+    .btn-post { flex: 2; background: var(--accent); color: #fff; border: none; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; }
+    .btn-post:hover { background: #e0441e; }
+    .coin-preview { background: #fffbea; border: 1px solid rgba(255,186,0,0.4); border-radius: 10px; padding: 9px 13px; font-size: 12px; color: #7a5500; margin-top: 6px; line-height: 1.5; }
+
+    .deal-box { background: #fffbea; border: 1.5px solid rgba(255,186,0,0.4); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+    .deal-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 5px; }
+    .deal-row:last-child { margin-bottom: 0; font-weight: 700; font-size: 14px; padding-top: 5px; border-top: 1px solid rgba(255,186,0,0.3); }
+    .deal-label { color: #7a5500; }
+    .deal-val { color: #b38600; font-family: 'Unbounded', sans-serif; }
+    .deal-val.total { color: var(--navy); }
+    .btn-deal { width: 100%; padding: 13px; background: var(--green); color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Geologica', sans-serif; transition: background 0.15s; margin-bottom: 8px; }
+    .btn-deal:hover { background: #17a36c; }
+    .btn-deal:disabled { background: #ccc; cursor: not-allowed; }
+    .btn-escrow { background: var(--escrow) !important; }
+    .btn-escrow:hover { background: #1a56c2 !important; }
+
+    .escrow-status { background: #f0f5ff; border: 1px solid #c5d8ff; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; font-size: 13px; color: #2d6cdf; line-height: 1.6; }
+
+    .rating-stars { display: flex; gap: 4px; justify-content: center; margin: 1rem 0; }
+    .star-btn { font-size: 28px; cursor: pointer; transition: transform 0.1s; background: none; border: none; line-height: 1; }
+    .star-btn:hover, .star-btn.sel { transform: scale(1.15); }
+
+    .wallet-balance { font-family: 'Unbounded', sans-serif; font-size: 2.5rem; font-weight: 800; color: var(--gold); text-align: center; }
+    .wallet-sub { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 1.2rem; }
+    .wallet-history { max-height: 240px; overflow-y: auto; }
+    .tx-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .tx-row:last-child { border-bottom: none; }
+    .tx-icon { font-size: 18px; flex-shrink: 0; }
+    .tx-desc { flex: 1; font-size: 12.5px; }
+    .tx-time { font-size: 10px; color: var(--muted); }
+    .tx-amt { font-size: 13px; font-weight: 700; font-family: 'Unbounded', sans-serif; flex-shrink: 0; }
+    .tx-amt.plus { color: var(--green); }
+    .tx-amt.minus { color: var(--accent); }
+
+    .profile-avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 0.5rem; overflow: hidden; border: 3px solid var(--border); }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-name { font-family: 'Unbounded', sans-serif; font-size: 1rem; font-weight: 700; text-align: center; color: var(--navy); }
+    .profile-contact { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 0.5rem; }
+    .profile-class-badge { text-align: center; margin-bottom: 1rem; }
+    .profile-stats { display: flex; background: var(--bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 1.2rem; }
+    .ps-item { flex: 1; text-align: center; padding: 0.8rem; border-right: 1px solid var(--border); }
+    .ps-item:last-child { border-right: none; }
+    .ps-num { font-family: 'Unbounded', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+    .ps-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .profile-rating { text-align: center; font-size: 14px; color: var(--gold); font-weight: 700; margin-bottom: 1rem; }
+    .reviews-list { max-height: 180px; overflow-y: auto; margin-bottom: 1rem; }
+    .review-item { background: var(--bg); border-radius: 10px; padding: 0.7rem; margin-bottom: 7px; font-size: 12px; line-height: 1.5; }
+    .review-item .rev-author { font-weight: 600; color: var(--navy); }
+    .review-item .rev-stars { color: var(--gold); }
+
+    .lb-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: var(--bg); border-radius: 10px; margin-bottom: 6px; }
+    .lb-row:first-child { background: linear-gradient(135deg, #fff8e0, #fff3c0); border: 1px solid rgba(255,186,0,0.3); }
+    .lb-row:nth-child(2) { background: #f5f5f5; }
+    .lb-row:nth-child(3) { background: #fff5f0; }
+    .lb-rank { font-family: 'Unbounded', sans-serif; font-size: 1rem; font-weight: 800; color: var(--navy); width: 28px; text-align: center; flex-shrink: 0; }
+    .lb-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--border); }
+    .lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .lb-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--navy); }
+    .lb-coins { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: var(--gold); }
+
+    .avatar-picker-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 1rem 0; }
+    .avatar-option { width: 58px; height: 58px; border-radius: 50%; border: 3px solid var(--border); cursor: pointer; overflow: hidden; transition: all 0.15s; background: var(--bg); }
+    .avatar-option:hover { border-color: var(--accent); transform: scale(1.08); }
+    .avatar-option.selected { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,92,53,0.25); }
+    .avatar-option img { width: 100%; height: 100%; object-fit: cover; }
+
+    .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 2.5rem; }
+    .how-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.3rem; }
+    .how-num { font-family: 'Unbounded', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--border); line-height: 1; margin-bottom: 0.6rem; }
+    .how-card h4 { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+    .how-card p { font-size: 12px; color: #777; line-height: 1.5; }
+
+    .ad-detail-top { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 1rem; }
+    .ad-detail-emoji { font-size: 34px; width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ad-detail-info h2 { font-family: 'Unbounded', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy); line-height: 1.3; margin-bottom: 5px; }
+    .ad-detail-desc { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 1rem; }
+    .ad-detail-meta { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 1.1rem; }
+    .meta-chip { background: var(--bg); border: 1px solid var(--border); border-radius: 999px; padding: 4px 11px; font-size: 11px; color: var(--navy); font-weight: 500; }
+
+    footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); }
+    footer strong { font-family: 'Unbounded', sans-serif; color: var(--navy); }
+
+    /* CHAT */
+    #chat-messages::-webkit-scrollbar { width: 4px; }
+    #chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+
+    /* TOAST */
+    #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--navy); color: #fff; padding: 10px 22px; border-radius: 999px; font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 9999; pointer-events: none; white-space: nowrap; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* LOADING SCREEN */
+    #loading-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #1a2744; }
+
+    /* ADMIN PANEL */
+    .admin-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 400; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .admin-panel { background: #1a2744; border-radius: 18px; width: 100%; max-width: 700px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .admin-header { padding: 1.3rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; }
+    .admin-tabs { display: flex; gap: 8px; padding: 1rem 1.5rem 0; }
+    .admin-tab { padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; font-family: 'Geologica', sans-serif; background: rgba(255,255,255,0.1); color: #aab3cc; transition: all 0.15s; }
+    .admin-tab.active { background: var(--accent); color: #fff; }
+    .admin-content { flex: 1; overflow-y: auto; padding: 1rem 1.5rem 1.5rem; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; color: #fff; }
+    .admin-table th { padding: 8px 10px; text-align: left; color: #aab3cc; font-weight: 600; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .admin-table td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.5rem; }
+      nav { padding: 0 0.75rem; height: auto; min-height: 52px; flex-wrap: nowrap; gap: 6px; }
+      .nav-logo { font-size: 17px; flex-shrink: 0; }
+      .nav-right { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; gap: 5px; padding: 6px 0; scrollbar-width: none; }
+      .nav-right::-webkit-scrollbar { display: none; }
+      .btn-sm { font-size: 10px; padding: 5px 8px; white-space: nowrap; flex-shrink: 0; }
+      .nav-coin-badge { font-size: 11px; padding: 4px 9px; flex-shrink: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div style="text-align:center">
+    <div style="font-family:'Unbounded',sans-serif;font-size:28px;font-weight:800;color:#fff;margin-bottom:1rem">
+      tam<span style="color:#ff5c35">ox</span>
+    </div>
+    <span class="spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:#ff5c35;width:32px;height:32px"></span>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div id="auth-screen" class="screen">
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo">tam<span>ox</span></div>
+      <div class="auth-sub">Школьная доска объявлений · Алматы</div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Войти</div>
+        <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Регистрация</div>
+      </div>
+      <!-- Login -->
+      <div id="form-login">
+        <div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="email@mail.com" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+        <div class="form-group"><label>Пароль</label><input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+        <div class="form-err" id="login-err"></div>
+        <button class="btn-full" id="login-btn" onclick="doLogin()">Войти →</button>
+        <div class="auth-switch">Нет аккаунта? <a onclick="switchAuthTab('register')">Зарегистрироваться</a></div>
+      </div>
+      <!-- Register -->
+      <div id="form-register" style="display:none">
+        <div class="auth-info">🪙 Каждый новый ученик получает <strong>100 монет</strong> при регистрации!</div>
+        <div class="form-group"><label>Имя</label><input type="text" id="reg-name" placeholder="Айгерим" /></div>
+        <div class="form-group"><label>Email</label><input type="email" id="reg-email" placeholder="email@mail.com" /></div>
+        <div class="form-group">
+          <label>Класс <span style="font-weight:400;color:var(--muted)">(например: 10А, 11Б или свой вариант)</span></label>
+          <input type="text" id="reg-class" placeholder="Введи свой класс" maxlength="20" />
+        </div>
+        <div class="form-group"><label>Пароль</label><input type="password" id="reg-password" placeholder="Минимум 6 символов" onkeydown="if(event.key==='Enter')doRegister()" /></div>
+        <div class="form-err" id="reg-err"></div>
+        <button class="btn-full" id="reg-btn" onclick="doRegister()">Создать аккаунт 🎉</button>
+        <div class="auth-switch">Уже есть аккаунт? <a onclick="switchAuthTab('login')">Войти</a></div>
+      </div>
+      <!-- Email Confirm Message -->
+      <div id="form-confirm" style="display:none;text-align:center">
+        <div style="font-size:52px;margin-bottom:1rem">📬</div>
+        <div style="font-family:'Unbounded',sans-serif;font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:0.6rem">Подтверди email!</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:1rem">Мы отправили письмо на <strong id="confirm-email-display"></strong>.<br/>Открой письмо и нажми на ссылку подтверждения, затем войди.</div>
+        <div style="background:#fff8e0;border:1px solid rgba(255,186,0,0.4);border-radius:10px;padding:9px 13px;font-size:12px;color:#7a5500;margin-bottom:1.2rem;text-align:left;line-height:1.6">📁 <strong>Не пришло письмо?</strong> Проверь папку <strong>Спам</strong> или <strong>Промоакции</strong> — письмо могло попасть туда.</div>
+        <button class="btn-full" onclick="switchAuthTab('login')">Войти после подтверждения →</button>
+        <div class="auth-switch" style="margin-top:0.8rem"><a onclick="switchAuthTab('register')">← Назад</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main-screen" class="screen">
+  <nav>
+    <span class="nav-logo" onclick="window.scrollTo(0,0)">tam<span>ox</span></span>
+    <div class="nav-right">
+      <div class="nav-coin-badge" onclick="openWallet()">🪙 <span id="nav-coins">0</span></div>
+      <button class="btn-sm btn-accent" onclick="openPostModal()">+ Объявление</button>
+      <button class="btn-sm btn-outline" onclick="openLeaderboard()">🏆 Топ</button>
+      <button class="btn-sm btn-admin" id="admin-btn" style="display:none" onclick="openAdminPanel()">⚙️ Админ</button>
+      <button class="btn-sm btn-outline" onclick="openOrders('active')">📦 Заказы</button>
+      <button class="btn-sm btn-outline" onclick="openChat()">💬 Чат</button>
+      <button class="btn-sm btn-outline" id="profile-btn" onclick="openProfileModal()">👤 —</button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-badge">Только монеты · Эскроу · Комиссия 10%</div>
+    <h1>Нужна помощь?<br />Найди её <em>здесь</em></h1>
+    <p>Сгонять в магаз, продать учебник, помочь с учёбой — всё за монеты Tamox</p>
+    <div class="hero-search">
+      <input type="text" id="search-input" placeholder="Найти объявление..." oninput="renderAds()" />
+      <button onclick="renderAds()">Найти</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Объявлений</div></div>
+      <div class="stat-item"><div class="stat-num" id="stat-done">0</div><div class="stat-label">Выполнено</div></div>
+      <div class="stat-item"><div class="stat-num">10%</div><div class="stat-label">Комиссия</div></div>
+    </div>
+
+    <div class="filters-bar">
+      <span class="filter-label">🔍 Фильтры:</span>
+      <select class="filter-select" id="sort-select" onchange="loadAds(true)">
+        <option value="new">Сначала новые</option>
+        <option value="cheap">Дешевле</option>
+        <option value="expensive">Дороже</option>
+      </select>
+      <select class="filter-select" id="min-coins" onchange="renderAds()">
+        <option value="0">От 0 🪙</option>
+        <option value="20">От 20 🪙</option>
+        <option value="50">От 50 🪙</option>
+        <option value="100">От 100 🪙</option>
+      </select>
+      <select class="filter-select" id="max-coins" onchange="renderAds()">
+        <option value="9999">До любой суммы</option>
+        <option value="50">До 50 🪙</option>
+        <option value="100">До 100 🪙</option>
+        <option value="200">До 200 🪙</option>
+      </select>
+    </div>
+
+    <div class="cats-scroll" id="cat-pills"></div>
+
+    <div class="feed-tabs">
+      <div class="feed-tab active" data-tab="feed" onclick="setFeedTab('feed')">📋 Лента</div>
+      <div class="feed-tab" data-tab="favs" onclick="setFeedTab('favs')">❤️ Избранное</div>
+      <div class="feed-tab" data-tab="my" onclick="setFeedTab('my')">📌 Мои</div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-title" id="feed-title">Объявления</div>
+      <span style="font-size:12px;color:var(--muted)" id="ads-count"></span>
+    </div>
+
+    <div class="ads-grid" id="ads-grid"></div>
+    <button class="load-more-btn" id="load-more-btn" style="display:none" onclick="loadAds(false)">Загрузить ещё ↓</button>
+
+    <div class="section-head" style="margin-top:1.5rem"><div class="section-title">Как это работает</div></div>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-num">01</div><h4>Регистрируйся</h4><p>Получи 100 стартовых монет за регистрацию</p></div>
+      <div class="how-card"><div class="how-num">02</div><h4>Подай объявление</h4><p>Монеты замораживаются в эскроу — исполнитель получит их только после твоего подтверждения</p></div>
+      <div class="how-card"><div class="how-num">03</div><h4>Сделка с защитой</h4><p>Исполнитель берётся за задание → выполняет → ты подтверждаешь → монеты переходят</p></div>
+      <div class="how-card"><div class="how-num">04</div><h4>Рейтинг и доверие</h4><p>После каждой сделки ставьте друг другу оценки — это защита от обманщиков</p></div>
+    </div>
+  </div>
+
+  <footer>© 2026 <strong>tamox</strong> — школьная доска объявлений · Алматы</footer>
+</div>
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- AD DETAIL -->
+<div class="overlay" id="modal-detail" onclick="if(event.target===this)closeModal('detail')">
+  <div class="modal" id="modal-detail-body"></div>
+</div>
+
+<!-- POST AD -->
+<div class="overlay" id="modal-post" onclick="if(event.target===this)closeModal('post')">
+  <div class="modal">
+    <div class="modal-title">📌 Подать объявление</div>
+    <div class="form-group">
+      <label>Категория</label>
+      <select id="new-cat">
+        <option value="magaz">🛒 Сходить в магаз</option>
+        <option value="ucheba">📚 Учёба / помощь</option>
+        <option value="prodazha">💰 Продам / куплю</option>
+        <option value="other">✨ Разное</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Заголовок</label><input type="text" id="new-title" placeholder="Кратко опиши суть" maxlength="60" /></div>
+    <div class="form-group"><label>Описание</label><textarea id="new-desc" placeholder="Подробнее..."></textarea></div>
+    <div class="form-group">
+      <label>Вознаграждение (монеты 🪙)</label>
+      <input type="number" id="new-coins" min="1" max="9999" placeholder="Напр.: 50" oninput="updateCoinPreview()" />
+      <div class="coin-preview" id="coin-preview">Введи сумму монет 👆</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('post')">Отмена</button>
+      <button class="btn-post" id="post-btn" onclick="postAd()">Опубликовать 📌</button>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET -->
+<div class="overlay" id="modal-wallet" onclick="if(event.target===this)closeModal('wallet')">
+  <div class="modal">
+    <div class="modal-title">🪙 Кошелёк</div>
+    <div class="wallet-balance" id="wallet-balance">0</div>
+    <div class="wallet-sub">монет на счету</div>
+    <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px">История транзакций</div>
+    <div class="wallet-history" id="wallet-history"></div>
+    <div style="margin-top:1rem;background:var(--bg);border-radius:10px;padding:0.9rem">
+      <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:6px">Как заработать монеты</div>
+      <div style="font-size:11.5px;color:#555;line-height:1.8">
+        ✅ Выполнить задание → монеты −10% комиссии<br>
+        ⭐ Получить 5★ оценку → +20 🪙<br>
+        🎉 Приветственный бонус → +100 🪙
+      </div>
+    </div>
+    <button class="btn-cancel" style="width:100%;margin-top:1rem" onclick="closeModal('wallet')">Закрыть</button>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="overlay" id="modal-profile" onclick="if(event.target===this)closeModal('profile')">
+  <div class="modal" style="max-width:480px" id="modal-profile-body"></div>
+</div>
+
+<!-- AVATAR PICKER -->
+<div class="overlay" id="modal-avatar" onclick="if(event.target===this)closeModal('avatar')">
+  <div class="modal">
+    <div class="modal-title">🎨 Сменить аватарку</div>
+    <div class="avatar-picker-grid" id="avatar-picker-grid"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('avatar')">Отмена</button>
+      <button class="btn-post" onclick="saveAvatar()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="overlay" id="modal-lb" onclick="if(event.target===this)closeModal('lb')">
+  <div class="modal">
+    <div class="modal-title">🏆 Топ-10 пользователей</div>
+    <div id="lb-list"></div>
+    <button class="btn-cancel" style="width:100%;margin-top:1rem" onclick="closeModal('lb')">Закрыть</button>
+  </div>
+</div>
+
+<!-- ORDERS -->
+<div class="overlay" id="modal-orders" onclick="if(event.target===this)closeModal('orders')">
+  <div class="modal modal-wide">
+    <div class="modal-title">📦 Мои заказы</div>
+    <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap" id="orders-tabs"></div>
+    <div id="orders-list"></div>
+    <button class="btn-cancel" style="width:100%;margin-top:1rem" onclick="closeModal('orders')">Закрыть</button>
+  </div>
+</div>
+
+<!-- RATING -->
+<div class="overlay" id="modal-rate" onclick="if(event.target===this)closeModal('rate')">
+  <div class="modal">
+    <div class="modal-title">⭐ Оцени исполнителя</div>
+    <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:0.5rem">Оцени работу исполнителя</div>
+    <div class="rating-stars" id="rating-stars"></div>
+    <div class="form-group">
+      <label>Комментарий (необязательно)</label>
+      <textarea id="rate-comment" placeholder="Как всё прошло?" style="min-height:60px"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('rate')">Пропустить</button>
+      <button class="btn-post" onclick="submitRating()">Отправить оценку ⭐</button>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT AD -->
+<div class="overlay" id="modal-report" onclick="if(event.target===this)closeModal('report')">
+  <div class="modal">
+    <div class="modal-title">🚩 Жалоба на объявление</div>
+    <div class="form-group">
+      <label>Причина жалобы</label>
+      <select id="report-reason">
+        <option value="spam">Спам / реклама</option>
+        <option value="fraud">Мошенничество</option>
+        <option value="inappropriate">Неприемлемый контент</option>
+        <option value="wrong_category">Неправильная категория</option>
+        <option value="other">Другое</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Комментарий (необязательно)</label>
+      <textarea id="report-comment" placeholder="Опиши проблему подробнее..." style="min-height:70px"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('report')">Отмена</button>
+      <button class="btn-post" style="background:#e24b4a" onclick="submitReport()">Отправить жалобу 🚩</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT TICKET -->
+<div class="overlay" id="modal-support" onclick="if(event.target===this)closeModal('support')">
+  <div class="modal">
+    <div class="modal-title">🛠️ Техническая поддержка</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.5">Опиши проблему — администратор увидит твой запрос и свяжется с тобой.</div>
+    <div class="form-group">
+      <label>Тема обращения</label>
+      <select id="support-topic">
+        <option value="bug">Ошибка / баг</option>
+        <option value="account">Проблема с аккаунтом</option>
+        <option value="coins">Вопрос по монетам</option>
+        <option value="deal">Проблема со сделкой</option>
+        <option value="other">Другое</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Описание проблемы</label>
+      <textarea id="support-text" placeholder="Опиши ситуацию как можно подробнее..." style="min-height:90px"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('support')">Отмена</button>
+      <button class="btn-post" onclick="submitSupportTicket()">Отправить запрос 🛠️</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="overlay" id="modal-chat" onclick="if(event.target===this)closeModal('chat')">
+  <div class="modal modal-wide" style="max-width:560px;display:flex;flex-direction:column;height:85vh;max-height:600px;padding:0;overflow:hidden;border-radius:18px">
+    <div style="padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div style="font-family:'Unbounded',sans-serif;font-size:0.95rem;font-weight:700;color:var(--navy)">💬 Общий чат</div>
+      <button onclick="closeModal('chat')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:8px;background:var(--bg)"></div>
+    <div style="padding:0.8rem 1rem;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:#fff">
+      <input type="text" id="chat-input" placeholder="Написать сообщение..." maxlength="500"
+        style="flex:1;border:1.5px solid var(--border);border-radius:10px;padding:9px 13px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;background:var(--bg)"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMsg()}" />
+      <button onclick="sendChatMsg()" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-overlay" id="admin-overlay" style="display:none">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <div>
+        <div style="font-family:'Unbounded',sans-serif;font-size:1rem;font-weight:700;color:#ffba00">⚙️ Панель администратора</div>
+        <div style="font-size:11px;color:#aab3cc;margin-top:3px">Только для авторизованных администраторов</div>
+      </div>
+      <button onclick="document.getElementById('admin-overlay').style.display='none'" style="background:rgba(255,255,255,0.1);border:none;color:#fff;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:14px">✕</button>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('stats')">📊 Статистика</button>
+      <button class="admin-tab" onclick="switchAdminTab('users')">👥 Пользователи</button>
+      <button class="admin-tab" onclick="switchAdminTab('ads')">🗂️ Объявления</button>
+      <button class="admin-tab" onclick="switchAdminTab('reports')">🚩 Жалобы</button>
+      <button class="admin-tab" onclick="switchAdminTab('support')">🛠️ Тикеты</button>
+    </div>
+    <div class="admin-content" id="admin-content"></div>
+  </div>
+  <!-- Edit Balance Sub-modal -->
+  <div id="edit-balance-modal" style="display:none;position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:10">
+    <div style="background:#fff;border-radius:16px;padding:1.5rem;width:320px;box-shadow:0 8px 40px rgba(0,0,0,0.3)">
+      <div style="font-family:'Unbounded',sans-serif;font-size:0.9rem;font-weight:700;color:#1a2744;margin-bottom:1rem">✏️ Редактировать баланс</div>
+      <div id="edit-balance-user-info" style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding:10px;background:#f5f3ee;border-radius:10px"></div>
+      <div class="form-group">
+        <label>Новый баланс (монеты 🪙)</label>
+        <input type="number" id="edit-coins-input" min="0" style="width:100%" />
+      </div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button onclick="closeEditBalance()" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #e3e0d8;background:#f5f3ee;cursor:pointer;font-weight:600;font-family:'Geologica',sans-serif;font-size:13px">Отмена</button>
+        <button onclick="saveBalance()" style="flex:2;padding:10px;border-radius:10px;border:none;background:#1db87a;color:#fff;cursor:pointer;font-weight:700;font-family:'Geologica',sans-serif;font-size:13px">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+
+const SUPABASE_URL = 'https://kfktwjoxaqwudaeyjmka.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtma3R3am94YXF3dWRhZXlqbWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0NjY5MzksImV4cCI6MjA5MzA0MjkzOX0._nI_eIVIIyqZmTLBzBDruz-b9Jv4Pl3iYQl-qDynHrs'; // вставь сюда свой ANON_KEY
+
+
+supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const ADMIN_PROFILE_ID = 1;
+const PAGE_SIZE = 12;
+
+const CAT_MAP = {
+  magaz:    { icon: '🛒', label: 'В магазин',    tagBg: '#fff0eb', tagColor: '#e0441e', bg: '#fff5f2' },
+  ucheba:   { icon: '📚', label: 'Учёба',        tagBg: '#e8f3ff', tagColor: '#1a6ec9', bg: '#f0f7ff' },
+  prodazha: { icon: '💰', label: 'Продам/куплю', tagBg: '#e5f7ee', tagColor: '#0f6e56', bg: '#f0faf4' },
+  other:    { icon: '✨', label: 'Разное',        tagBg: '#f0ebff', tagColor: '#6b3fc9', bg: '#f5f0ff' },
+};
+
+const AVATAR_SEEDS = [
+  'Айгерим','Данияр','Мадина','Ерлан','Аружан',
+  'Тимур','Камила','Нурлан','Зарина','Бекзат',
+  'Алия','Арман','Гулназ','Серик','Ботакоз',
+];
+
+const USER_CLASSES = [
+  { name: 'Новичок',   emoji: '🌱', minCoins: 0,    cls: 'novice' },
+  { name: 'Фрилансер', emoji: '💼', minCoins: 200,  cls: 'freelancer' },
+  { name: 'Воркер',    emoji: '⚡', minCoins: 500,  cls: 'worker' },
+  { name: 'Профи',     emoji: '🔥', minCoins: 1000, cls: 'pro' },
+  { name: 'Акула',     emoji: '🦈', minCoins: 2000, cls: 'shark' },
+  { name: 'mister money',     emoji: '🤑', minCoins: 10000, cls: 'mister money' },
+];
+
+function getUserClass(coins) {
+  let uc = USER_CLASSES[0];
+  for (const c of USER_CLASSES) { if (coins >= c.minCoins) uc = c; }
+  return uc;
+}
+
+function avatarUrl(seed) {
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
+}
+
+function fmtTime(ts) {
+  const d = Date.now() - new Date(ts).getTime();
+  const m = Math.floor(d / 60000);
+  if (m < 1) return 'только что';
+  if (m < 60) return m + ' мин назад';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + ' ч назад';
+  return Math.floor(h / 24) + ' дн назад';
+}
+
+function classBadgeHTML(coins) {
+  const uc = getUserClass(coins);
+  const styles = {
+    novice:     'background:#f0f3f8;color:#666',
+    freelancer: 'background:#e8f3ff;color:#1a6ec9',
+    worker:     'background:#e5f7ee;color:#0f6e56',
+    pro:        'background:#fff0e0;color:#b36000',
+    shark:      'background:linear-gradient(135deg,#1a2744,#2d6cdf);color:#fff',
+    mistermoney: 'background:linear-gradient(135deg,#1a2744,#2d6cdf);color:#ffba00',
+  };
+  return `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;${styles[uc.cls]}">${uc.emoji} ${uc.name}</span>`;
+}
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let currentProfile = null;
+let allAds = [];
+let totalAdsCount = 0;
+let currentPage = 0;
+let allLoaded = false;
+let currentCat = 'all';
+let feedTab = 'feed';
+let favorites = new Set();
+let rateAdContext = null;
+let selectedStars = 0;
+let selectedAvatarSeed = '';
+let editBalanceUserId = null;
+let adminCurrentTab = 'stats';
+let _authHandling = false;
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+(async function init() {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    if (_authHandling) return;
+    _authHandling = true;
+    (async () => {
+      try {
+        if (session?.user) {
+          await createProfileIfNeeded(session.user.id);
+          const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+          if (data) {
+            setProfile(data);
+            showMain();
+          } else {
+            showAuth();
+          }
+        } else {
+          setProfile(null);
+          showAuth();
+        }
+      } finally {
+        _authHandling = false;
+      }
+    })();
+  });
+
+  // Realtime ads
+  supabase.channel('ads-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'ads' }, () => loadAds(true))
+    .subscribe();
+
+  // Build cat pills
+  const pillsEl = document.getElementById('cat-pills');
+  const cats = [{ key: 'all', icon: '🗂️', label: 'Все' }, ...Object.entries(CAT_MAP).map(([k, v]) => ({ key: k, ...v }))];
+  pillsEl.innerHTML = cats.map(c =>
+    `<div class="cat-pill ${c.key === 'all' ? 'active' : ''}" data-cat="${c.key}" onclick="setCat('${c.key}')">${c.icon} ${c.label}</div>`
+  ).join('');
+})();
+
+function setProfile(p) {
+  currentProfile = p;
+  if (!p) return;
+  document.getElementById('nav-coins').textContent = p.coins;
+  document.getElementById('profile-btn').textContent = '👤 ' + p.name.split(' ')[0];
+  document.getElementById('admin-btn').style.display = p.is_admin ? '' : 'none';
+}
+
+function showAuth() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('auth-screen').classList.add('active');
+  document.getElementById('main-screen').classList.remove('active');
+}
+
+function showMain() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('auth-screen').classList.remove('active');
+  document.getElementById('main-screen').classList.add('active');
+  loadAds(true);
+}
+
+// ══════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════
+function switchAuthTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('form-register').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('form-confirm').style.display = 'none';
+  document.getElementById('login-err').classList.remove('show');
+  document.getElementById('reg-err').classList.remove('show');
+}
+
+async function doLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errEl = document.getElementById('login-err');
+    const btn = document.getElementById('login-btn');
+
+    if (!email || !password) {
+        showErr(errEl, 'Заполни все поля');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>';
+
+    // Используем наше имя supabase, которое мы настроили на 548 строке
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    btn.disabled = false;
+    btn.textContent = 'Войти →';
+
+    if (error) {
+        showErr(errEl, 
+            error.message.includes('Invalid login') ? 'Неверный email или пароль' :
+            error.message.includes('Email not confirmed') ? 'Подтверди email' :
+            'Ошибка: ' + error.message
+        );
+    }
+    // onAuthStateChange сам вызовет showMain() при успехе
+}
+
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const cls = document.getElementById('reg-class').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const errEl = document.getElementById('reg-err');
+  const btn = document.getElementById('reg-btn');
+  if (!name || !email || !cls || !password) { showErr(errEl, 'Заполни все поля'); return; }
+  if (cls.length < 2) { showErr(errEl, 'Укажи класс (минимум 2 символа, например 10А)'); return; }
+  if (password.length < 6) { showErr(errEl, 'Пароль минимум 6 символов'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+
+  // Store pending profile data in sessionStorage to create after email confirm
+  const avatarSeed = AVATAR_SEEDS[Math.floor(Math.random() * AVATAR_SEEDS.length)];
+  sessionStorage.setItem('pendingProfile', JSON.stringify({ name, email, cls, avatarSeed }));
+
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  btn.disabled = false; btn.textContent = 'Создать аккаунт 🎉';
+  if (error) {
+    showErr(errEl, error.message.includes('already registered') ? 'Email уже используется' : 'Ошибка: ' + error.message);
+    return;
+  }
+
+  // Check if email confirmation is required
+  if (data.user && !data.session) {
+    // Email confirmation required — show confirm screen
+    document.getElementById('confirm-email-display').textContent = email;
+    document.getElementById('form-register').style.display = 'none';
+    document.getElementById('form-confirm').style.display = '';
+    return;
+  }
+
+  // If somehow auto-confirmed (email confirmations disabled in Supabase), create profile immediately
+  if (data.user) {
+    await createProfileIfNeeded(data.user.id);
+  }
+}
+
+async function createProfileIfNeeded(authUid) {
+  const pending = sessionStorage.getItem('pendingProfile');
+  if (!pending) return;
+  const { name, email, cls, avatarSeed } = JSON.parse(pending);
+  const { data: existing } = await supabase.from('profiles').select('id').eq('id', authUid).maybeSingle();
+  if (existing) { sessionStorage.removeItem('pendingProfile'); return; }
+  const { data: profileData, error: profileErr } = await supabase.from('profiles')
+    .insert({ id: authUid, name, email, class: cls, coins: 100, avatar_seed: avatarSeed, is_admin: false })
+    .select().single();
+  if (!profileErr && profileData) {
+    sessionStorage.removeItem('pendingProfile');
+    if (profileData.id === ADMIN_PROFILE_ID) {
+      await supabase.from('profiles').update({ is_admin: true }).eq('id', ADMIN_PROFILE_ID);
+    }
+    await supabase.from('transactions').insert({ user_id: profileData.id, icon: '🎉', description: 'Приветственный бонус', amount: 100 });
+    const { data: statRow } = await supabase.from('platform_stats').select('value').eq('key', 'total_users').maybeSingle();
+    if (statRow) await supabase.from('platform_stats').update({ value: statRow.value + 1 }).eq('key', 'total_users');
+  }
+}
+
+function showErr(el, msg) {
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+// ══════════════════════════════════════════════
+// ADS
+// ══════════════════════════════════════════════
+async function loadAds(reset = false) {
+  if (reset) { currentPage = 0; allAds = []; allLoaded = false; }
+  if (allLoaded) return;
+
+  const PAGE_SIZE = 20;
+  const sortVal = document.getElementById('sort-select')?.value || 'new';
+  let query = supabase.from('ads')
+    .select('*, author:profiles(name, avatar_seed, class)', { count: 'exact' })
+    .neq('status', 'deleted')
+    .range(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE - 1);
+
+  if (sortVal === 'cheap') query = query.order('coins', { ascending: true });
+  else if (sortVal === 'expensive') query = query.order('coins', { ascending: false });
+  else query = query.order('created_at', { ascending: false });
+
+  const { data, error, count } = await query;
+  if (error) { console.error('loadAds error', error); return; }
+
+  if (reset) allAds = data || [];
+  else allAds = [...allAds, ...(data || [])];
+
+  if (count !== null) totalAdsCount = count;
+  allLoaded = !data || data.length < PAGE_SIZE;
+  currentPage++;
+
+  document.getElementById('load-more-btn').style.display = allLoaded ? 'none' : 'block';
+  updateStats();
+  renderAds();
+}
+function renderAds() {
+  const searchQ = document.getElementById('search-input').value.toLowerCase();
+  const minC = parseInt(document.getElementById('min-coins').value) || 0;
+  const maxC = parseInt(document.getElementById('max-coins').value) || 9999;
+  const grid = document.getElementById('ads-grid');
+
+  let filtered = allAds.filter(ad => {
+    if (currentCat !== 'all' && ad.cat !== currentCat) return false;
+    if (searchQ && !ad.title.toLowerCase().includes(searchQ) && !ad.description.toLowerCase().includes(searchQ)) return false;
+    if (ad.coins < minC || ad.coins > maxC) return false;
+    if (feedTab === 'favs') return favorites.has(ad.id);
+    if (feedTab === 'my') return ad.author_id === currentProfile?.id;
+    return true;
+  });
+
+  document.getElementById('ads-count').textContent = filtered.length + ' объявлений';
+  const titles = { feed: 'Объявления', favs: '❤️ Избранное', my: '📌 Мои объявления' };
+  document.getElementById('feed-title').textContent = titles[feedTab];
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><div class="big">${feedTab === 'favs' ? '❤️' : '🔍'}</div><p style="font-size:14px;font-weight:600">${feedTab === 'favs' ? 'Нет избранных' : 'Объявлений не найдено'}</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(ad => {
+    const m = CAT_MAP[ad.cat] || CAT_MAP.other;
+    const earn = Math.floor(ad.coins * (1 - COMMISSION));
+    const isFav = favorites.has(ad.id);
+    const authorName = ad.author?.name || '—';
+    let badge = '';
+    if (ad.status === 'taken') badge = '<div class="badge-escrow">🔒 ВЗЯТО</div>';
+    else if (ad.status === 'open' && ad.badge === 'new') badge = '<div class="badge-new">НОВОЕ</div>';
+    else if (ad.status === 'open' && ad.badge === 'hot') badge = '<div class="badge-hot">🔥 ТОП</div>';
+    const imgHtml = ad.photo_url ? `<img class="ad-card-img" src="${ad.photo_url}" alt="" loading="lazy">` : '';
+    return `
+      <div class="ad-card" onclick="openAdDetail('${ad.id}')">
+        ${badge}
+        <button class="fav-btn" onclick="event.stopPropagation();toggleFav('${ad.id}')">${isFav ? '❤️' : '🤍'}</button>
+        ${imgHtml}
+        <div class="ad-card-body">
+          <div class="ad-top">
+            <div class="ad-emoji" style="background:${m.bg}">${m.icon}</div>
+            <div class="ad-meta">
+              <div class="ad-cat-tag" style="background:${m.tagBg};color:${m.tagColor}">${m.label}</div>
+              <div class="ad-title">${escHtml(ad.title)}</div>
+            </div>
+          </div>
+          <div class="ad-desc">${escHtml(ad.description)}</div>
+          <div class="ad-footer">
+            <div class="ad-price">🪙 ${ad.coins}<small>исполнитель получит ${earn}🪙</small></div>
+            <div class="ad-info">
+              <span class="ad-author">${escHtml(authorName)}</span>
+              <span class="ad-time">${fmtTime(ad.created_at)}</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = totalAdsCount;
+  document.getElementById('stat-done').textContent = allAds.filter(a => a.status === 'done').length;
+}
+
+function setCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+  renderAds();
+}
+
+function setFeedTab(tab) {
+  feedTab = tab;
+  document.querySelectorAll('.feed-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  renderAds();
+}
+
+function toggleFav(id) {
+  if (favorites.has(id)) favorites.delete(id); else favorites.add(id);
+  renderAds();
+}
+
+// ══════════════════════════════════════════════
+// AD DETAIL MODAL
+// ══════════════════════════════════════════════
+function openAdDetail(id) {
+  const ad = allAds.find(a => a.id === id);
+  if (!ad) return;
+  const m = CAT_MAP[ad.cat] || CAT_MAP.other;
+  const earn = Math.floor(ad.coins * (1 - COMMISSION));
+  const comm = ad.coins - earn;
+  const isOwn = ad.author_id === currentProfile.id;
+  const isExecutor = ad.executor_id === currentProfile.id;
+  const canAfford = currentProfile.coins >= ad.coins;
+  const authorName = ad.author?.name || '—';
+
+  let actionHtml = '';
+  if (isOwn) {
+    if (ad.status === 'open') {
+      actionHtml = `<button class="btn-deal" style="background:#e24b4a" onclick="deleteAd('${ad.id}')">🗑️ Удалить объявление</button>`;
+    } else if (ad.status === 'taken') {
+      actionHtml = `
+        <div class="escrow-status">🔒 Монеты в эскроу. Исполнитель берётся за задание. Нажми «Подтвердить», когда выполнено.</div>
+        <button class="btn-deal btn-escrow" onclick="confirmDeal('${ad.id}')">✅ Подтвердить выполнение</button>
+        <button class="btn-deal" style="background:#e24b4a;margin-top:6px" onclick="cancelDeal('${ad.id}')">❌ Отменить сделку</button>`;
+    } else {
+      actionHtml = `<div style="background:#e8faf2;border:1px solid #a8edca;border-radius:12px;padding:1rem;font-size:13px;color:#0f6e56;text-align:center">✅ Сделка завершена</div>`;
+    }
+  } else {
+    if (ad.status === 'open') {
+      actionHtml = `<button class="btn-deal ${canAfford ? 'btn-escrow' : ''}" ${canAfford ? '' : 'disabled'} onclick="takeDeal('${ad.id}')">
+        ${canAfford ? '🔒 Взяться за задание (Эскроу)' : `❌ Недостаточно монет (нужно ${ad.coins}🪙)`}
+      </button>`;
+    } else if (ad.status === 'taken' && isExecutor) {
+      actionHtml = `<div class="escrow-status">🔒 Ты взялся за задание. Выполни и дождись подтверждения заказчика.</div>`;
+    } else {
+      actionHtml = `<button class="btn-deal" disabled>${ad.status === 'taken' ? '🔒 Уже взято' : '✅ Завершено'}</button>`;
+    }
+  }
+
+  document.getElementById('modal-detail-body').innerHTML = `
+    <div class="modal-title">📋 Объявление</div>
+    <div class="ad-detail-top">
+      <div class="ad-detail-emoji" style="background:${m.bg}">${m.icon}</div>
+      <div class="ad-detail-info">
+        <div class="ad-cat-tag" style="background:${m.tagBg};color:${m.tagColor};display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-bottom:5px">${m.label}</div>
+        <h2>${escHtml(ad.title)}</h2>
+      </div>
+    </div>
+    <div class="ad-detail-desc">${escHtml(ad.description)}</div>
+    <div class="ad-detail-meta">
+      <div class="meta-chip">👤 ${escHtml(authorName)}</div>
+      <div class="meta-chip">📅 ${fmtTime(ad.created_at)}</div>
+      <div class="meta-chip">🪙 ${ad.coins} монет</div>
+    </div>
+    <div class="deal-box">
+      <div class="deal-row"><span class="deal-label">Вознаграждение</span><span class="deal-val">🪙 ${ad.coins}</span></div>
+      <div class="deal-row"><span class="deal-label">Комиссия Tamox (10%)</span><span class="deal-val">−🪙 ${comm}</span></div>
+      <div class="deal-row"><span class="deal-label">Исполнитель получит</span><span class="deal-val total">🪙 ${earn}</span></div>
+    </div>
+    ${actionHtml}
+    ${!isOwn ? `<button onclick="openReportModal('${ad.id}')" style="width:100%;margin-top:6px;padding:9px;border-radius:10px;border:1.5px solid #e3e0d8;background:transparent;color:#e24b4a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">🚩 Пожаловаться на объявление</button>` : ''}
+    <button class="btn-cancel" style="width:100%;margin-top:8px" onclick="closeModal('detail')">Закрыть</button>
+  `;
+  openModal('detail');
+}
+
+// ══════════════════════════════════════════════
+// DEAL ACTIONS
+// ══════════════════════════════════════════════
+async function takeDeal(adId) {
+  const ad = allAds.find(a => a.id === adId);
+  if (!ad || currentProfile.coins < ad.coins) { showToast('Недостаточно монет!'); return; }
+  await supabase.from('ads').update({ status: 'taken', executor_id: currentProfile.id }).eq('id', adId);
+  closeModal('detail');
+  showToast('🔒 Ты взялся за задание!');
+  loadAds(true);
+}
+
+async function confirmDeal(adId) {
+  const ad = allAds.find(a => a.id === adId);
+  if (!ad || !ad.executor_id) return;
+  const earn = Math.floor(ad.coins * (1 - COMMISSION));
+  const comm = ad.coins - earn;
+  await supabase.from('ads').update({ status: 'done' }).eq('id', adId);
+  const { data: execP } = await supabase.from('profiles').select('coins, ads_completed').eq('id', ad.executor_id).maybeSingle();
+  if (execP) {
+    await supabase.from('profiles').update({ coins: execP.coins + earn, ads_completed: execP.ads_completed + 1 }).eq('id', ad.executor_id);
+    await supabase.from('transactions').insert({ user_id: ad.executor_id, icon: '✅', description: `Выполнил: "${ad.title.slice(0, 28)}"`, amount: earn });
+  }
+  const { data: adminP } = await supabase.from('profiles').select('coins').eq('id', ADMIN_PROFILE_ID).maybeSingle();
+  if (adminP) {
+    await supabase.from('profiles').update({ coins: adminP.coins + comm }).eq('id', ADMIN_PROFILE_ID);
+    await supabase.from('transactions').insert({ user_id: ADMIN_PROFILE_ID, icon: '💰', description: `Комиссия 10%: "${ad.title.slice(0, 28)}"`, amount: comm });
+  }
+  const { data: statsRows } = await supabase.from('platform_stats').select('key,value').in('key', ['total_deals', 'total_commission']);
+  if (statsRows) {
+    for (const row of statsRows) {
+      const delta = row.key === 'total_deals' ? 1 : comm;
+      await supabase.from('platform_stats').update({ value: row.value + delta }).eq('key', row.key);
+    }
+  }
+  closeModal('detail');
+  showToast(`🎉 Сделка завершена! Исполнитель получил ${earn}🪙, комиссия ${comm}🪙`);
+  loadAds(true);
+  // Open rating
+  rateAdContext = adId;
+  selectedStars = 0;
+  renderRatingStars();
+  document.getElementById('rate-comment').value = '';
+  openModal('rate');
+}
+
+async function cancelDeal(adId) {
+  await supabase.from('ads').update({ status: 'open', executor_id: null }).eq('id', adId);
+  closeModal('detail');
+  showToast('Сделка отменена');
+  loadAds(true);
+}
+
+async function deleteAd(adId) {
+  await supabase.from('ads').delete().eq('id', adId);
+  closeModal('detail');
+  showToast('Объявление удалено');
+  loadAds(true);
+}
+
+// ══════════════════════════════════════════════
+// POST AD
+// ══════════════════════════════════════════════
+function openPostModal() {
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-desc').value = '';
+  document.getElementById('new-coins').value = '';
+  document.getElementById('coin-preview').textContent = 'Введи сумму монет 👆';
+  openModal('post');
+}
+
+function updateCoinPreview() {
+  const c = parseInt(document.getElementById('new-coins').value) || 0;
+  if (!c) { document.getElementById('coin-preview').textContent = 'Введи сумму монет 👆'; return; }
+  const earn = Math.floor(c * (1 - COMMISSION));
+  document.getElementById('coin-preview').textContent = `🔒 Эскроу: ${c}🪙 · Исполнитель получит: ${earn}🪙 · Комиссия: ${c - earn}🪙`;
+}
+
+async function postAd() {
+  const title = document.getElementById('new-title').value.trim();
+  const desc = document.getElementById('new-desc').value.trim();
+  const cat = document.getElementById('new-cat').value;
+  const coins = parseInt(document.getElementById('new-coins').value);
+  const btn = document.getElementById('post-btn');
+  if (!title) { showToast('Введи заголовок'); return; }
+  if (!coins || coins < 1) { showToast('Укажи сумму монет'); return; }
+  if (currentProfile.coins < coins) { showToast(`Недостаточно монет! У тебя ${currentProfile.coins}🪙`); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+  const { error } = await supabase.from('ads').insert({ author_id: currentProfile.id, cat, title, description: desc || 'Без описания.', coins, badge: 'new', status: 'open' });
+  btn.disabled = false; btn.textContent = 'Опубликовать 📌';
+  if (error) { showToast('Ошибка: ' + error.message); return; }
+  const newBal = currentProfile.coins - coins;
+  await supabase.from('profiles').update({ coins: newBal, ads_posted: currentProfile.ads_posted + 1 }).eq('id', currentProfile.id);
+  await supabase.from('transactions').insert({ user_id: currentProfile.id, icon: '📌', description: `Объявление: "${title.slice(0, 28)}"`, amount: -coins });
+  currentProfile = { ...currentProfile, coins: newBal, ads_posted: currentProfile.ads_posted + 1 };
+  setProfile(currentProfile);
+  closeModal('post');
+  showToast('📌 Объявление опубликовано!');
+  loadAds(true);
+}
+
+// ══════════════════════════════════════════════
+// WALLET
+// ══════════════════════════════════════════════
+async function openWallet() {
+  document.getElementById('wallet-balance').textContent = currentProfile.coins;
+  const { data } = await supabase.from('transactions').select('*').eq('user_id', currentProfile.id).order('created_at', { ascending: false }).limit(30);
+  const txs = data || [];
+  document.getElementById('wallet-history').innerHTML = txs.length === 0
+    ? '<div style="text-align:center;color:var(--muted);font-size:13px;padding:1rem">Транзакций пока нет</div>'
+    : txs.map(tx => `
+      <div class="tx-row">
+        <span class="tx-icon">${tx.icon}</span>
+        <span class="tx-desc">${escHtml(tx.description)}</span>
+        <span class="tx-time">${fmtTime(tx.created_at)}</span>
+        <span class="tx-amt ${tx.amount > 0 ? 'plus' : 'minus'}">${tx.amount > 0 ? '+' : ''}${tx.amount}🪙</span>
+      </div>`).join('');
+  openModal('wallet');
+}
+
+// ══════════════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════════════
+async function openProfileModal(profileData) {
+  const target = profileData || currentProfile;
+  const [adsRes, revRes] = await Promise.all([
+  supabase.from('ads').select('*').eq('author_id', target.id).order('created_at', { ascending: false }).limit(12),
+  supabase.from('reviews').select('*, from_user:profiles!reviews_from_user_id_fkey(name)').eq('to_user_id', target.id).order('created_at', { ascending: false }).limit(10),
+  ]);
+  const profileAds = adsRes.data || [];
+  const profileReviews = revRes.data || [];
+  renderProfileModal(target, profileAds, profileReviews, 'ads');
+}
+
+function renderProfileModal(target, profileAds, profileReviews, activeTab) {
+  const isOwn = target.id === currentProfile.id;
+  const adsHtml = profileAds.length === 0
+    ? '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">📭 Нет объявлений</div>'
+    : profileAds.map(ad => {
+        const m = CAT_MAP[ad.cat] || CAT_MAP.other;
+        return `<div onclick="closeModal('profile');openAdDetail('${ad.id}')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--bg);border-radius:10px;margin-bottom:7px;cursor:pointer;border:1px solid var(--border)">
+          <div style="font-size:20px;width:36px;height:36px;border-radius:9px;background:${m.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">${m.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12.5px;font-weight:600;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(ad.title)}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">${fmtTime(ad.created_at)} · 🪙 ${ad.coins}</div>
+          </div>
+        </div>`;
+      }).join('');
+
+  const revsHtml = profileReviews.length === 0
+    ? '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">Нет отзывов</div>'
+    : profileReviews.map(r => `
+        <div class="review-item">
+          <span class="rev-author">${escHtml(r.from_user?.name || '?')}</span>
+          <span class="rev-stars">${'⭐'.repeat(r.stars)}</span><br>${escHtml(r.comment)}
+        </div>`).join('');
+
+  const ownBtns = isOwn ? `
+    <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="openAvatarPicker()">🎨 Сменить аватарку</button>
+    <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="closeModal('profile');openWallet()">🪙 Кошелёк</button>
+    <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="closeModal('profile');openOrders('active')">📦 Мои заказы</button>
+    <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="openSupportModal()">🛠️ Техническая поддержка</button>
+    <button class="btn-cancel" style="width:100%;color:var(--accent);border-color:var(--accent)" onclick="doLogout()">Выйти из аккаунта</button>
+  ` : `<button class="btn-cancel" style="width:100%" onclick="closeModal('profile')">Закрыть</button>`;
+
+  document.getElementById('modal-profile-body').innerHTML = `
+    <div class="modal-title">👤 Профиль</div>
+    <div class="profile-avatar"><img src="${avatarUrl(target.avatar_seed || target.name)}" alt="avatar"></div>
+    <div class="profile-name">${escHtml(target.name)}</div>
+    <div class="profile-contact">${escHtml(target.email)} · Класс ${target.class || '—'}</div>
+    <div class="profile-class-badge">${classBadgeHTML(target.coins)}</div>
+    <div class="profile-rating">${target.rating ? `⭐ ${target.rating.toFixed(1)} (${target.rating_count} оценок)` : 'Нет оценок'}</div>
+    <div class="profile-stats">
+      <div class="ps-item"><div class="ps-num">${target.coins}</div><div class="ps-label">🪙 монет</div></div>
+      <div class="ps-item"><div class="ps-num">${target.ads_posted}</div><div class="ps-label">Объявлений</div></div>
+      <div class="ps-item"><div class="ps-num">${target.ads_completed}</div><div class="ps-label">Выполнено</div></div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      <button onclick="switchProfileTab('ads')" id="ptab-ads" style="flex:1;padding:7px;border-radius:8px;border:1.5px solid ${activeTab === 'ads' ? 'var(--accent)' : 'var(--border)'};background:${activeTab === 'ads' ? 'var(--accent)' : 'var(--bg)'};color:${activeTab === 'ads' ? '#fff' : 'var(--navy)'};font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">
+        📌 Объявления (${profileAds.length})
+      </button>
+      <button onclick="switchProfileTab('reviews')" id="ptab-reviews" style="flex:1;padding:7px;border-radius:8px;border:1.5px solid ${activeTab === 'reviews' ? 'var(--accent)' : 'var(--border)'};background:${activeTab === 'reviews' ? 'var(--accent)' : 'var(--bg)'};color:${activeTab === 'reviews' ? '#fff' : 'var(--navy)'};font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">
+        ⭐ Отзывы (${profileReviews.length})
+      </button>
+    </div>
+    <div id="profile-tab-ads" style="max-height:200px;overflow-y:auto;margin-bottom:1rem;${activeTab !== 'ads' ? 'display:none' : ''}">${adsHtml}</div>
+    <div id="profile-tab-reviews" class="reviews-list" style="${activeTab !== 'reviews' ? 'display:none' : ''}">${revsHtml}</div>
+    ${ownBtns}
+  `;
+  openModal('profile');
+}
+
+function switchProfileTab(tab) {
+  document.getElementById('profile-tab-ads').style.display = tab === 'ads' ? '' : 'none';
+  document.getElementById('profile-tab-reviews').style.display = tab === 'reviews' ? '' : 'none';
+  const accentStyle = 'border:1.5px solid var(--accent);background:var(--accent);color:#fff';
+  const normalStyle = 'border:1.5px solid var(--border);background:var(--bg);color:var(--navy)';
+  document.getElementById('ptab-ads').style.cssText += tab === 'ads' ? accentStyle : normalStyle;
+  document.getElementById('ptab-reviews').style.cssText += tab === 'reviews' ? accentStyle : normalStyle;
+}
+
+// ══════════════════════════════════════════════
+// AVATAR PICKER
+// ══════════════════════════════════════════════
+function openAvatarPicker() {
+  selectedAvatarSeed = currentProfile.avatar_seed || '';
+  const grid = document.getElementById('avatar-picker-grid');
+  grid.innerHTML = AVATAR_SEEDS.map(seed => `
+    <div class="avatar-option ${seed === selectedAvatarSeed ? 'selected' : ''}" onclick="selectAvatar('${seed}')" id="avo-${seed.replace(/[^a-zA-Z0-9]/g,'_')}">
+      <img src="${avatarUrl(seed)}" alt="${seed}" loading="lazy">
+    </div>`).join('');
+  openModal('avatar');
+}
+
+function selectAvatar(seed) {
+  document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+  const id = 'avo-' + seed.replace(/[^a-zA-Z0-9]/g,'_');
+  document.getElementById(id)?.classList.add('selected');
+  selectedAvatarSeed = seed;
+}
+
+async function saveAvatar() {
+  if (!selectedAvatarSeed) return;
+  await supabase.from('profiles').update({ avatar_seed: selectedAvatarSeed }).eq('id', currentProfile.id);
+  currentProfile = { ...currentProfile, avatar_seed: selectedAvatarSeed };
+  setProfile(currentProfile);
+  closeModal('avatar');
+  showToast('🎨 Аватарка обновлена!');
+}
+
+// ══════════════════════════════════════════════
+// LEADERBOARD
+// ══════════════════════════════════════════════
+async function openLeaderboard() {
+  const { data } = await supabase.from('profiles').select('*').order('coins', { ascending: false }).limit(10);
+  const leaders = data || [];
+  const medals = ['🥇', '🥈', '🥉'];
+  document.getElementById('lb-list').innerHTML = leaders.map((u, i) => `
+    <div class="lb-row">
+      <div class="lb-rank">${medals[i] || '#' + (i + 1)}</div>
+      <div class="lb-avatar"><img src="${avatarUrl(u.avatar_seed || u.name)}" alt=""></div>
+      <div class="lb-name">${escHtml(u.name)}<br><span style="font-size:10px">${classBadgeHTML(u.coins)}</span></div>
+      <div class="lb-coins">🪙 ${u.coins}</div>
+    </div>`).join('');
+  openModal('lb');
+}
+
+// ══════════════════════════════════════════════
+// ORDERS
+// ══════════════════════════════════════════════
+async function openOrders(tab = 'active') {
+  renderOrdersTabs(tab);
+  await loadOrders(tab);
+  openModal('orders');
+}
+
+function renderOrdersTabs(activeTab) {
+  document.getElementById('orders-tabs').innerHTML = ['active', 'done', 'posted'].map(t => `
+    <div class="feed-tab ${t === activeTab ? 'active' : ''}" onclick="switchOrdersTab('${t}')">
+      ${t === 'active' ? '🔒 Активные' : t === 'done' ? '✅ Выполненные' : '📌 Мои объявления'}
+    </div>`).join('');
+}
+
+function switchOrdersTab(tab) {
+  renderOrdersTabs(tab);
+  loadOrders(tab);
+}
+
+async function loadOrders(tab) {
+  let q = supabase.from('ads').select('*');
+  if (tab === 'active') q = q.eq('executor_id', currentProfile.id).eq('status', 'taken');
+  else if (tab === 'done') q = q.or(`author_id.eq.${currentProfile.id},executor_id.eq.${currentProfile.id}`).eq('status', 'done');
+  else q = q.eq('author_id', currentProfile.id);
+  const { data } = await q.order('created_at', { ascending: false });
+  const orders = data || [];
+  const el = document.getElementById('orders-list');
+  if (orders.length === 0) {
+    const icons = { active: '🔒', done: '✅', posted: '📌' };
+    el.innerHTML = `<div style="text-align:center;padding:2.5rem;color:var(--muted)"><div style="font-size:44px;margin-bottom:0.7rem">${icons[tab]}</div><p style="font-size:14px;font-weight:600">Пусто</p></div>`;
+    return;
+  }
+  el.innerHTML = orders.map(ad => {
+    const m = CAT_MAP[ad.cat] || CAT_MAP.other;
+    const earn = Math.floor(ad.coins * (1 - COMMISSION));
+    const isOwn = ad.author_id === currentProfile.id;
+    return `<div onclick="closeModal('orders');openAdDetail('${ad.id}')" style="background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:10px;cursor:pointer">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:7px">
+        <div style="font-size:24px;width:42px;height:42px;border-radius:10px;background:${m.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">${m.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(ad.title)}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">${fmtTime(ad.created_at)}</div>
+        </div>
+        <div style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:#b38600">🪙 ${ad.coins}</div>
+      </div>
+      <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+        <span style="background:${isOwn ? '#e8f3ff' : '#e5f7ee'};color:${isOwn ? '#1a6ec9' : '#0f6e56'};border-radius:999px;padding:2px 9px;font-size:10px;font-weight:700">${isOwn ? '📌 Заказчик' : '⚡ Исполнитель'}</span>
+        ${!isOwn ? `<span style="font-size:11px;color:var(--green)">Получишь: 🪙${earn}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// RATING
+// ══════════════════════════════════════════════
+function renderRatingStars() {
+  document.getElementById('rating-stars').innerHTML = [1,2,3,4,5].map(v =>
+    `<button class="star-btn ${selectedStars >= v ? 'sel' : ''}" onclick="setStars(${v})">${selectedStars >= v ? '⭐' : '☆'}</button>`
+  ).join('');
+}
+
+function setStars(v) {
+  selectedStars = v;
+  renderRatingStars();
+}
+
+async function submitRating() {
+  if (!rateAdContext || !selectedStars) { showToast('Выбери оценку'); return; }
+  const ad = allAds.find(a => a.id === rateAdContext);
+  if (!ad || !ad.executor_id) return;
+  await supabase.from('reviews').insert({ from_user_id: currentProfile.id, to_user_id: ad.executor_id, ad_id: ad.id, stars: selectedStars, comment: document.getElementById('rate-comment').value });
+  const { data: execP } = await supabase.from('profiles').select('rating, rating_count, coins').eq('id', ad.executor_id).maybeSingle();
+  if (execP) {
+    const newCount = execP.rating_count + 1;
+    const newRating = (execP.rating * execP.rating_count + selectedStars) / newCount;
+    const bonusCoins = selectedStars === 5 ? execP.coins + 20 : execP.coins;
+    await supabase.from('profiles').update({ rating: newRating, rating_count: newCount, coins: bonusCoins }).eq('id', ad.executor_id);
+    if (selectedStars === 5) {
+      await supabase.from('transactions').insert({ user_id: ad.executor_id, icon: '⭐', description: '5★ бонус', amount: 20 });
+    }
+  }
+  closeModal('rate');
+  showToast('⭐ Оценка отправлена!');
+}
+
+// ══════════════════════════════════════════════
+// ADMIN PANEL
+// ══════════════════════════════════════════════
+function openAdminPanel() {
+  document.getElementById('admin-overlay').style.display = 'flex';
+  switchAdminTab('stats');
+}
+
+function switchAdminTab(tab) {
+  adminCurrentTab = tab;
+  document.querySelectorAll('.admin-tab').forEach((b, i) => {
+    const tabs = ['stats', 'users', 'ads', 'reports', 'support'];
+    b.classList.toggle('active', tabs[i] === tab);
+  });
+  loadAdminTab(tab);
+}
+
+async function loadAdminTab(tab) {
+  const content = document.getElementById('admin-content');
+  content.innerHTML = '<div style="text-align:center;padding:2rem;color:#aab3cc"><span class="spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:#ffba00;width:28px;height:28px"></span></div>';
+
+  if (tab === 'stats') {
+    const [statsRes, adminRes] = await Promise.all([
+    supabase.from('platform_stats').select('*'),
+    supabase.from('profiles').select('coins').eq('id', ADMIN_PROFILE_ID).maybeSingle(),
+    ]);
+    const s = {};
+    (statsRes.data || []).forEach(r => { s[r.key] = r.value; });
+    const adminBalance = adminRes.data?.coins || 0;
+    content.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem">
+        ${[
+          { num: s['total_users'] || 0, label: 'Пользователей', color: '#fff' },
+          { num: s['total_deals'] || 0, label: 'Выполнено сделок', color: '#fff' },
+          { num: (s['total_commission'] || 0) + '🪙', label: 'Суммарная комиссия (10%)', color: '#1db87a' },
+          { num: adminBalance + '🪙', label: 'Баланс администратора', color: '#ffba00' },
+        ].map(s => `
+          <div style="background:rgba(255,255,255,0.07);border-radius:12px;padding:1rem;text-align:center;border:1px solid rgba(255,255,255,0.08)">
+            <div style="font-family:'Unbounded',sans-serif;font-size:1.4rem;font-weight:800;color:${s.color}">${s.num}</div>
+            <div style="font-size:10px;color:#aab3cc;margin-top:4px">${s.label}</div>
+          </div>`).join('')}
+      </div>
+      <div style="background:rgba(255,186,0,0.1);border:1px solid rgba(255,186,0,0.25);border-radius:10px;padding:10px 14px;font-size:12px;color:#ffba00;line-height:1.6">
+        💡 Комиссия 10% автоматически перечисляется на баланс администратора (ID=1) при каждом подтверждении сделки.
+      </div>`;
+  } else if (tab === 'users') {
+    const { data: users } = await supabase.from('profiles').select('*').order('coins', { ascending: false });
+    content.innerHTML = `
+      <div style="font-size:12px;color:#aab3cc;margin-bottom:10px">Всего: ${(users||[]).length} пользователей</div>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr>${['ID','Аватар','Имя','Email','Класс','Баланс','Статус','Действия'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
+          <tbody>
+            ${(users||[]).map(u => {
+              const uc = getUserClass(u.coins);
+              return `<tr style="border-bottom:1px solid rgba(255,255,255,0.06);background:${u.is_blocked ? 'rgba(255,60,60,0.08)' : 'transparent'}">
+                <td style="color:#aab3cc">#${u.id}</td>
+                <td><img src="${avatarUrl(u.avatar_seed || u.name)}" style="width:28px;height:28px;border-radius:50%"></td>
+                <td style="font-weight:600">${escHtml(u.name)}${u.is_admin ? '<span style="background:#ff5c35;color:#fff;font-size:9px;padding:1px 5px;border-radius:4px;margin-left:4px">ADMIN</span>' : ''}</td>
+                <td style="color:#aab3cc;font-size:11px">${escHtml(u.email)}</td>
+                <td style="color:#aab3cc">${u.class || '—'}</td>
+                <td><span style="font-family:'Unbounded',sans-serif;font-weight:700;color:#ffba00">${u.coins}🪙</span><div style="font-size:10px;color:#aab3cc;margin-top:2px">${uc.emoji} ${uc.name}</div></td>
+                <td>${u.is_blocked ? '<span style="color:#ff4444;font-size:11px;font-weight:700">🚫 Заблокирован</span>' : '<span style="color:#1db87a;font-size:11px;font-weight:700">✅ Активен</span>'}</td>
+                <td>
+                  <div style="display:flex;gap:5px">
+                    <button onclick="openEditBalance('${u.id}','${escHtml(u.name)}',${u.coins},'${u.avatar_seed || u.name}')" style="background:#2d6cdf;color:#fff;border:none;border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;font-weight:600">✏️ Баланс</button>
+                    ${!u.is_admin ? `<button onclick="toggleBlock('${u.id}',${u.is_blocked},'${escHtml(u.name)}')" style="background:${u.is_blocked ? '#1db87a' : '#e24b4a'};color:#fff;border:none;border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;font-weight:600">${u.is_blocked ? '✅ Разблок.' : '🚫 Блок.'}</button>` : ''}
+                  </div>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } else if (tab === 'ads') {
+    const { data: ads } = await supabase.from('ads')
+      .select('*, author:profiles(name, avatar_seed)')
+      .order('created_at', { ascending: false });
+    const statusColor = { open: '#1db87a', taken: '#2d6cdf', done: '#888' };
+    const statusLabel = { open: '🟢 Открыто', taken: '🔒 В работе', done: '✅ Завершено' };
+    content.innerHTML = `
+      <div style="font-size:12px;color:#aab3cc;margin-bottom:10px">Всего: ${(ads||[]).length} объявлений</div>
+      ${(ads||[]).map(ad => {
+        const m = CAT_MAP[ad.cat] || CAT_MAP.other;
+        return `<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,0.05);border-radius:10px;margin-bottom:7px">
+          <span style="font-size:18px">${m.icon}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(ad.title)}</div>
+            <div style="font-size:10px;color:#aab3cc;margin-top:2px">${escHtml(ad.author?.name || '—')} · ${fmtTime(ad.created_at)}</div>
+          </div>
+          <span style="font-size:11px;color:#ffba00;font-weight:700">${ad.coins}🪙</span>
+          <span style="font-size:10px;color:${statusColor[ad.status]};font-weight:700">${statusLabel[ad.status]}</span>
+          <button onclick="adminDeleteAd('${ad.id}')" style="background:#e24b4a;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:700">🗑️</button>
+        </div>`;
+      }).join('')}`;
+  } else if (tab === 'reports') {
+    const { data: reports } = await supabase.from('reports')
+      .select('*, reporter:profiles!reports_reporter_id_fkey(name), ad:ads(title)')
+      .order('created_at', { ascending: false });
+    const reasonLabel = { spam: 'Спам', fraud: 'Мошенничество', inappropriate: 'Неприемлемый контент', wrong_category: 'Неправильная категория', other: 'Другое' };
+    content.innerHTML = `
+      <div style="font-size:12px;color:#aab3cc;margin-bottom:10px">Всего жалоб: ${(reports||[]).length}</div>
+      ${(reports||[]).length === 0 ? '<div style="text-align:center;color:#aab3cc;padding:2rem">Жалоб нет 👍</div>' : (reports||[]).map(r => `
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,60,60,0.2);border-radius:10px;padding:10px 14px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:700;color:#ff6b6b">🚩 ${reasonLabel[r.reason] || r.reason}</span>
+            <span style="font-size:10px;color:#aab3cc">${fmtTime(r.created_at)}</span>
+          </div>
+          <div style="font-size:12px;color:#fff;margin-bottom:4px">📋 Объявление: <span style="color:#ffba00">${escHtml(r.ad?.title || r.ad_id)}</span></div>
+          <div style="font-size:11px;color:#aab3cc;margin-bottom:4px">От: ${escHtml(r.reporter?.name || r.reporter_id)}</div>
+          ${r.comment ? `<div style="font-size:11px;color:#ccc;background:rgba(255,255,255,0.05);border-radius:7px;padding:6px 9px;margin-top:4px">${escHtml(r.comment)}</div>` : ''}
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <button onclick="adminDeleteAd('${r.ad_id}');adminDismissReport('${r.id}')" style="background:#e24b4a;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:700">🗑️ Удалить объявление</button>
+            <button onclick="adminDismissReport('${r.id}')" style="background:rgba(255,255,255,0.1);color:#aab3cc;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:700">✓ Отклонить</button>
+          </div>
+        </div>`).join('')}`;
+  } else if (tab === 'support') {
+    const { data: tickets } = await supabase.from('support_tickets')
+      .select('*, user:profiles(name, email)')
+      .order('created_at', { ascending: false });
+    const topicLabel = { bug: '🐛 Баг', account: '👤 Аккаунт', coins: '🪙 Монеты', deal: '🤝 Сделка', other: '📝 Другое' };
+    const statusColor = { open: '#ffba00', closed: '#1db87a' };
+    content.innerHTML = `
+      <div style="font-size:12px;color:#aab3cc;margin-bottom:10px">Тикетов: ${(tickets||[]).length}</div>
+      ${(tickets||[]).length === 0 ? '<div style="text-align:center;color:#aab3cc;padding:2rem">Обращений нет 👍</div>' : (tickets||[]).map(t => `
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:700;color:#fff">${topicLabel[t.topic] || t.topic}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:10px;color:${statusColor[t.status || 'open']};font-weight:700">${t.status === 'closed' ? '✅ Закрыт' : '🔔 Открыт'}</span>
+              <span style="font-size:10px;color:#aab3cc">${fmtTime(t.created_at)}</span>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#aab3cc;margin-bottom:6px">От: ${escHtml(t.user?.name || '')} &lt;${escHtml(t.user?.email || t.user_id)}&gt;</div>
+          <div style="font-size:12px;color:#ddd;background:rgba(255,255,255,0.04);border-radius:7px;padding:8px 10px;line-height:1.5">${escHtml(t.text)}</div>
+          ${t.status !== 'closed' ? `<button onclick="adminCloseTicket('${t.id}')" style="margin-top:8px;background:#1db87a;color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer;font-weight:700">✅ Закрыть тикет</button>` : ''}
+        </div>`).join('')}`;
+  }
+}
+
+async function adminDismissReport(reportId) {
+  await supabase.from('reports').delete().eq('id', reportId);
+  showToast('✓ Жалоба отклонена');
+  loadAdminTab('reports');
+}
+
+async function adminCloseTicket(ticketId) {
+  await supabase.from('support_tickets').update({ status: 'closed' }).eq('id', ticketId);
+  showToast('✅ Тикет закрыт');
+  loadAdminTab('support');
+}
+
+async function toggleBlock(userId, isBlocked, name) {
+  await supabase.from('profiles').update({ is_blocked: !isBlocked }).eq('id', userId);
+  showToast(isBlocked ? `✅ Пользователь ${name} разблокирован` : `🚫 Пользователь ${name} заблокирован`);
+  loadAdminTab('users');
+}
+
+function openEditBalance(userId, name, coins, avatarSeed) {
+  editBalanceUserId = userId;
+  document.getElementById('edit-coins-input').value = coins;
+  document.getElementById('edit-balance-user-info').innerHTML = `
+    <img src="${avatarUrl(avatarSeed)}" style="width:36px;height:36px;border-radius:50%">
+    <div>
+      <div style="font-size:13px;font-weight:600;color:#1a2744">${escHtml(name)}</div>
+      <div style="font-size:11px;color:#888">Текущий баланс: ${coins}🪙</div>
+    </div>`;
+  const modal = document.getElementById('edit-balance-modal');
+  modal.style.display = 'flex';
+}
+
+function closeEditBalance() {
+  document.getElementById('edit-balance-modal').style.display = 'none';
+}
+
+async function saveBalance() {
+  if (!editBalanceUserId) return;
+  const newCoins = parseInt(document.getElementById('edit-coins-input').value);
+  if (isNaN(newCoins) || newCoins < 0) { showToast('Введи корректную сумму'); return; }
+  const { data: u } = await supabase.from('profiles').select('coins, name').eq('id', editBalanceUserId).maybeSingle();
+  const diff = newCoins - (u?.coins || 0);
+  await supabase.from('profiles').update({ coins: newCoins }).eq('id', editBalanceUserId);
+  if (diff !== 0) {
+    await supabase.from('transactions').insert({ user_id: editBalanceUserId, icon: '⚙️', description: 'Корректировка баланса администратором', amount: diff });
+  }
+  closeEditBalance();
+  showToast(`✅ Баланс обновлён: ${newCoins}🪙`);
+  loadAdminTab('users');
+}
+
+async function adminDeleteAd(adId) {
+  await supabase.from('ads').delete().eq('id', adId);
+  showToast('🗑️ Объявление удалено');
+  loadAdminTab('ads');
+}
+
+// ══════════════════════════════════════════════
+// REPORT AD
+// ══════════════════════════════════════════════
+let reportAdId = null;
+
+function openReportModal(adId) {
+  reportAdId = adId;
+  document.getElementById('report-reason').value = 'spam';
+  document.getElementById('report-comment').value = '';
+  closeModal('detail');
+  openModal('report');
+}
+
+async function submitReport() {
+  if (!reportAdId || !currentProfile) return;
+  const reason = document.getElementById('report-reason').value;
+  const comment = document.getElementById('report-comment').value.trim();
+  const { error } = await supabase.from('reports').insert({
+    ad_id: reportAdId,
+    reporter_id: currentProfile.id,
+    reason,
+    comment: comment || null,
+  });
+  if (error) { showToast('Ошибка: ' + error.message); return; }
+  closeModal('report');
+  showToast('🚩 Жалоба отправлена администратору');
+  reportAdId = null;
+}
+
+// ══════════════════════════════════════════════
+// SUPPORT TICKETS
+// ══════════════════════════════════════════════
+function openSupportModal() {
+  document.getElementById('support-topic').value = 'bug';
+  document.getElementById('support-text').value = '';
+  openModal('support');
+}
+
+async function submitSupportTicket() {
+  if (!currentProfile) return;
+  const topic = document.getElementById('support-topic').value;
+  const text = document.getElementById('support-text').value.trim();
+  if (!text) { showToast('Опиши проблему'); return; }
+  const { error } = await supabase.from('support_tickets').insert({
+    user_id: currentProfile.id,
+    topic,
+    text,
+  });
+  if (error) { showToast('Ошибка: ' + error.message); return; }
+  closeModal('support');
+  showToast('✅ Запрос отправлен! Администратор свяжется с тобой.');
+}
+
+// ══════════════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════════════
+let chatChannel = null;
+let chatMessages = [];
+
+async function openChat() {
+  openModal('chat');
+  await loadChatMessages();
+  subscribeChat();
+}
+
+async function loadChatMessages() {
+  const el = document.getElementById('chat-messages');
+  el.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:12px;padding:1rem">Загрузка...</div>`;
+  const { data } = await supabase.from('chat_messages')
+    .select('*, author:profiles(name, avatar_seed, class)')
+    .order('created_at', { ascending: true })
+    .limit(100);
+  chatMessages = data || [];
+  renderChatMessages();
+}
+
+function renderChatMessages() {
+  const el = document.getElementById('chat-messages');
+  if (chatMessages.length === 0) {
+    el.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:13px;padding:2rem">Чат пока пустой. Напиши первым! 👋</div>`;
+    return;
+  }
+  el.innerHTML = chatMessages.map(msg => {
+    const isMe = msg.author_id === currentProfile?.id;
+    const authorName = msg.author?.name || 'Аноним';
+    const cls = msg.author?.class ? `<span style="font-size:10px;color:var(--muted);margin-left:4px">${escHtml(msg.author.class)}</span>` : '';
+    const avatar = msg.author?.avatar_seed ? `<img src="${avatarUrl(msg.author.avatar_seed)}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0" />` : '';
+    return `
+      <div style="display:flex;gap:8px;align-items:flex-end;${isMe ? 'flex-direction:row-reverse' : ''}">
+        ${avatar}
+        <div style="max-width:72%;${isMe ? 'align-items:flex-end' : ''}">
+          ${!isMe ? `<div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:3px">${escHtml(authorName)}${cls}</div>` : ''}
+          <div style="background:${isMe ? 'var(--accent)' : '#fff'};color:${isMe ? '#fff' : 'var(--text)'};padding:8px 12px;border-radius:${isMe ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};font-size:13px;line-height:1.5;word-break:break-word;box-shadow:0 1px 4px rgba(0,0,0,0.08)">${escHtml(msg.text)}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px;${isMe ? 'text-align:right' : ''}">${fmtTime(msg.created_at)}</div>
+        </div>
+      </div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function subscribeChat() {
+  if (chatChannel) return;
+  chatChannel = supabase.channel('chat-realtime')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, async (payload) => {
+      const { data } = await supabase.from('chat_messages')
+        .select('*, author:profiles(name, avatar_seed, class)')
+        .eq('id', payload.new.id).maybeSingle();
+      if (data) {
+        chatMessages.push(data);
+        const modal = document.getElementById('modal-chat');
+        if (modal.classList.contains('open')) renderChatMessages();
+      }
+    })
+    .subscribe();
+}
+
+async function sendChatMsg() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text || !currentProfile) return;
+  input.value = '';
+  const { error } = await supabase.from('chat_messages').insert({ author_id: currentProfile.id, text });
+  if (error) { showToast('Ошибка отправки сообщения'); input.value = text; }
+}
+
+async function doRegister() {
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const btn = document.getElementById('reg-btn');
+
+    if (!email || password.length < 6) {
+        alert("Заполни email и пароль (минимум 6 символов)!");
+        return;
+    }
+
+    btn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = "Регистрация...";
+
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        alert("Ошибка от базы: " + error.message);
+        btn.disabled = false;
+        btn.textContent = originalText;
+        return; // Это чтобы код не шел дальше при ошибке!
+    } 
+
+    // ЕСЛИ ВСЁ ХОРОШО:
+    alert("Успех! Теперь войдите под своим аккаунтом.");
+    btn.disabled = false;
+    btn.textContent = originalText;
+    
+    // ПЕРЕКЛЮЧАЕМ НА ВКЛАДКУ ВХОДА (чтобы не было каши)
+    if (typeof switchAuthTab === 'function') {
+        switchAuthTab('login');
+    }
+}
+// ══════════════════════════════════════════════
+// LOGOUT
+// ══════════════════════════════════════════════
+async function doLogout() {
+  if (chatChannel) { supabase.removeChannel(chatChannel); chatChannel = null; }
+  await supabase.auth.signOut();
+  currentProfile = null;
+  allAds = [];
+  chatMessages = [];
+  closeModal('profile');
+  showAuth();
+}
+
+// ══════════════════════════════════════════════
+// MODAL HELPERS
+// ══════════════════════════════════════════════
+function openModal(name) {
+  document.getElementById('modal-' + name).classList.add('open');
+}
+function closeModal(name) {
+  document.getElementById('modal-' + name).classList.remove('open');
+}
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
