@@ -545,7 +545,7 @@ const SUPABASE_URL = 'https://kfktwjoxaqwudaeyjmka.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtma3R3am94YXF3dWRhZXlqbWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0NjY5MzksImV4cCI6MjA5MzA0MjkzOX0._nI_eIVIIyqZmTLBzBDruz-b9Jv4Pl3iYQl-qDynHrs'; // вставь сюда свой ANON_KEY
 
 
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const COMMISSION = 0.10;
 const ADMIN_PROFILE_ID = 1;
 const PAGE_SIZE = 12;
