@@ -626,12 +626,12 @@ let adminCurrentTab = 'stats';
 // INIT
 // ══════════════════════════════════════════════
 (async function init() {
-  const { data: { subscription } } = db.auth.onAuthStateChange((event, session) => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
     (async () => {
       if (session?.user) {
         // If there's pending profile data (after email confirmation), create it first
       
-        const { data } = await db.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+        const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
         if (data) {
           setProfile(data);
           showMain();
@@ -646,7 +646,7 @@ let adminCurrentTab = 'stats';
   });
 
   // Realtime ads
-  db.channel('ads-realtime')
+  supabase.channel('ads-realtime')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'ads' }, () => loadAds(true))
     .subscribe();
 
@@ -730,7 +730,7 @@ async function doRegister() {
   const avatarSeed = AVATAR_SEEDS[Math.floor(Math.random() * AVATAR_SEEDS.length)];
   sessionStorage.setItem('pendingProfile', JSON.stringify({ name, email, cls, avatarSeed }));
 
-  const { data, error } = await db.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({ email, password });
   btn.disabled = false; btn.textContent = 'Создать аккаунт 🎉';
   if (error) {
     showErr(errEl, error.message.includes('already registered') ? 'Email уже используется' : 'Ошибка: ' + error.message);
@@ -756,19 +756,19 @@ async function createProfileIfNeeded(authUid) {
   const pending = sessionStorage.getItem('pendingProfile');
   if (!pending) return;
   const { name, email, cls, avatarSeed } = JSON.parse(pending);
-  const { data: existing } = await db.from('profiles').select('id').eq('auth_uid', authUid).maybeSingle();
+  const { data: existing } = await supabase.from('profiles').select('id').eq('auth_uid', authUid).maybeSingle();
   if (existing) { sessionStorage.removeItem('pendingProfile'); return; }
-  const { data: profileData, error: profileErr } = await db.from('profiles')
+  const { data: profileData, error: profileErr } = await supabase.from('profiles')
     .insert({ auth_uid: authUid, name, email, class: cls, coins: 100, avatar_seed: avatarSeed, is_admin: false })
     .select().single();
   if (!profileErr && profileData) {
     sessionStorage.removeItem('pendingProfile');
     if (profileData.id === ADMIN_PROFILE_ID) {
-      await db.from('profiles').update({ is_admin: true }).eq('id', ADMIN_PROFILE_ID);
+      await supabase.from('profiles').update({ is_admin: true }).eq('id', ADMIN_PROFILE_ID);
     }
-    await db.from('transactions').insert({ user_id: profileData.id, icon: '🎉', description: 'Приветственный бонус', amount: 100 });
-    const { data: statRow } = await db.from('platform_stats').select('value').eq('key', 'total_users').maybeSingle();
-    if (statRow) await db.from('platform_stats').update({ value: statRow.value + 1 }).eq('key', 'total_users');
+    await supabase.from('transactions').insert({ user_id: profileData.id, icon: '🎉', description: 'Приветственный бонус', amount: 100 });
+    const { data: statRow } = await supabase.from('platform_stats').select('value').eq('key', 'total_users').maybeSingle();
+    if (statRow) await supabase.from('platform_stats').update({ value: statRow.value + 1 }).eq('key', 'total_users');
   }
 }
 
@@ -783,7 +783,7 @@ function showErr(el, msg) {
 async function loadAds(reset = false) {
   const sort = document.getElementById('sort-select').value;
   const from = reset ? 0 : currentPage * PAGE_SIZE;
-  let q = db.from('ads')
+  let q = supabase.from('ads')
     .select('*, author:profiles!ads_author_id_fkey(name, avatar_seed, rating, class)', { count: 'exact' })
     .range(from, from + PAGE_SIZE - 1);
   if (sort === 'cheap') q = q.order('coins', { ascending: true });
@@ -957,7 +957,7 @@ function openAdDetail(id) {
 async function takeDeal(adId) {
   const ad = allAds.find(a => a.id === adId);
   if (!ad || currentProfile.coins < ad.coins) { showToast('Недостаточно монет!'); return; }
-  await db.from('ads').update({ status: 'taken', executor_id: currentProfile.id }).eq('id', adId);
+  await supabase.from('ads').update({ status: 'taken', executor_id: currentProfile.id }).eq('id', adId);
   closeModal('detail');
   showToast('🔒 Ты взялся за задание!');
   loadAds(true);
@@ -968,22 +968,22 @@ async function confirmDeal(adId) {
   if (!ad || !ad.executor_id) return;
   const earn = Math.floor(ad.coins * (1 - COMMISSION));
   const comm = ad.coins - earn;
-  await db.from('ads').update({ status: 'done' }).eq('id', adId);
-  const { data: execP } = await db.from('profiles').select('coins, ads_completed').eq('id', ad.executor_id).maybeSingle();
+  await supabase.from('ads').update({ status: 'done' }).eq('id', adId);
+  const { data: execP } = await supabase.from('profiles').select('coins, ads_completed').eq('id', ad.executor_id).maybeSingle();
   if (execP) {
-    await db.from('profiles').update({ coins: execP.coins + earn, ads_completed: execP.ads_completed + 1 }).eq('id', ad.executor_id);
-    await db.from('transactions').insert({ user_id: ad.executor_id, icon: '✅', description: `Выполнил: "${ad.title.slice(0, 28)}"`, amount: earn });
+    await supabase.from('profiles').update({ coins: execP.coins + earn, ads_completed: execP.ads_completed + 1 }).eq('id', ad.executor_id);
+    await supabase.from('transactions').insert({ user_id: ad.executor_id, icon: '✅', description: `Выполнил: "${ad.title.slice(0, 28)}"`, amount: earn });
   }
-  const { data: adminP } = await db.from('profiles').select('coins').eq('id', ADMIN_PROFILE_ID).maybeSingle();
+  const { data: adminP } = await supabase.from('profiles').select('coins').eq('id', ADMIN_PROFILE_ID).maybeSingle();
   if (adminP) {
-    await db.from('profiles').update({ coins: adminP.coins + comm }).eq('id', ADMIN_PROFILE_ID);
-    await db.from('transactions').insert({ user_id: ADMIN_PROFILE_ID, icon: '💰', description: `Комиссия 10%: "${ad.title.slice(0, 28)}"`, amount: comm });
+    await supabase.from('profiles').update({ coins: adminP.coins + comm }).eq('id', ADMIN_PROFILE_ID);
+    await supabase.from('transactions').insert({ user_id: ADMIN_PROFILE_ID, icon: '💰', description: `Комиссия 10%: "${ad.title.slice(0, 28)}"`, amount: comm });
   }
-  const { data: statsRows } = await db.from('platform_stats').select('key,value').in('key', ['total_deals', 'total_commission']);
+  const { data: statsRows } = await supabase.from('platform_stats').select('key,value').in('key', ['total_deals', 'total_commission']);
   if (statsRows) {
     for (const row of statsRows) {
       const delta = row.key === 'total_deals' ? 1 : comm;
-      await db.from('platform_stats').update({ value: row.value + delta }).eq('key', row.key);
+      await supabase.from('platform_stats').update({ value: row.value + delta }).eq('key', row.key);
     }
   }
   closeModal('detail');
@@ -998,14 +998,14 @@ async function confirmDeal(adId) {
 }
 
 async function cancelDeal(adId) {
-  await db.from('ads').update({ status: 'open', executor_id: null }).eq('id', adId);
+  await supabase.from('ads').update({ status: 'open', executor_id: null }).eq('id', adId);
   closeModal('detail');
   showToast('Сделка отменена');
   loadAds(true);
 }
 
 async function deleteAd(adId) {
-  await db.from('ads').delete().eq('id', adId);
+  await supabase.from('ads').delete().eq('id', adId);
   closeModal('detail');
   showToast('Объявление удалено');
   loadAds(true);
@@ -1039,12 +1039,12 @@ async function postAd() {
   if (!coins || coins < 1) { showToast('Укажи сумму монет'); return; }
   if (currentProfile.coins < coins) { showToast(`Недостаточно монет! У тебя ${currentProfile.coins}🪙`); return; }
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
-  const { error } = await db.from('ads').insert({ author_id: currentProfile.id, cat, title, description: desc || 'Без описания.', coins, badge: 'new', status: 'open' });
+  const { error } = await supabase.from('ads').insert({ author_id: currentProfile.id, cat, title, description: desc || 'Без описания.', coins, badge: 'new', status: 'open' });
   btn.disabled = false; btn.textContent = 'Опубликовать 📌';
   if (error) { showToast('Ошибка: ' + error.message); return; }
   const newBal = currentProfile.coins - coins;
-  await db.from('profiles').update({ coins: newBal, ads_posted: currentProfile.ads_posted + 1 }).eq('id', currentProfile.id);
-  await db.from('transactions').insert({ user_id: currentProfile.id, icon: '📌', description: `Объявление: "${title.slice(0, 28)}"`, amount: -coins });
+  await supabase.from('profiles').update({ coins: newBal, ads_posted: currentProfile.ads_posted + 1 }).eq('id', currentProfile.id);
+  await supabase.from('transactions').insert({ user_id: currentProfile.id, icon: '📌', description: `Объявление: "${title.slice(0, 28)}"`, amount: -coins });
   currentProfile = { ...currentProfile, coins: newBal, ads_posted: currentProfile.ads_posted + 1 };
   setProfile(currentProfile);
   closeModal('post');
@@ -1057,7 +1057,7 @@ async function postAd() {
 // ══════════════════════════════════════════════
 async function openWallet() {
   document.getElementById('wallet-balance').textContent = currentProfile.coins;
-  const { data } = await db.from('transactions').select('*').eq('user_id', currentProfile.id).order('created_at', { ascending: false }).limit(30);
+  const { data } = await supabase.from('transactions').select('*').eq('user_id', currentProfile.id).order('created_at', { ascending: false }).limit(30);
   const txs = data || [];
   document.getElementById('wallet-history').innerHTML = txs.length === 0
     ? '<div style="text-align:center;color:var(--muted);font-size:13px;padding:1rem">Транзакций пока нет</div>'
@@ -1077,8 +1077,8 @@ async function openWallet() {
 async function openProfileModal(profileData) {
   const target = profileData || currentProfile;
   const [adsRes, revRes] = await Promise.all([
-    db.from('ads').select('*').eq('author_id', target.id).order('created_at', { ascending: false }).limit(12),
-    db.from('reviews').select('*, from_user:profiles!reviews_from_user_id_fkey(name)').eq('to_user_id', target.id).order('created_at', { ascending: false }).limit(10),
+  supabase.from('ads').select('*').eq('author_id', target.id).order('created_at', { ascending: false }).limit(12),
+  supabase.from('reviews').select('*, from_user:profiles!reviews_from_user_id_fkey(name)').eq('to_user_id', target.id).order('created_at', { ascending: false }).limit(10),
   ]);
   const profileAds = adsRes.data || [];
   const profileReviews = revRes.data || [];
@@ -1173,7 +1173,7 @@ function selectAvatar(seed) {
 
 async function saveAvatar() {
   if (!selectedAvatarSeed) return;
-  await db.from('profiles').update({ avatar_seed: selectedAvatarSeed }).eq('id', currentProfile.id);
+  await supabase.from('profiles').update({ avatar_seed: selectedAvatarSeed }).eq('id', currentProfile.id);
   currentProfile = { ...currentProfile, avatar_seed: selectedAvatarSeed };
   setProfile(currentProfile);
   closeModal('avatar');
@@ -1184,7 +1184,7 @@ async function saveAvatar() {
 // LEADERBOARD
 // ══════════════════════════════════════════════
 async function openLeaderboard() {
-  const { data } = await db.from('profiles').select('*').order('coins', { ascending: false }).limit(10);
+  const { data } = await supabase.from('profiles').select('*').order('coins', { ascending: false }).limit(10);
   const leaders = data || [];
   const medals = ['🥇', '🥈', '🥉'];
   document.getElementById('lb-list').innerHTML = leaders.map((u, i) => `
@@ -1219,7 +1219,7 @@ function switchOrdersTab(tab) {
 }
 
 async function loadOrders(tab) {
-  let q = db.from('ads').select('*');
+  let q = supabase.from('ads').select('*');
   if (tab === 'active') q = q.eq('executor_id', currentProfile.id).eq('status', 'taken');
   else if (tab === 'done') q = q.or(`author_id.eq.${currentProfile.id},executor_id.eq.${currentProfile.id}`).eq('status', 'done');
   else q = q.eq('author_id', currentProfile.id);
@@ -1270,15 +1270,15 @@ async function submitRating() {
   if (!rateAdContext || !selectedStars) { showToast('Выбери оценку'); return; }
   const ad = allAds.find(a => a.id === rateAdContext);
   if (!ad || !ad.executor_id) return;
-  await db.from('reviews').insert({ from_user_id: currentProfile.id, to_user_id: ad.executor_id, ad_id: ad.id, stars: selectedStars, comment: document.getElementById('rate-comment').value });
-  const { data: execP } = await db.from('profiles').select('rating, rating_count, coins').eq('id', ad.executor_id).maybeSingle();
+  await supabase.from('reviews').insert({ from_user_id: currentProfile.id, to_user_id: ad.executor_id, ad_id: ad.id, stars: selectedStars, comment: document.getElementById('rate-comment').value });
+  const { data: execP } = await supabase.from('profiles').select('rating, rating_count, coins').eq('id', ad.executor_id).maybeSingle();
   if (execP) {
     const newCount = execP.rating_count + 1;
     const newRating = (execP.rating * execP.rating_count + selectedStars) / newCount;
     const bonusCoins = selectedStars === 5 ? execP.coins + 20 : execP.coins;
-    await db.from('profiles').update({ rating: newRating, rating_count: newCount, coins: bonusCoins }).eq('id', ad.executor_id);
+    await supabase.from('profiles').update({ rating: newRating, rating_count: newCount, coins: bonusCoins }).eq('id', ad.executor_id);
     if (selectedStars === 5) {
-      await db.from('transactions').insert({ user_id: ad.executor_id, icon: '⭐', description: '5★ бонус', amount: 20 });
+      await supabase.from('transactions').insert({ user_id: ad.executor_id, icon: '⭐', description: '5★ бонус', amount: 20 });
     }
   }
   closeModal('rate');
@@ -1308,8 +1308,8 @@ async function loadAdminTab(tab) {
 
   if (tab === 'stats') {
     const [statsRes, adminRes] = await Promise.all([
-      db.from('platform_stats').select('*'),
-      db.from('profiles').select('coins').eq('id', ADMIN_PROFILE_ID).maybeSingle(),
+    supabase.from('platform_stats').select('*'),
+    supabase.from('profiles').select('coins').eq('id', ADMIN_PROFILE_ID).maybeSingle(),
     ]);
     const s = {};
     (statsRes.data || []).forEach(r => { s[r.key] = r.value; });
@@ -1331,7 +1331,7 @@ async function loadAdminTab(tab) {
         💡 Комиссия 10% автоматически перечисляется на баланс администратора (ID=1) при каждом подтверждении сделки.
       </div>`;
   } else if (tab === 'users') {
-    const { data: users } = await db.from('profiles').select('*').order('coins', { ascending: false });
+    const { data: users } = await supabase.from('profiles').select('*').order('coins', { ascending: false });
     content.innerHTML = `
       <div style="font-size:12px;color:#aab3cc;margin-bottom:10px">Всего: ${(users||[]).length} пользователей</div>
       <div style="overflow-x:auto">
@@ -1360,7 +1360,7 @@ async function loadAdminTab(tab) {
         </table>
       </div>`;
   } else if (tab === 'ads') {
-    const { data: ads } = await db.from('ads')
+    const { data: ads } = await supabase.from('ads')
       .select('*, author:profiles!ads_author_id_fkey(name, avatar_seed)')
       .order('created_at', { ascending: false });
     const statusColor = { open: '#1db87a', taken: '#2d6cdf', done: '#888' };
@@ -1384,7 +1384,7 @@ async function loadAdminTab(tab) {
 }
 
 async function toggleBlock(userId, isBlocked, name) {
-  await db.from('profiles').update({ is_blocked: !isBlocked }).eq('id', userId);
+  await supabase.from('profiles').update({ is_blocked: !isBlocked }).eq('id', userId);
   showToast(isBlocked ? `✅ Пользователь ${name} разблокирован` : `🚫 Пользователь ${name} заблокирован`);
   loadAdminTab('users');
 }
@@ -1410,11 +1410,11 @@ async function saveBalance() {
   if (!editBalanceUserId) return;
   const newCoins = parseInt(document.getElementById('edit-coins-input').value);
   if (isNaN(newCoins) || newCoins < 0) { showToast('Введи корректную сумму'); return; }
-  const { data: u } = await db.from('profiles').select('coins, name').eq('id', editBalanceUserId).maybeSingle();
+  const { data: u } = await supabase.from('profiles').select('coins, name').eq('id', editBalanceUserId).maybeSingle();
   const diff = newCoins - (u?.coins || 0);
-  await db.from('profiles').update({ coins: newCoins }).eq('id', editBalanceUserId);
+  await supabase.from('profiles').update({ coins: newCoins }).eq('id', editBalanceUserId);
   if (diff !== 0) {
-    await db.from('transactions').insert({ user_id: editBalanceUserId, icon: '⚙️', description: 'Корректировка баланса администратором', amount: diff });
+    await supabase.from('transactions').insert({ user_id: editBalanceUserId, icon: '⚙️', description: 'Корректировка баланса администратором', amount: diff });
   }
   closeEditBalance();
   showToast(`✅ Баланс обновлён: ${newCoins}🪙`);
@@ -1422,7 +1422,7 @@ async function saveBalance() {
 }
 
 async function adminDeleteAd(adId) {
-  await db.from('ads').delete().eq('id', adId);
+  await supabase.from('ads').delete().eq('id', adId);
   showToast('🗑️ Объявление удалено');
   loadAdminTab('ads');
 }
@@ -1442,7 +1442,7 @@ async function openChat() {
 async function loadChatMessages() {
   const el = document.getElementById('chat-messages');
   el.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:12px;padding:1rem">Загрузка...</div>`;
-  const { data } = await db.from('chat_messages')
+  const { data } = await supabase.from('chat_messages')
     .select('*, author:profiles!chat_messages_author_id_fkey(name, avatar_seed, class)')
     .order('created_at', { ascending: true })
     .limit(100);
@@ -1476,9 +1476,9 @@ function renderChatMessages() {
 
 function subscribeChat() {
   if (chatChannel) return;
-  chatChannel = db.channel('chat-realtime')
+  chatChannel = supabase.channel('chat-realtime')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, async (payload) => {
-      const { data } = await db.from('chat_messages')
+      const { data } = await supabase.from('chat_messages')
         .select('*, author:profiles!chat_messages_author_id_fkey(name, avatar_seed, class)')
         .eq('id', payload.new.id).maybeSingle();
       if (data) {
@@ -1495,7 +1495,7 @@ async function sendChatMsg() {
   const text = input.value.trim();
   if (!text || !currentProfile) return;
   input.value = '';
-  const { error } = await db.from('chat_messages').insert({ author_id: currentProfile.id, text });
+  const { error } = await supabase.from('chat_messages').insert({ author_id: currentProfile.id, text });
   if (error) { showToast('Ошибка отправки сообщения'); input.value = text; }
 }
 
@@ -1503,8 +1503,8 @@ async function sendChatMsg() {
 // LOGOUT
 // ══════════════════════════════════════════════
 async function doLogout() {
-  if (chatChannel) { db.removeChannel(chatChannel); chatChannel = null; }
-  await db.auth.signOut();
+  if (chatChannel) { supabase.removeChannel(chatChannel); chatChannel = null; }
+  await supabase.auth.signOut();
   currentProfile = null;
   allAds = [];
   chatMessages = [];
