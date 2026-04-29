@@ -114,6 +114,34 @@
     .empty-state { grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--muted); }
     .empty-state .big { font-size: 44px; margin-bottom: 0.7rem; }
 
+
+    /* ── SKELETON LOADING ── */
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #ede9e0 25%, #f5f2ea 50%, #ede9e0 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    .sk-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      padding: 1rem;
+    }
+    .sk-img { width: 100%; height: 0; margin-bottom: 0; }
+    .sk-icon { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; }
+    .sk-tag { width: 60px; height: 12px; margin-bottom: 6px; }
+    .sk-title { width: 85%; height: 14px; margin-bottom: 8px; }
+    .sk-desc1 { width: 100%; height: 11px; margin-bottom: 4px; }
+    .sk-desc2 { width: 70%; height: 11px; margin-bottom: 12px; }
+    .sk-price { width: 50px; height: 14px; }
+    .sk-author { width: 60px; height: 10px; }
+
     .load-more-btn { display: block; margin: 0 auto 2rem; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 30px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; color: var(--navy); transition: all 0.15s; }
     .load-more-btn:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -603,6 +631,7 @@ supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const ADMIN_PROFILE_ID = 1;
 const PAGE_SIZE = 12;
+const COMMISSION = 0.1;
 
 const CAT_MAP = {
   magaz:    { icon: '🛒', label: 'В магазин',    tagBg: '#fff0eb', tagColor: '#e0441e', bg: '#fff5f2' },
@@ -849,9 +878,37 @@ function showErr(el, msg) {
 // ══════════════════════════════════════════════
 // ADS
 // ══════════════════════════════════════════════
+function showSkeletons(count = 6) {
+  const grid = document.getElementById('ads-grid');
+  grid.innerHTML = Array.from({ length: count }).map(() => `
+    <div class="sk-card">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px">
+        <div class="skeleton sk-icon"></div>
+        <div style="flex:1;min-width:0">
+          <div class="skeleton sk-tag"></div>
+          <div class="skeleton sk-title"></div>
+        </div>
+      </div>
+      <div class="skeleton sk-desc1"></div>
+      <div class="skeleton sk-desc2"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="skeleton sk-price"></div>
+        <div class="skeleton sk-author"></div>
+      </div>
+    </div>`).join('');
+}
+
+let _adsLoading = false;
 async function loadAds(reset = false) {
   if (reset) { currentPage = 0; allAds = []; allLoaded = false; }
   if (allLoaded) return;
+  if (_adsLoading) return;
+  _adsLoading = true;
+
+  // Показываем скелетоны только при первой загрузке (reset + пустой массив)
+  if (reset && allAds.length === 0) {
+    showSkeletons(6);
+  }
 
   const PAGE_SIZE = 20;
   const sortVal = document.getElementById('sort-select')?.value || 'new';
@@ -865,7 +922,8 @@ async function loadAds(reset = false) {
   else query = query.order('created_at', { ascending: false });
 
   const { data, error, count } = await query;
-  if (error) { console.error('loadAds error', error); return; }
+  _adsLoading = false;
+  if (error) { console.error('loadAds error', error); renderAds(); return; }
 
   if (reset) allAds = data || [];
   else allAds = [...allAds, ...(data || [])];
@@ -1111,19 +1169,49 @@ async function postAd() {
   const btn = document.getElementById('post-btn');
   if (!title) { showToast('Введи заголовок'); return; }
   if (!coins || coins < 1) { showToast('Укажи сумму монет'); return; }
-  if (currentProfile.coins < coins) { showToast(`Недостаточно монет! У тебя ${currentProfile.coins}🪙`); return; }
+  if (currentProfile.coins < coins) { showToast('Недостаточно монет! У тебя ' + currentProfile.coins + '\u{1FA99}'); return; }
+
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
-  const { error } = await supabase.from('ads').insert({ author_id: currentProfile.id, cat, title, description: desc || 'Без описания.', coins, badge: 'new', status: 'open' });
-  btn.disabled = false; btn.textContent = 'Опубликовать 📌';
-  if (error) { showToast('Ошибка: ' + error.message); return; }
+
+  // 1. Сначала вставляем объявление и получаем его обратно с join
+  const { data: newAd, error: adErr } = await supabase
+    .from('ads')
+    .insert({ author_id: currentProfile.id, cat, title, description: desc || 'Без описания.', coins, badge: 'new', status: 'open' })
+    .select('*, author:profiles(name, avatar_seed, class)')
+    .single();
+
+  btn.disabled = false; btn.textContent = 'Опубликовать \uD83D\uDCCC';
+
+  if (adErr) {
+    showToast('Ошибка публикации: ' + adErr.message);
+    return;
+  }
+
+  // 2. Только после успешной вставки — списываем монеты
   const newBal = currentProfile.coins - coins;
-  await supabase.from('profiles').update({ coins: newBal, ads_posted: currentProfile.ads_posted + 1 }).eq('id', currentProfile.id);
-  await supabase.from('transactions').insert({ user_id: currentProfile.id, icon: '📌', description: `Объявление: "${title.slice(0, 28)}"`, amount: -coins });
+  await supabase.from('profiles')
+    .update({ coins: newBal, ads_posted: currentProfile.ads_posted + 1 })
+    .eq('id', currentProfile.id);
+  await supabase.from('transactions').insert({
+    user_id: currentProfile.id,
+    icon: '\uD83D\uDCCC',
+    description: 'Объявление: "' + title.slice(0, 28) + '"',
+    amount: -coins,
+  });
+
+  // 3. Оптимистично добавляем объявление в начало ленты — сразу видно без перезапроса
   currentProfile = { ...currentProfile, coins: newBal, ads_posted: currentProfile.ads_posted + 1 };
   setProfile(currentProfile);
+  allAds = [newAd, ...allAds];
+  totalAdsCount++;
+  updateStats();
+  renderAds();
+
   closeModal('post');
-  showToast('📌 Объявление опубликовано!');
-  loadAds(true);
+  showToast('\uD83D\uDCCC Объявление опубликовано!');
+
+  // 4. Фоновый рефреш через 1.5с для синхронизации с сервером
+  setTimeout(() => loadAds(true), 1500);
 }
 
 // ══════════════════════════════════════════════
