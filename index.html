@@ -563,7 +563,28 @@
       </div>
       <!-- Login -->
       <div id="form-login">
-        <div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="email@mail.com" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+        <div class="form-group"><label>Email</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="text" id="login-email-user" placeholder="твой_email" onkeydown="if(event.key==='Enter')doLogin()" style="flex:1;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;outline:none;font-family:'Geologica',sans-serif;color:var(--text);background:var(--bg);transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--card)'" onblur="this.style.borderColor='var(--border)';this.style.background='var(--bg)'" />
+            <span style="color:var(--muted);font-size:14px;flex-shrink:0">@</span>
+            <select id="login-email-domain" style="border:1.5px solid var(--border);border-radius:10px;padding:10px 10px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;color:var(--text);background:var(--bg);cursor:pointer;min-width:130px;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+              <option>gmail.com</option>
+              <option>mail.ru</option>
+              <option>yandex.ru</option>
+              <option>outlook.com</option>
+              <option>hotmail.com</option>
+              <option>icloud.com</option>
+              <option>yahoo.com</option>
+              <option>rambler.ru</option>
+              <option>inbox.ru</option>
+              <option>list.ru</option>
+              <option>bk.ru</option>
+              <option>proton.me</option>
+              <option>ukr.net</option>
+              <option>meta.ua</option>
+            </select>
+          </div>
+        </div>
         <div class="form-group"><label>Пароль</label><input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
         <div class="form-err" id="login-err"></div>
         <button class="btn-full" id="login-btn" onclick="doLogin()">Войти →</button>
@@ -573,7 +594,28 @@
       <div id="form-register" style="display:none">
         <div class="auth-info">🪙 Каждый новый ученик получает <strong>100 монет</strong> при регистрации!</div>
         <div class="form-group"><label>Имя</label><input type="text" id="reg-name" placeholder="Айгерим" /></div>
-        <div class="form-group"><label>Email</label><input type="email" id="reg-email" placeholder="email@mail.com" /></div>
+        <div class="form-group"><label>Email</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="text" id="reg-email-user" placeholder="твой_email" style="flex:1;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;outline:none;font-family:'Geologica',sans-serif;color:var(--text);background:var(--bg);transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--card)'" onblur="this.style.borderColor='var(--border)';this.style.background='var(--bg)'" />
+            <span style="color:var(--muted);font-size:14px;flex-shrink:0">@</span>
+            <select id="reg-email-domain" style="border:1.5px solid var(--border);border-radius:10px;padding:10px 10px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;color:var(--text);background:var(--bg);cursor:pointer;min-width:130px;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+              <option>gmail.com</option>
+              <option>mail.ru</option>
+              <option>yandex.ru</option>
+              <option>outlook.com</option>
+              <option>hotmail.com</option>
+              <option>icloud.com</option>
+              <option>yahoo.com</option>
+              <option>rambler.ru</option>
+              <option>inbox.ru</option>
+              <option>list.ru</option>
+              <option>bk.ru</option>
+              <option>proton.me</option>
+              <option>ukr.net</option>
+              <option>meta.ua</option>
+            </select>
+          </div>
+        </div>
         <div class="form-group">
           <label>Класс <span style="font-weight:400;color:var(--muted)">(например: 10А, 11Б или свой вариант)</span></label>
           <input type="text" id="reg-class" placeholder="Введи свой класс" maxlength="20" />
@@ -690,7 +732,10 @@
 <!-- POST AD -->
 <div class="overlay" id="modal-post" onclick="if(event.target===this)closeModal('post')">
   <div class="modal">
-    <div class="modal-title">📌 Подать объявление</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div class="modal-title" style="margin-bottom:0">📌 Подать объявление</div>
+      <button onclick="closeModal('post')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div class="form-group">
       <label>Категория</label>
       <select id="new-cat">
@@ -730,7 +775,10 @@
 <!-- WALLET -->
 <div class="overlay" id="modal-wallet" onclick="if(event.target===this)closeModal('wallet')">
   <div class="modal">
-    <div class="modal-title">🪙 Кошелёк</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+      <div class="modal-title" style="margin-bottom:0">🪙 Кошелёк</div>
+      <button onclick="closeModal('wallet')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div class="wallet-balance" id="wallet-balance">0</div>
     <div class="wallet-sub">монет на счету</div>
     <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px">История транзакций</div>
@@ -756,7 +804,10 @@
 <!-- AVATAR PICKER -->
 <div class="overlay" id="modal-avatar" onclick="if(event.target===this)closeModal('avatar')">
   <div class="modal">
-    <div class="modal-title">🎨 Сменить аватарку</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+      <div class="modal-title" style="margin-bottom:0">🎨 Сменить аватарку</div>
+      <button onclick="closeModal('avatar')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div class="avatar-picker-grid" id="avatar-picker-grid"></div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal('avatar')">Отмена</button>
@@ -768,7 +819,10 @@
 <!-- LEADERBOARD -->
 <div class="overlay" id="modal-lb" onclick="if(event.target===this)closeModal('lb')">
   <div class="modal">
-    <div class="modal-title">🏆 Топ-10 пользователей</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div class="modal-title" style="margin-bottom:0">🏆 Топ-10 пользователей</div>
+      <button onclick="closeModal('lb')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div id="lb-list"></div>
     <button class="btn-cancel" style="width:100%;margin-top:1rem" onclick="closeModal('lb')">Закрыть</button>
   </div>
@@ -777,7 +831,10 @@
 <!-- ORDERS -->
 <div class="overlay" id="modal-orders" onclick="if(event.target===this)closeModal('orders')">
   <div class="modal modal-wide">
-    <div class="modal-title">📦 Мои заказы</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem">
+      <div class="modal-title" style="margin-bottom:0">📦 Мои заказы</div>
+      <button onclick="closeModal('orders')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap" id="orders-tabs"></div>
     <div id="orders-list"></div>
     <button class="btn-cancel" style="width:100%;margin-top:1rem" onclick="closeModal('orders')">Закрыть</button>
@@ -787,7 +844,10 @@
 <!-- RATING -->
 <div class="overlay" id="modal-rate" onclick="if(event.target===this)closeModal('rate')">
   <div class="modal">
-    <div class="modal-title">⭐ Оцени исполнителя</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+      <div class="modal-title" style="margin-bottom:0">⭐ Оцени исполнителя</div>
+      <button onclick="closeModal('rate')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:0.5rem">Оцени работу исполнителя</div>
     <div class="rating-stars" id="rating-stars"></div>
     <div class="form-group">
@@ -804,7 +864,10 @@
 <!-- REPORT AD -->
 <div class="overlay" id="modal-report" onclick="if(event.target===this)closeModal('report')">
   <div class="modal">
-    <div class="modal-title">🚩 Жалоба на объявление</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div class="modal-title" style="margin-bottom:0">🚩 Жалоба на объявление</div>
+      <button onclick="closeModal('report')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div class="form-group">
       <label>Причина жалобы</label>
       <select id="report-reason">
@@ -829,7 +892,10 @@
 <!-- SUPPORT TICKET -->
 <div class="overlay" id="modal-support" onclick="if(event.target===this)closeModal('support')">
   <div class="modal">
-    <div class="modal-title">🛠️ Техническая поддержка</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem">
+      <div class="modal-title" style="margin-bottom:0">🛠️ Техническая поддержка</div>
+      <button onclick="closeModal('support')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.5">Опиши проблему — администратор увидит твой запрос и свяжется с тобой.</div>
     <div class="form-group">
       <label>Тема обращения</label>
@@ -895,7 +961,10 @@
 <!-- TIKTOK LINK MODAL -->
 <div class="overlay" id="modal-tiktok" onclick="if(event.target===this)closeModal('tiktok')">
   <div class="modal" style="max-width:400px">
-    <div class="modal-title">🎵 Привязать TikTok</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem">
+      <div class="modal-title" style="margin-bottom:0">🎵 Привязать TikTok</div>
+      <button onclick="closeModal('tiktok')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.5">Привяжи свой TikTok-аккаунт, чтобы другие пользователи могли тебя найти. Твой никнейм будет отображаться в профиле.</div>
     <div class="form-group">
       <label>Никнейм TikTok</label>
@@ -917,7 +986,10 @@
 <!-- COMMENTS MODAL -->
 <div class="overlay" id="modal-comments" onclick="if(event.target===this)closeModal('comments')">
   <div class="modal modal-wide" style="max-width:520px">
-    <div class="modal-title" id="comments-modal-title">💬 Комментарии</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div class="modal-title" id="comments-modal-title" style="margin-bottom:0">💬 Комментарии</div>
+      <button onclick="closeModal('comments')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div id="comments-list" style="max-height:340px;overflow-y:auto;margin-bottom:12px;padding-right:2px"></div>
     <div class="comment-input-row">
       <textarea id="comment-text" placeholder="Задай вопрос публично..." maxlength="300" rows="1"
@@ -1005,7 +1077,10 @@
 <!-- CREATE GROUP -->
 <div class="overlay" id="modal-create-group" onclick="if(event.target===this)closeModal('create-group')">
   <div class="modal" style="max-width:440px">
-    <div class="modal-title">✨ Создать чат / группу</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div class="modal-title" style="margin-bottom:0">✨ Создать чат / группу</div>
+      <button onclick="closeModal('create-group')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div class="form-group">
       <label>Название группы</label>
       <input type="text" id="new-group-name" placeholder="Название чата" maxlength="40" />
@@ -1069,7 +1144,10 @@
 <!-- GROUP INFO / INVITE -->
 <div class="overlay" id="modal-group-info" onclick="if(event.target===this)closeModal('group-info')">
   <div class="modal" style="max-width:400px">
-    <div class="modal-title" id="ginfo-title">ℹ️ Информация о группе</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div class="modal-title" id="ginfo-title" style="margin-bottom:0">ℹ️ Информация о группе</div>
+      <button onclick="closeModal('group-info')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div id="ginfo-body"></div>
     <button class="btn-cancel" style="width:100%;margin-top:1rem" onclick="closeModal('group-info')">Закрыть</button>
   </div>
@@ -1078,7 +1156,10 @@
 <!-- JOIN GROUP (password) -->
 <div class="overlay" id="modal-join-group" onclick="if(event.target===this)closeModal('join-group')">
   <div class="modal" style="max-width:380px">
-    <div class="modal-title">🔒 Приватная группа</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem">
+      <div class="modal-title" style="margin-bottom:0">🔒 Приватная группа</div>
+      <button onclick="closeModal('join-group')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
     <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Введи пароль для вступления в группу</div>
     <div class="form-group">
       <label>Пароль</label>
@@ -1271,12 +1352,14 @@ function switchAuthTab(tab) {
 }
 
 async function doLogin() {
-    const email = document.getElementById('login-email').value.trim();
+    const emailUser = document.getElementById('login-email-user').value.trim();
+    const emailDomain = document.getElementById('login-email-domain').value;
+    const email = emailUser ? emailUser + '@' + emailDomain : '';
     const password = document.getElementById('login-password').value;
     const errEl = document.getElementById('login-err');
     const btn = document.getElementById('login-btn');
 
-    if (!email || !password) {
+    if (!emailUser || !password) {
         showErr(errEl, 'Заполни все поля');
         return;
     }
@@ -1303,32 +1386,16 @@ async function doLogin() {
 
 async function doRegister() {
   const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
+  const emailUser = document.getElementById('reg-email-user').value.trim();
+  const emailDomain = document.getElementById('reg-email-domain').value;
+  const email = emailUser ? emailUser + '@' + emailDomain : '';
   const cls = document.getElementById('reg-class').value.trim();
   const password = document.getElementById('reg-password').value;
   const refCode = document.getElementById('reg-ref').value.trim().toUpperCase();
   const errEl = document.getElementById('reg-err');
   const btn = document.getElementById('reg-btn');
-  if (!name || !email || !cls || !password) { showErr(errEl, 'Заполни все поля'); return; }
-
-  // ── Строгая проверка email ──
-  const emailLower = email.toLowerCase();
-  // Базовая структура: что-то @ что-то . домен (минимум 2 буквы)
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(email)) { showErr(errEl, 'Некорректный email-адрес'); return; }
-  // Список допустимых TLD (блокируем опечатки вроде .con, .cmo, .ogr и т.д.)
-  const validTLDs = ['com','ru','kz','net','org','io','me','co','uk','de','fr','es','it','ua','by','am','ge','az','tm','tj','kg','uz','info','biz','edu','gov','app','dev','ai','mail','gmail','yahoo','yandex','outlook','hotmail','live','icloud','proton','protonmail'];
-  const parts = emailLower.split('@');
-  const domainParts = parts[1] ? parts[1].split('.') : [];
-  const tld = domainParts[domainParts.length - 1] || '';
-  if (!validTLDs.includes(tld) && tld.length < 2) { showErr(errEl, `Похоже, домен .${tld} некорректный. Проверь email`); return; }
-  // Блокируем явные опечатки
-  const typos = ['con','cmo','ogr','omc','ocm','vom','gmal','gmial','gail','gamil','yaho','homail','hotmal','outlok'];
-  if (typos.includes(tld)) { showErr(errEl, `Похоже, ты опечатался: «.${tld}». Возможно, ты имел в виду .com или .net?`); return; }
-  // Должен быть хотя бы 1 символ до @
-  if (parts[0].length < 1) { showErr(errEl, 'Некорректный email-адрес'); return; }
-  // Домен должен содержать хотя бы одну точку
-  if (!parts[1] || !parts[1].includes('.')) { showErr(errEl, 'Некорректный email-адрес (отсутствует домен)'); return; }
+  if (!name || !emailUser || !cls || !password) { showErr(errEl, 'Заполни все поля'); return; }
+  if (!/^[^\s@]+$/.test(emailUser)) { showErr(errEl, 'Некорректное имя пользователя в email'); return; }
 
   if (cls.length < 2) { showErr(errEl, 'Укажи класс (минимум 2 символа, например 10А)'); return; }
   if (password.length < 6) { showErr(errEl, 'Пароль минимум 6 символов'); return; }
