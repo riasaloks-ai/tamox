@@ -474,6 +474,16 @@
     .bnav-label { font-size: 10px; font-weight: 600; white-space: nowrap; }
     .bnav-admin { color: var(--gold) !important; }
     .bnav-admin.active { color: var(--gold) !important; }
+    .bnav-plus-circle {
+      background: var(--accent); color: #fff;
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; line-height: 1;
+      box-shadow: 0 4px 14px rgba(255,92,53,0.45);
+      margin-bottom: 2px; transition: transform 0.15s;
+    }
+    .bnav-post-btn:hover .bnav-plus-circle { transform: scale(1.1) rotate(90deg); }
+    .bnav-post-btn { color: var(--accent); }
 
     /* Push page content up so it doesn't hide behind bottom nav */
     #main-screen .container { padding-bottom: 80px; }
@@ -545,7 +555,6 @@
     <span class="nav-logo" onclick="window.scrollTo(0,0)">tam<span>ox</span></span>
     <div class="nav-right">
       <div class="nav-coin-badge" onclick="openWallet()">🪙 <span id="nav-coins">0</span></div>
-      <button class="btn-sm btn-accent" onclick="openPostModal()">+ Объявление</button>
       <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Переключить тему">🌙</button>
     </div>
   </nav>
@@ -922,38 +931,42 @@
 
 <div id="toast"></div>
 
-<!-- BOTTOM NAV (OLX style) -->
+<!-- BOTTOM NAV (4 tabs) -->
 <nav class="bottom-nav" id="bottom-nav" style="display:none">
   <button class="bnav-item active" id="bnav-home" onclick="bnavSelect('home');window.scrollTo(0,0)">
     <span class="bnav-icon">🏠</span>
     <span class="bnav-label">Главная</span>
   </button>
-  <button class="bnav-item" id="bnav-top" onclick="bnavSelect('top');openLeaderboard()">
-    <span class="bnav-icon">🏆</span>
-    <span class="bnav-label">Топ</span>
+  <button class="bnav-item" id="bnav-activity" onclick="bnavSelect('activity');openActivityMenu()">
+    <span class="bnav-icon">⚡</span>
+    <span class="bnav-label">Активность</span>
+  </button>
+  <button class="bnav-item bnav-post-btn" id="bnav-post" onclick="openPostModal()">
+    <span class="bnav-icon bnav-plus-circle">＋</span>
+    <span class="bnav-label">Добавить</span>
   </button>
   <button class="bnav-item bnav-admin" id="bnav-admin" style="display:none" onclick="bnavSelect('admin');openAdminPanel()">
     <span class="bnav-icon">⚙️</span>
     <span class="bnav-label">Админ</span>
-  </button>
-  <button class="bnav-item" id="bnav-orders" onclick="bnavSelect('orders');openOrders('active')">
-    <span class="bnav-icon">📦</span>
-    <span class="bnav-label">Заказы</span>
-  </button>
-  <button class="bnav-item" id="bnav-chat" onclick="bnavSelect('chat');openChat()">
-    <span class="bnav-icon">💬</span>
-    <span class="bnav-label">Чат</span>
-  </button>
-  <button class="bnav-item" id="bnav-notif" onclick="bnavSelect('notif');openNotifications()">
-    <span class="bnav-icon">🔔</span>
-    <span id="notif-badge" class="notif-badge" style="display:none">0</span>
-    <span class="bnav-label">Уведомления</span>
   </button>
   <button class="bnav-item" id="bnav-profile" onclick="bnavSelect('profile');openProfileModal()">
     <span class="bnav-icon">👤</span>
     <span class="bnav-label" id="bnav-profile-name">Профиль</span>
   </button>
 </nav>
+
+<!-- ACTIVITY POPUP MENU -->
+<div id="activity-menu" onclick="closeActivityMenu()" style="display:none;position:fixed;inset:0;z-index:499">
+  <div onclick="event.stopPropagation()" style="position:absolute;bottom:74px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:16px;padding:8px;box-shadow:0 -4px 28px rgba(0,0,0,0.18);min-width:210px">
+    <button onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:13px;font-weight:600;color:var(--text);width:100%;text-align:left">🏆 Топ пользователей</button>
+    <button onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:13px;font-weight:600;color:var(--text);width:100%;text-align:left">📦 Мои заказы</button>
+    <button onclick="closeActivityMenu();bnavSelect('chat');openChat()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:13px;font-weight:600;color:var(--text);width:100%;text-align:left">💬 Общий чат</button>
+    <button onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:13px;font-weight:600;color:var(--text);width:100%;text-align:left">
+      🔔 Уведомления
+      <span id="notif-badge" class="notif-badge" style="position:static;margin-left:auto;display:none">0</span>
+    </button>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -2257,6 +2270,21 @@ function bnavSelect(tab) {
 
 function showBottomNav(show) {
   document.getElementById('bottom-nav').style.display = show ? 'flex' : 'none';
+  if (!show) closeActivityMenu();
+}
+
+function openActivityMenu() {
+  const menu = document.getElementById('activity-menu');
+  const isOpen = menu.style.display === 'block' || menu.style.display === '';
+  menu.style.display = isOpen ? 'none' : 'block';
+}
+
+function closeActivityMenu() {
+  const menu = document.getElementById('activity-menu');
+  if (menu) menu.style.display = 'none';
+  // Deselect activity tab if it was active
+  const actBtn = document.getElementById('bnav-activity');
+  if (actBtn) actBtn.classList.remove('active');
 }
 
 // ══════════════════════════════════════════════
