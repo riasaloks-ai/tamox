@@ -184,6 +184,26 @@
     .ad-info { display: flex; gap: 6px; align-items: flex-end; flex-direction: column; }
     .ad-author { font-size: 11px; color: var(--muted); }
     .ad-time { font-size: 10px; color: var(--muted); }
+
+    /* ── LIKES ── */
+    .like-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer;
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      padding: 3px 7px; border-radius: 999px;
+      transition: all 0.18s; font-family: 'Geologica', sans-serif;
+      flex-shrink: 0;
+    }
+    .like-btn:hover { background: rgba(255,92,53,0.08); color: var(--accent); }
+    .like-btn.liked { color: var(--accent); }
+    .like-btn .like-heart { font-size: 14px; line-height: 1; transition: transform 0.15s; }
+    .like-btn.liked .like-heart { transform: scale(1.25); }
+    .like-btn.pop .like-heart { animation: likePop 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes likePop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.5); }
+      100% { transform: scale(1.15); }
+    }
     .badge-urgent { position: absolute; top: 10px; left: 10px; background: #e53935; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 999px; z-index: 2; animation: urgentPulse 1.4s ease-in-out infinite; }
     @keyframes urgentPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(229,57,53,0.5); } 50% { box-shadow: 0 0 0 5px rgba(229,57,53,0); } }
 
@@ -427,20 +447,23 @@
     }
 
     /* ── BOTTOM NAVIGATION ── */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
+    #bottom-nav {
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      top: auto !important;
       height: 62px;
       background: var(--card);
       border-top: 1px solid var(--border);
       display: none;
       align-items: stretch;
       justify-content: space-around;
-      z-index: 200;
+      z-index: 9000;
       padding-bottom: env(safe-area-inset-bottom, 0px);
       box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
     }
-    [data-theme="dark"] .bottom-nav {
+    [data-theme="dark"] #bottom-nav {
       box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
     }
     .bnav-item {
@@ -923,51 +946,6 @@
 
 <div id="toast"></div>
 
-<!-- BOTTOM NAV (4 tabs) -->
-<nav class="bottom-nav" id="bottom-nav" style="display:none">
-  <button class="bnav-item active" id="bnav-home" onclick="bnavSelect('home');window.scrollTo(0,0)">
-    <span class="bnav-icon">🏠</span>
-    <span class="bnav-label">Главная</span>
-  </button>
-  <button class="bnav-item" id="bnav-activity" onclick="bnavSelect('activity');openActivityMenu()">
-    <span class="bnav-icon">⚡</span>
-    <span class="bnav-label">Активность</span>
-  </button>
-  <button class="bnav-item bnav-post-btn" id="bnav-post" onclick="openPostModal()">
-    <span class="bnav-icon bnav-plus-circle">＋</span>
-    <span class="bnav-label">Добавить</span>
-  </button>
-  <button class="bnav-item bnav-admin" id="bnav-admin" style="display:none" onclick="bnavSelect('admin');openAdminPanel()">
-    <span class="bnav-icon">⚙️</span>
-    <span class="bnav-label">Админ</span>
-  </button>
-  <button class="bnav-item" id="bnav-profile" onclick="bnavSelect('profile');openProfileModal()">
-    <span class="bnav-icon">👤</span>
-    <span class="bnav-label" id="bnav-profile-name">Профиль</span>
-  </button>
-</nav>
-
-<!-- ACTIVITY POPUP MENU -->
-<div id="activity-menu" onclick="closeActivityMenu()" style="display:none;position:fixed;inset:0;z-index:499;background:rgba(0,0,0,0.35)">
-  <div onclick="event.stopPropagation()" style="position:absolute;bottom:74px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:20px;padding:10px;box-shadow:0 -8px 40px rgba(0,0,0,0.25);min-width:280px;max-width:92vw">
-    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 14px 8px">Активность</div>
-    <button onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
-      <span style="font-size:24px;width:36px;text-align:center">🏆</span> Топ пользователей
-    </button>
-    <button onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
-      <span style="font-size:24px;width:36px;text-align:center">📦</span> Мои заказы
-    </button>
-    <button onclick="closeActivityMenu();bnavSelect('chat');openChat()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
-      <span style="font-size:24px;width:36px;text-align:center">💬</span> Общий чат
-    </button>
-    <button onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
-      <span style="font-size:24px;width:36px;text-align:center">🔔</span> Уведомления
-      <span id="notif-badge" class="notif-badge" style="position:static;margin-left:auto;display:none">0</span>
-    </button>
-    <div style="margin:6px 8px 2px;height:1px;background:var(--border)"></div>
-    <button onclick="closeActivityMenu()" style="display:flex;align-items:center;justify-content:center;padding:12px;border-radius:12px;border:none;background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;font-size:14px;font-weight:600;color:var(--muted);width:100%;margin-top:4px">Закрыть</button>
-  </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -1054,6 +1032,9 @@ let selectedAvatarSeed = '';
 let editBalanceUserId = null;
 let adminCurrentTab = 'stats';
 let _authHandling = false;
+let myLikes = new Set(); // ad IDs liked by current user
+let adLikeCounts = {}; // { adId: count }
+let likesChannel = null;
 
 // ══════════════════════════════════════════════
 // INIT
@@ -1074,6 +1055,8 @@ let _authHandling = false;
             await loadMySubscriptions();
             await loadNotifications();
             subscribeNotifications();
+            await loadMyLikes();
+            subscribeLikes();
           } else {
             showAuth();
           }
@@ -1400,6 +1383,10 @@ function renderAds() {
     return true;
   });
 
+  // Load like counts for visible ads
+  if (filtered.length > 0) {
+    loadLikeCounts(filtered.map(a => a.id));
+  }
   document.getElementById('ads-count').textContent = filtered.length + ' объявлений';
   const titles = { feed: 'Объявления', favs: '❤️ Избранное', my: '📌 Мои объявления', urgent: '⚡ Срочные задания' };
   document.getElementById('feed-title').textContent = titles[feedTab] || 'Объявления';
@@ -1436,307 +1423,18 @@ function renderAds() {
           <div class="ad-desc">${escHtml(ad.description)}</div>
           <div class="ad-footer">
             <div class="ad-price">🪙 ${ad.coins}<small>исполнитель получит ${earn}🪙</small></div>
-            <div class="ad-info">
-              <span class="ad-author" style="cursor:pointer;color:var(--muted)" onclick="event.stopPropagation();openComments('${ad.id}','${escHtml(ad.title).replace(/'/g,'\\\'')}')" title="Комментарии">💬</span>
-              <span class="ad-author">${escHtml(authorName)}</span>
+            <div class="ad-info" style="display:flex;align-items:center;gap:8px;flex-direction:row">
+              <button class="like-btn ${myLikes.has(ad.id) ? 'liked' : ''}" id="like-btn-${ad.id}" onclick="event.stopPropagation();toggleLike('${ad.id}')">
+                <span class="like-heart">${myLikes.has(ad.id) ? '❤️' : '🤍'}</span>
+                <span id="like-count-${ad.id}">${adLikeCounts[ad.id] || 0}</span>
+              </button>
+              <span style="cursor:pointer;color:var(--muted);font-size:14px" onclick="event.stopPropagation();openComments('${ad.id}','${escHtml(ad.title)}')">&#x1F4AC;</span>
               <span class="ad-time">${fmtTime(ad.created_at)}</span>
             </div>
           </div>
         </div>
       </div>`;
   }).join('');
-}
-
-function updateStats() {
-  document.getElementById('stat-total').textContent = totalAdsCount;
-  document.getElementById('stat-done').textContent = allAds.filter(a => a.status === 'done').length;
-}
-
-function setCat(cat) {
-  currentCat = cat;
-  document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
-  renderAds();
-}
-
-function setFeedTab(tab) {
-  feedTab = tab;
-  document.querySelectorAll('.feed-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-  renderAds();
-}
-
-function toggleFav(id) {
-  if (favorites.has(id)) favorites.delete(id); else favorites.add(id);
-  renderAds();
-}
-
-// ══════════════════════════════════════════════
-// AD DETAIL MODAL
-// ══════════════════════════════════════════════
-function openAdDetail(id) {
-  const ad = allAds.find(a => a.id === id);
-  if (!ad) return;
-  const m = CAT_MAP[ad.cat] || CAT_MAP.other;
-  const earn = Math.floor(ad.coins * (1 - COMMISSION));
-  const comm = ad.coins - earn;
-  const isOwn = ad.author_id === currentProfile.id;
-  const isExecutor = ad.executor_id === currentProfile.id;
-  const canAfford = currentProfile.coins >= ad.coins;
-  const authorName = ad.author?.name || '—';
-
-  let actionHtml = '';
-  if (isOwn) {
-    if (ad.status === 'open') {
-      actionHtml = `<button class="btn-deal" style="background:#e24b4a" onclick="deleteAd('${ad.id}')">🗑️ Удалить объявление</button>`;
-    } else if (ad.status === 'taken') {
-      actionHtml = `
-        <div class="escrow-status">🔒 Монеты в эскроу. Исполнитель берётся за задание. Нажми «Подтвердить», когда выполнено.</div>
-        <button class="btn-deal btn-escrow" onclick="confirmDeal('${ad.id}')">✅ Подтвердить выполнение</button>
-        <button class="btn-deal" style="background:#e24b4a;margin-top:6px" onclick="cancelDeal('${ad.id}')">❌ Отменить сделку</button>`;
-    } else {
-      actionHtml = `<div style="background:#e8faf2;border:1px solid #a8edca;border-radius:12px;padding:1rem;font-size:13px;color:#0f6e56;text-align:center">✅ Сделка завершена</div>`;
-    }
-  } else {
-    if (ad.status === 'open') {
-      actionHtml = `<button class="btn-deal ${canAfford ? 'btn-escrow' : ''}" ${canAfford ? '' : 'disabled'} onclick="takeDeal('${ad.id}')">
-        ${canAfford ? '🔒 Взяться за задание (Эскроу)' : `❌ Недостаточно монет (нужно ${ad.coins}🪙)`}
-      </button>`;
-    } else if (ad.status === 'taken' && isExecutor) {
-      actionHtml = `<div class="escrow-status">🔒 Ты взялся за задание. Выполни и дождись подтверждения заказчика.</div>`;
-    } else {
-      actionHtml = `<button class="btn-deal" disabled>${ad.status === 'taken' ? '🔒 Уже взято' : '✅ Завершено'}</button>`;
-    }
-  }
-
-  document.getElementById('modal-detail-body').innerHTML = `
-    <div class="modal-title">📋 Объявление</div>
-    <div class="ad-detail-top">
-      <div class="ad-detail-emoji" style="background:${m.bg}">${m.icon}</div>
-      <div class="ad-detail-info">
-        <div class="ad-cat-tag" style="background:${m.tagBg};color:${m.tagColor};display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-bottom:5px">${m.label}</div>
-        <h2>${escHtml(ad.title)}</h2>
-      </div>
-    </div>
-    <div class="ad-detail-desc">${escHtml(ad.description)}</div>
-    <div class="ad-detail-meta">
-      <div class="meta-chip" style="cursor:pointer" onclick="closeModal('detail');openOtherProfile('${ad.author_id}')">👤 ${escHtml(authorName)}</div>
-      <div class="meta-chip">📅 ${fmtTime(ad.created_at)}</div>
-      <div class="meta-chip">🪙 ${ad.coins} монет</div>
-    </div>
-    <div class="deal-box">
-      <div class="deal-row"><span class="deal-label">Вознаграждение</span><span class="deal-val">🪙 ${ad.coins}</span></div>
-      <div class="deal-row"><span class="deal-label">Комиссия Tamox (10%)</span><span class="deal-val">−🪙 ${comm}</span></div>
-      <div class="deal-row"><span class="deal-label">Исполнитель получит</span><span class="deal-val total">🪙 ${earn}</span></div>
-    </div>
-    ${actionHtml}
-    ${!isOwn ? `
-    <button onclick="closeModal('detail');openDm('${ad.author_id}')" style="width:100%;margin-top:8px;padding:11px;border-radius:10px;border:none;background:var(--escrow);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">💬 Написать в ЛС автору</button>
-    <button onclick="openReportModal('${ad.id}')" style="width:100%;margin-top:6px;padding:9px;border-radius:10px;border:1.5px solid #e3e0d8;background:transparent;color:#e24b4a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">🚩 Пожаловаться на объявление</button>` : ''}
-    <div style="display:flex;gap:8px;margin-top:8px">
-      <button onclick="openComments('${ad.id}','${escHtml(ad.title)}')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);color:var(--navy);font-size:12px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px" id="comments-btn-${ad.id}">💬 Комментарии</button>
-      ${!isOwn ? `<button onclick="toggleSubscribe('${ad.author_id}','${escHtml(authorName)}')" id="sub-btn-${ad.author_id}" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif">🔔 Подписаться</button>` : ''}
-    </div>
-    <button class="btn-cancel" style="width:100%;margin-top:8px" onclick="closeModal('detail')">Закрыть</button>
-  `;
-  openModal('detail');
-}
-
-// ══════════════════════════════════════════════
-// DEAL ACTIONS
-// ══════════════════════════════════════════════
-async function takeDeal(adId) {
-  const ad = allAds.find(a => a.id === adId);
-  if (!ad || currentProfile.coins < ad.coins) { showToast('Недостаточно монет!'); return; }
-  await supabase.from('ads').update({ status: 'taken', executor_id: currentProfile.id }).eq('id', adId);
-  closeModal('detail');
-  showToast('🔒 Ты взялся за задание!');
-  loadAds(true);
-}
-
-async function confirmDeal(adId) {
-  const ad = allAds.find(a => a.id === adId);
-  if (!ad || !ad.executor_id) return;
-  const earn = Math.floor(ad.coins * (1 - COMMISSION));
-  const comm = ad.coins - earn;
-  await supabase.from('ads').update({ status: 'done' }).eq('id', adId);
-  const { data: execP } = await supabase.from('profiles').select('coins, ads_completed').eq('id', ad.executor_id).maybeSingle();
-  if (execP) {
-    await supabase.from('profiles').update({ coins: execP.coins + earn, ads_completed: execP.ads_completed + 1 }).eq('id', ad.executor_id);
-    await supabase.from('transactions').insert({ user_id: ad.executor_id, icon: '✅', description: `Выполнил: "${ad.title.slice(0, 28)}"`, amount: earn });
-  }
-  const { data: adminP } = await supabase.from('profiles').select('coins').eq('id', ADMIN_PROFILE_ID).maybeSingle();
-  if (adminP) {
-    await supabase.from('profiles').update({ coins: adminP.coins + comm }).eq('id', ADMIN_PROFILE_ID);
-    await supabase.from('transactions').insert({ user_id: ADMIN_PROFILE_ID, icon: '💰', description: `Комиссия 10%: "${ad.title.slice(0, 28)}"`, amount: comm });
-  }
-  const { data: statsRows } = await supabase.from('platform_stats').select('key,value').in('key', ['total_deals', 'total_commission']);
-  if (statsRows) {
-    for (const row of statsRows) {
-      const delta = row.key === 'total_deals' ? 1 : comm;
-      await supabase.from('platform_stats').update({ value: row.value + delta }).eq('key', row.key);
-    }
-  }
-  closeModal('detail');
-  showToast(`🎉 Сделка завершена! Исполнитель получил ${earn}🪙, комиссия ${comm}🪙`);
-  loadAds(true);
-  // Open rating
-  rateAdContext = adId;
-  selectedStars = 0;
-  renderRatingStars();
-  document.getElementById('rate-comment').value = '';
-  openModal('rate');
-}
-
-async function cancelDeal(adId) {
-  await supabase.from('ads').update({ status: 'open', executor_id: null }).eq('id', adId);
-  closeModal('detail');
-  showToast('Сделка отменена');
-  loadAds(true);
-}
-
-async function deleteAd(adId) {
-  await supabase.from('ads').delete().eq('id', adId);
-  closeModal('detail');
-  showToast('Объявление удалено');
-  loadAds(true);
-}
-
-// ══════════════════════════════════════════════
-// POST AD
-// ══════════════════════════════════════════════
-function openPostModal() {
-  document.getElementById('new-title').value = '';
-  document.getElementById('new-desc').value = '';
-  document.getElementById('new-coins').value = '';
-  document.getElementById('coin-preview').textContent = 'Введи сумму монет 👆';
-  document.getElementById('new-urgent').checked = false;
-  document.getElementById('urgent-deadline-group').style.display = 'none';
-  openModal('post');
-}
-
-function updateCoinPreview() {
-  const c = parseInt(document.getElementById('new-coins').value) || 0;
-  if (!c) { document.getElementById('coin-preview').textContent = 'Введи сумму монет 👆'; return; }
-  const earn = Math.floor(c * (1 - COMMISSION));
-  document.getElementById('coin-preview').textContent = `🔒 Эскроу: ${c}🪙 · Исполнитель получит: ${earn}🪙 · Комиссия: ${c - earn}🪙`;
-}
-
-async function postAd() {
-  const title = document.getElementById('new-title').value.trim();
-  const desc = document.getElementById('new-desc').value.trim();
-  const cat = document.getElementById('new-cat').value;
-  const coins = parseInt(document.getElementById('new-coins').value);
-  const isUrgent = document.getElementById('new-urgent').checked;
-  const urgentHours = isUrgent ? parseInt(document.getElementById('new-urgent-hours').value) : null;
-  const btn = document.getElementById('post-btn');
-  if (!title) { showToast('Введи заголовок'); return; }
-  if (!coins || coins < 1) { showToast('Укажи сумму монет'); return; }
-  if (currentProfile.coins < coins) { showToast('Недостаточно монет! У тебя ' + currentProfile.coins + '\u{1FA99}'); return; }
-
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
-
-  const urgentDeadline = isUrgent ? new Date(Date.now() + urgentHours * 3600000).toISOString() : null;
-
-  // 1. Сначала вставляем объявление и получаем его обратно с join
-  const { data: newAd, error: adErr } = await supabase
-    .from('ads')
-    .insert({ author_id: currentProfile.id, cat, title, description: desc || 'Без описания.', coins, badge: 'new', status: 'open', is_urgent: isUrgent, urgent_deadline: urgentDeadline })
-    .select('*, author:profiles!ads_author_id_fkey(name, avatar_seed, class)')
-    .single();
-
-  btn.disabled = false; btn.textContent = 'Опубликовать \uD83D\uDCCC';
-
-  if (adErr) {
-    showToast('Ошибка публикации: ' + adErr.message);
-    return;
-  }
-
-  // 2. Только после успешной вставки — списываем монеты
-  const newBal = currentProfile.coins - coins;
-  await supabase.from('profiles')
-    .update({ coins: newBal, ads_posted: currentProfile.ads_posted + 1 })
-    .eq('id', currentProfile.id);
-  await supabase.from('transactions').insert({
-    user_id: currentProfile.id,
-    icon: '\uD83D\uDCCC',
-    description: 'Объявление: "' + title.slice(0, 28) + '"',
-    amount: -coins,
-  });
-
-  // 3. Оптимистично добавляем объявление в начало ленты — сразу видно без перезапроса
-  currentProfile = { ...currentProfile, coins: newBal, ads_posted: currentProfile.ads_posted + 1 };
-  setProfile(currentProfile);
-  allAds = [newAd, ...allAds];
-  totalAdsCount++;
-  updateStats();
-  renderUrgentBlock();
-  renderAds();
-
-  closeModal('post');
-  showToast('\uD83D\uDCCC Объявление опубликовано!');
-
-  // Уведомить подписчиков
-  notifySubscribersNewAd(newAd);
-
-  // 4. Фоновый рефреш через 1.5с для синхронизации с сервером
-  setTimeout(() => loadAds(true), 1500);
-}
-
-// Refresh urgent timers every 60 seconds
-setInterval(() => {
-  if (allAds.length > 0) { renderUrgentBlock(); renderAds(); }
-}, 60000);
-
-// ══════════════════════════════════════════════
-// WALLET
-// ══════════════════════════════════════════════
-async function openWallet() {
-  document.getElementById('wallet-balance').textContent = currentProfile.coins;
-  const { data } = await supabase.from('transactions').select('*').eq('user_id', currentProfile.id).order('created_at', { ascending: false }).limit(30);
-  const txs = data || [];
-  document.getElementById('wallet-history').innerHTML = txs.length === 0
-    ? '<div style="text-align:center;color:var(--muted);font-size:13px;padding:1rem">Транзакций пока нет</div>'
-    : txs.map(tx => `
-      <div class="tx-row">
-        <span class="tx-icon">${tx.icon}</span>
-        <span class="tx-desc">${escHtml(tx.description)}</span>
-        <span class="tx-time">${fmtTime(tx.created_at)}</span>
-        <span class="tx-amt ${tx.amount > 0 ? 'plus' : 'minus'}">${tx.amount > 0 ? '+' : ''}${tx.amount}🪙</span>
-      </div>`).join('');
-  openModal('wallet');
-}
-
-// ══════════════════════════════════════════════
-// PROFILE
-// ══════════════════════════════════════════════
-async function openProfileModal(profileData) {
-  const target = profileData || currentProfile;
-  const [adsRes, revRes] = await Promise.all([
-  supabase.from('ads').select('*').eq('author_id', target.id).order('created_at', { ascending: false }).limit(12),
-  supabase.from('reviews').select('*, from_user:profiles!reviews_from_user_id_fkey(name)').eq('to_user_id', target.id).order('created_at', { ascending: false }).limit(10),
-  ]);
-  const profileAds = adsRes.data || [];
-  const profileReviews = revRes.data || [];
-  renderProfileModal(target, profileAds, profileReviews, 'ads');
-  // Update subscribe button after render
-  if (target.id !== currentProfile.id) {
-    setTimeout(() => updateSubBtnProfile(target.id), 50);
-  }
-}
-
-function renderProfileModal(target, profileAds, profileReviews, activeTab) {
-  const isOwn = target.id === currentProfile.id;
-  const adsHtml = profileAds.length === 0
-    ? '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">📭 Нет объявлений</div>'
-    : profileAds.map(ad => {
-        const m = CAT_MAP[ad.cat] || CAT_MAP.other;
-        return `<div onclick="closeModal('profile');openAdDetail('${ad.id}')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--card);border-radius:10px;margin-bottom:7px;cursor:pointer;border:1px solid var(--border)">
-          <div style="font-size:20px;width:36px;height:36px;border-radius:9px;background:${m.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">${m.icon}</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:12.5px;font-weight:600;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(ad.title)}</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">${fmtTime(ad.created_at)} · 🪙 ${ad.coins}</div>
-          </div>
-        </div>`;
-      }).join('');
 
   const revsHtml = profileReviews.length === 0
     ? '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">Нет отзывов</div>'
@@ -1913,7 +1611,300 @@ async function loadOrders(tab) {
 }
 
 // ══════════════════════════════════════════════
+// LIKES
+// ══════════════════════════════════════════════
+
+async function loadMyLikes() {
+  if (!currentProfile) return;
+  const { data } = await supabase.from('likes').select('ad_id').eq('user_id', currentProfile.id);
+  myLikes = new Set((data || []).map(l => l.ad_id));
+}
+
+async function loadLikeCounts(adIds) {
+  if (!adIds || adIds.length === 0) return;
+  const { data } = await supabase.from('likes').select('ad_id').in('ad_id', adIds);
+  const newCounts = {};
+  (data || []).forEach(l => { newCounts[l.ad_id] = (newCounts[l.ad_id] || 0) + 1; });
+  Object.assign(adLikeCounts, newCounts);
+  adIds.forEach(id => { updateLikeUI(id); });
+}
+
+async function toggleLike(adId) {
+  if (!currentProfile) return;
+  const btn = document.getElementById('like-btn-' + adId);
+  const countEl = document.getElementById('like-count-' + adId);
+  const isLiked = myLikes.has(adId);
+  if (isLiked) {
+    myLikes.delete(adId);
+    adLikeCounts[adId] = Math.max(0, (adLikeCounts[adId] || 1) - 1);
+  } else {
+    myLikes.add(adId);
+    adLikeCounts[adId] = (adLikeCounts[adId] || 0) + 1;
+    if (btn) { btn.classList.add('pop'); setTimeout(() => btn.classList.remove('pop'), 350); }
+  }
+  if (btn) {
+    btn.classList.toggle('liked', !isLiked);
+    btn.querySelector('.like-heart').textContent = !isLiked ? '\u2764\ufe0f' : '\U0001f90d';
+  }
+  if (countEl) countEl.textContent = adLikeCounts[adId] || 0;
+  if (isLiked) {
+    await supabase.from('likes').delete().eq('ad_id', adId).eq('user_id', currentProfile.id);
+  } else {
+    await supabase.from('likes').insert({ ad_id: adId, user_id: currentProfile.id });
+  }
+}
+
+function subscribeLikes() {
+  if (likesChannel) return;
+  likesChannel = supabase.channel('likes-feed')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'likes' }, (payload) => {
+      const adId = payload.new.ad_id;
+      if (payload.new.user_id !== currentProfile?.id) {
+        adLikeCounts[adId] = (adLikeCounts[adId] || 0) + 1;
+        updateLikeUI(adId);
+      }
+    })
+    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'likes' }, (payload) => {
+      const adId = payload.old.ad_id;
+      if (payload.old.user_id !== currentProfile?.id) {
+        adLikeCounts[adId] = Math.max(0, (adLikeCounts[adId] || 1) - 1);
+        updateLikeUI(adId);
+      }
+    })
+    .subscribe();
+}
+
+function updateLikeUI(adId) {
+  const countEl = document.getElementById('like-count-' + adId);
+  if (countEl) countEl.textContent = adLikeCounts[adId] || 0;
+  const btn = document.getElementById('like-btn-' + adId);
+  if (btn) {
+    const isLiked = myLikes.has(adId);
+    btn.classList.toggle('liked', isLiked);
+    const heart = btn.querySelector('.like-heart');
+    if (heart) heart.textContent = isLiked ? '\u2764\ufe0f' : '\U0001f90d';
+  }
+}
+
+// ══════════════════════════════════════════════
+// ADS HELPERS
+// ══════════════════════════════════════════════
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = totalAdsCount;
+  document.getElementById('stat-done').textContent = allAds.filter(a => a.status === 'done').length;
+}
+
+function setCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+  renderAds();
+}
+
+function setFeedTab(tab) {
+  feedTab = tab;
+  document.querySelectorAll('.feed-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  renderAds();
+}
+
+function toggleFav(id) {
+  if (favorites.has(id)) favorites.delete(id); else favorites.add(id);
+  renderAds();
+}
+
+// ══════════════════════════════════════════════
+// AD DETAIL MODAL
+// ══════════════════════════════════════════════
+function openAdDetail(id) {
+  const ad = allAds.find(a => a.id === id);
+  if (!ad) return;
+  const m = CAT_MAP[ad.cat] || CAT_MAP.other;
+  const earn = Math.floor(ad.coins * (1 - COMMISSION));
+  const comm = ad.coins - earn;
+  const isOwn = ad.author_id === currentProfile.id;
+  const isExecutor = ad.executor_id === currentProfile.id;
+  const canAfford = currentProfile.coins >= ad.coins;
+  const authorName = ad.author?.name || '\u2014';
+  const likeCount = adLikeCounts[ad.id] || 0;
+  const isLiked = myLikes.has(ad.id);
+
+  let actionHtml = '';
+  if (isOwn) {
+    if (ad.status === 'open') {
+      actionHtml = `<button class="btn-deal" style="background:#e24b4a" onclick="deleteAd('${ad.id}')">🗑️ Удалить объявление</button>`;
+    } else if (ad.status === 'taken') {
+      actionHtml = `
+        <div class="escrow-status">🔒 Монеты в эскроу. Исполнитель берётся за задание. Нажми «Подтвердить», когда выполнено.</div>
+        <button class="btn-deal btn-escrow" onclick="confirmDeal('${ad.id}')">✅ Подтвердить выполнение</button>
+        <button class="btn-deal" style="background:#e24b4a;margin-top:6px" onclick="cancelDeal('${ad.id}')">❌ Отменить сделку</button>`;
+    } else {
+      actionHtml = `<div style="background:#e8faf2;border:1px solid #a8edca;border-radius:12px;padding:1rem;font-size:13px;color:#0f6e56;text-align:center">✅ Сделка завершена</div>`;
+    }
+  } else {
+    if (ad.status === 'open') {
+      actionHtml = `<button class="btn-deal ${canAfford ? 'btn-escrow' : ''}" ${canAfford ? '' : 'disabled'} onclick="takeDeal('${ad.id}')">
+        ${canAfford ? '🔒 Взяться за задание (Эскроу)' : `❌ Недостаточно монет (нужно ${ad.coins}🪙)`}
+      </button>`;
+    } else if (ad.status === 'taken' && isExecutor) {
+      actionHtml = `<div class="escrow-status">🔒 Ты взялся за задание. Выполни и дождись подтверждения заказчика.</div>`;
+    } else {
+      actionHtml = `<button class="btn-deal" disabled>${ad.status === 'taken' ? '🔒 Уже взято' : '✅ Завершено'}</button>`;
+    }
+  }
+
+  document.getElementById('modal-detail-body').innerHTML = `
+    <div class="modal-title">📋 Объявление</div>
+    <div class="ad-detail-top">
+      <div class="ad-detail-emoji" style="background:${m.bg}">${m.icon}</div>
+      <div class="ad-detail-info">
+        <div class="ad-cat-tag" style="background:${m.tagBg};color:${m.tagColor};display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-bottom:5px">${m.label}</div>
+        <h2>${escHtml(ad.title)}</h2>
+      </div>
+    </div>
+    <div class="ad-detail-desc">${escHtml(ad.description)}</div>
+    <div class="ad-detail-meta">
+      <div class="meta-chip" style="cursor:pointer" onclick="closeModal('detail');openOtherProfile('${ad.author_id}')">👤 ${escHtml(authorName)}</div>
+      <div class="meta-chip">📅 ${fmtTime(ad.created_at)}</div>
+      <div class="meta-chip">🪙 ${ad.coins} монет</div>
+      <div class="meta-chip" style="cursor:pointer" onclick="toggleLike('${ad.id}')">
+        ${isLiked ? '❤️' : '🤍'} <span id="detail-like-count-${ad.id}">${likeCount}</span> лайков
+      </div>
+    </div>
+    <div class="deal-box">
+      <div class="deal-row"><span class="deal-label">Вознаграждение</span><span class="deal-val">🪙 ${ad.coins}</span></div>
+      <div class="deal-row"><span class="deal-label">Комиссия Tamox (10%)</span><span class="deal-val">−🪙 ${comm}</span></div>
+      <div class="deal-row"><span class="deal-label">Исполнитель получит</span><span class="deal-val total">🪙 ${earn}</span></div>
+    </div>
+    ${actionHtml}
+    ${!isOwn ? `
+    <button onclick="closeModal('detail');openDm('${ad.author_id}')" style="width:100%;margin-top:8px;padding:11px;border-radius:10px;border:none;background:var(--escrow);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">💬 Написать в ЛС автору</button>
+    <button onclick="openReportModal('${ad.id}')" style="width:100%;margin-top:6px;padding:9px;border-radius:10px;border:1.5px solid #e3e0d8;background:transparent;color:#e24b4a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">🚩 Пожаловаться на объявление</button>` : ''}
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button onclick="openComments('${ad.id}','${escHtml(ad.title)}')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);color:var(--navy);font-size:12px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px">💬 Комментарии</button>
+      ${!isOwn ? `<button onclick="toggleSubscribe('${ad.author_id}','${escHtml(authorName)}')" id="sub-btn-${ad.author_id}" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif">🔔 Подписаться</button>` : ''}
+    </div>
+    <button class="btn-cancel" style="width:100%;margin-top:8px" onclick="closeModal('detail')">Закрыть</button>
+  `;
+  openModal('detail');
+}
+
+// ══════════════════════════════════════════════
+// DEAL ACTIONS
+// ══════════════════════════════════════════════
+async function takeDeal(adId) {
+  const ad = allAds.find(a => a.id === adId);
+  if (!ad || currentProfile.coins < ad.coins) { showToast('Недостаточно монет!'); return; }
+  await supabase.from('ads').update({ status: 'taken', executor_id: currentProfile.id }).eq('id', adId);
+  closeModal('detail');
+  showToast('🔒 Ты взялся за задание!');
+  loadAds(true);
+}
+
+async function confirmDeal(adId) {
+  const ad = allAds.find(a => a.id === adId);
+  if (!ad || !ad.executor_id) return;
+  const earn = Math.floor(ad.coins * (1 - COMMISSION));
+  const comm = ad.coins - earn;
+  await supabase.from('ads').update({ status: 'done' }).eq('id', adId);
+  const { data: execP } = await supabase.from('profiles').select('coins, ads_completed').eq('id', ad.executor_id).maybeSingle();
+  if (execP) {
+    await supabase.from('profiles').update({ coins: execP.coins + earn, ads_completed: execP.ads_completed + 1 }).eq('id', ad.executor_id);
+    await supabase.from('transactions').insert({ user_id: ad.executor_id, icon: '✅', description: `Выполнил: "${ad.title.slice(0, 28)}"`, amount: earn });
+  }
+  const { data: adminP } = await supabase.from('profiles').select('coins').eq('id', ADMIN_PROFILE_ID).maybeSingle();
+  if (adminP) {
+    await supabase.from('profiles').update({ coins: adminP.coins + comm }).eq('id', ADMIN_PROFILE_ID);
+    await supabase.from('transactions').insert({ user_id: ADMIN_PROFILE_ID, icon: '💰', description: `Комиссия 10%: "${ad.title.slice(0, 28)}"`, amount: comm });
+  }
+  const { data: statsRows } = await supabase.from('platform_stats').select('key,value').in('key', ['total_deals', 'total_commission']);
+  if (statsRows) {
+    for (const row of statsRows) {
+      const delta = row.key === 'total_deals' ? 1 : comm;
+      await supabase.from('platform_stats').update({ value: row.value + delta }).eq('key', row.key);
+    }
+  }
+  closeModal('detail');
+  showToast(`🎉 Сделка завершена! Исполнитель получил ${earn}🪙, комиссия ${comm}🪙`);
+  loadAds(true);
+  rateAdContext = adId;
+  selectedStars = 0;
+  renderRatingStars();
+  document.getElementById('rate-comment').value = '';
+  openModal('rate');
+}
+
+async function cancelDeal(adId) {
+  await supabase.from('ads').update({ status: 'open', executor_id: null }).eq('id', adId);
+  closeModal('detail');
+  showToast('Сделка отменена');
+  loadAds(true);
+}
+
+async function deleteAd(adId) {
+  await supabase.from('ads').delete().eq('id', adId);
+  closeModal('detail');
+  showToast('Объявление удалено');
+  loadAds(true);
+}
+
+// ══════════════════════════════════════════════
+// POST AD
+// ══════════════════════════════════════════════
+function openPostModal() {
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-desc').value = '';
+  document.getElementById('new-coins').value = '';
+  document.getElementById('coin-preview').textContent = 'Введи сумму монет 👆';
+  document.getElementById('new-urgent').checked = false;
+  document.getElementById('urgent-deadline-group').style.display = 'none';
+  openModal('post');
+}
+
+function updateCoinPreview() {
+  const coins = parseInt(document.getElementById('new-coins').value) || 0;
+  const earn = Math.floor(coins * (1 - COMMISSION));
+  const comm = coins - earn;
+  const el = document.getElementById('coin-preview');
+  if (coins <= 0) { el.textContent = 'Введи сумму монет 👆'; return; }
+  if (coins > (currentProfile?.coins || 0)) {
+    el.textContent = `❌ Недостаточно монет (у тебя ${currentProfile?.coins || 0}🪙)`;
+  } else {
+    el.textContent = `✅ Заморозим ${coins}🪙 → Исполнитель получит ${earn}🪙 (комиссия ${comm}🪙)`;
+  }
+}
+
+async function postAd() {
+  const title = document.getElementById('new-title').value.trim();
+  const desc = document.getElementById('new-desc').value.trim();
+  const coins = parseInt(document.getElementById('new-coins').value) || 0;
+  const cat = document.getElementById('new-cat').value;
+  const isUrgent = document.getElementById('new-urgent').checked;
+  const btn = document.getElementById('post-btn');
+  if (!title || !desc || coins <= 0) { showToast('Заполни все поля!'); return; }
+  if (coins > currentProfile.coins) { showToast('Недостаточно монет!'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+  let urgentDeadline = null;
+  if (isUrgent) {
+    const hours = parseInt(document.getElementById('new-urgent-hours').value) || 2;
+    urgentDeadline = new Date(Date.now() + hours * 3600000).toISOString();
+  }
+  const { data: ad, error } = await supabase.from('ads').insert({
+    author_id: currentProfile.id, title, description: desc, coins, cat,
+    status: 'open', badge: 'new', is_urgent: isUrgent, urgent_deadline: urgentDeadline
+  }).select().single();
+  btn.disabled = false; btn.textContent = 'Опубликовать 📌';
+  if (error) { showToast('Ошибка: ' + error.message); return; }
+  await supabase.from('profiles').update({ ads_posted: currentProfile.ads_posted + 1 }).eq('id', currentProfile.id);
+  currentProfile.ads_posted++;
+  closeModal('post');
+  showToast('📌 Объявление опубликовано!');
+  await notifySubscribersNewAd(ad);
+  loadAds(true);
+}
+
+// ══════════════════════════════════════════════
 // RATING
+// ══════════════════════════════════════════════
 // ══════════════════════════════════════════════
 function renderRatingStars() {
   document.getElementById('rating-stars').innerHTML = [1,2,3,4,5].map(v =>
@@ -2273,7 +2264,8 @@ function bnavSelect(tab) {
 }
 
 function showBottomNav(show) {
-  document.getElementById('bottom-nav').style.display = show ? 'flex' : 'none';
+  const bnav = document.getElementById('bottom-nav');
+  bnav.style.setProperty('display', show ? 'flex' : 'none', 'important');
   if (!show) closeActivityMenu();
 }
 
@@ -2761,5 +2753,51 @@ async function unlinkTikTok() {
 
 
 </script>
+
+<!-- BOTTOM NAV (4 tabs) -->
+<nav id="bottom-nav" style="display:none;position:fixed;bottom:0;left:0;right:0;top:auto;height:62px;z-index:9000;background:var(--card);border-top:1px solid var(--border);align-items:stretch;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -2px 12px rgba(0,0,0,0.08)">
+  <button class="bnav-item active" id="bnav-home" onclick="bnavSelect('home');window.scrollTo(0,0)">
+    <span class="bnav-icon">🏠</span>
+    <span class="bnav-label">Главная</span>
+  </button>
+  <button class="bnav-item" id="bnav-activity" onclick="bnavSelect('activity');openActivityMenu()">
+    <span class="bnav-icon">⚡</span>
+    <span class="bnav-label">Активность</span>
+  </button>
+  <button class="bnav-item bnav-post-btn" id="bnav-post" onclick="openPostModal()">
+    <span class="bnav-icon bnav-plus-circle">＋</span>
+    <span class="bnav-label">Добавить</span>
+  </button>
+  <button class="bnav-item bnav-admin" id="bnav-admin" style="display:none" onclick="bnavSelect('admin');openAdminPanel()">
+    <span class="bnav-icon">⚙️</span>
+    <span class="bnav-label">Админ</span>
+  </button>
+  <button class="bnav-item" id="bnav-profile" onclick="bnavSelect('profile');openProfileModal()">
+    <span class="bnav-icon">👤</span>
+    <span class="bnav-label" id="bnav-profile-name">Профиль</span>
+  </button>
+</nav>
+
+<!-- ACTIVITY POPUP MENU -->
+<div id="activity-menu" onclick="closeActivityMenu()" style="display:none;position:fixed;inset:0;z-index:499;background:rgba(0,0,0,0.35)">
+  <div onclick="event.stopPropagation()" style="position:absolute;bottom:74px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:20px;padding:10px;box-shadow:0 -8px 40px rgba(0,0,0,0.25);min-width:280px;max-width:92vw">
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 14px 8px">Активность</div>
+    <button onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
+      <span style="font-size:24px;width:36px;text-align:center">🏆</span> Топ пользователей
+    </button>
+    <button onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
+      <span style="font-size:24px;width:36px;text-align:center">📦</span> Мои заказы
+    </button>
+    <button onclick="closeActivityMenu();bnavSelect('chat');openChat()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
+      <span style="font-size:24px;width:36px;text-align:center">💬</span> Общий чат
+    </button>
+    <button onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
+      <span style="font-size:24px;width:36px;text-align:center">🔔</span> Уведомления
+      <span id="notif-badge" class="notif-badge" style="position:static;margin-left:auto;display:none">0</span>
+    </button>
+    <div style="margin:6px 8px 2px;height:1px;background:var(--border)"></div>
+    <button onclick="closeActivityMenu()" style="display:flex;align-items:center;justify-content:center;padding:12px;border-radius:12px;border:none;background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;font-size:14px;font-weight:600;color:var(--muted);width:100%;margin-top:4px">Закрыть</button>
+  </div>
+</div>
 </body>
 </html>
