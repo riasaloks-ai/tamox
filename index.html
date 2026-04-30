@@ -132,6 +132,36 @@
     }
     .theme-toggle:hover { background: rgba(255,255,255,0.08); color: #fff; }
 
+    /* Fix: email text input always shows typed text */
+    .email-text-input {
+      flex: 1;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      outline: none;
+      font-family: 'Geologica', sans-serif;
+      color: var(--text) !important;
+      background: var(--bg) !important;
+      transition: border-color .15s, background .15s;
+      min-width: 0;
+    }
+    .email-text-input::placeholder { color: var(--muted); opacity: 1; }
+    .email-text-input:focus {
+      border-color: var(--accent) !important;
+      background: var(--card) !important;
+    }
+
+    /* Password toggle wrapper */
+    .pw-wrap { position: relative; display: flex; align-items: center; }
+    .pw-wrap input { width: 100%; padding-right: 42px !important; }
+    .pw-toggle {
+      position: absolute; right: 12px; background: none; border: none;
+      cursor: pointer; font-size: 16px; color: var(--muted); padding: 0;
+      line-height: 1; transition: color 0.15s; user-select: none;
+    }
+    .pw-toggle:hover { color: var(--text); }
+
 
 
     .hero { background: var(--navy); padding: 2.5rem 1.5rem 3.5rem; text-align: center; position: relative; overflow: hidden; }
@@ -564,28 +594,14 @@
       <!-- Login -->
       <div id="form-login">
         <div class="form-group"><label>Email</label>
-          <div style="display:flex;gap:6px;align-items:center">
-            <input type="text" id="login-email-user" placeholder="твой_email" onkeydown="if(event.key==='Enter')doLogin()" style="flex:1;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;outline:none;font-family:'Geologica',sans-serif;color:var(--text);background:var(--bg);transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--card)'" onblur="this.style.borderColor='var(--border)';this.style.background='var(--bg)'" />
-            <span style="color:var(--muted);font-size:14px;flex-shrink:0">@</span>
-            <select id="login-email-domain" style="border:1.5px solid var(--border);border-radius:10px;padding:10px 10px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;color:var(--text);background:var(--bg);cursor:pointer;min-width:130px;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-              <option>gmail.com</option>
-              <option>mail.ru</option>
-              <option>yandex.ru</option>
-              <option>outlook.com</option>
-              <option>hotmail.com</option>
-              <option>icloud.com</option>
-              <option>yahoo.com</option>
-              <option>rambler.ru</option>
-              <option>inbox.ru</option>
-              <option>list.ru</option>
-              <option>bk.ru</option>
-              <option>proton.me</option>
-              <option>ukr.net</option>
-              <option>meta.ua</option>
-            </select>
+          <input type="email" id="login-email-user" placeholder="example@gmail.com" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="email" />
+        </div>
+        <div class="form-group"><label>Пароль</label>
+          <div class="pw-wrap">
+            <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+            <button type="button" class="pw-toggle" onclick="togglePw('login-password',this)" title="Показать/скрыть пароль">👁</button>
           </div>
         </div>
-        <div class="form-group"><label>Пароль</label><input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
         <div class="form-err" id="login-err"></div>
         <button class="btn-full" id="login-btn" onclick="doLogin()">Войти →</button>
         <div class="auth-switch">Нет аккаунта? <a onclick="switchAuthTab('register')">Зарегистрироваться</a></div>
@@ -595,32 +611,18 @@
         <div class="auth-info">🪙 Каждый новый ученик получает <strong>100 монет</strong> при регистрации!</div>
         <div class="form-group"><label>Имя</label><input type="text" id="reg-name" placeholder="Айгерим" /></div>
         <div class="form-group"><label>Email</label>
-          <div style="display:flex;gap:6px;align-items:center">
-            <input type="text" id="reg-email-user" placeholder="твой_email" style="flex:1;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;outline:none;font-family:'Geologica',sans-serif;color:var(--text);background:var(--bg);transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--card)'" onblur="this.style.borderColor='var(--border)';this.style.background='var(--bg)'" />
-            <span style="color:var(--muted);font-size:14px;flex-shrink:0">@</span>
-            <select id="reg-email-domain" style="border:1.5px solid var(--border);border-radius:10px;padding:10px 10px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;color:var(--text);background:var(--bg);cursor:pointer;min-width:130px;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-              <option>gmail.com</option>
-              <option>mail.ru</option>
-              <option>yandex.ru</option>
-              <option>outlook.com</option>
-              <option>hotmail.com</option>
-              <option>icloud.com</option>
-              <option>yahoo.com</option>
-              <option>rambler.ru</option>
-              <option>inbox.ru</option>
-              <option>list.ru</option>
-              <option>bk.ru</option>
-              <option>proton.me</option>
-              <option>ukr.net</option>
-              <option>meta.ua</option>
-            </select>
-          </div>
+          <input type="email" id="reg-email-user" placeholder="example@gmail.com" autocomplete="email" />
         </div>
         <div class="form-group">
           <label>Класс <span style="font-weight:400;color:var(--muted)">(например: 10А, 11Б или свой вариант)</span></label>
           <input type="text" id="reg-class" placeholder="Введи свой класс" maxlength="20" />
         </div>
-        <div class="form-group"><label>Пароль</label><input type="password" id="reg-password" placeholder="Минимум 6 символов" onkeydown="if(event.key==='Enter')doRegister()" /></div>
+        <div class="form-group"><label>Пароль</label>
+          <div class="pw-wrap">
+            <input type="password" id="reg-password" placeholder="Минимум 6 символов" onkeydown="if(event.key==='Enter')doRegister()" />
+            <button type="button" class="pw-toggle" onclick="togglePw('reg-password',this)" title="Показать/скрыть пароль">👁</button>
+          </div>
+        </div>
         <div class="form-group"><label>Реферальный код <span style="font-weight:400;color:var(--muted)">(необязательно — получишь +15 🪙)</span></label><input type="text" id="reg-ref" placeholder="Введи код друга" maxlength="8" style="text-transform:uppercase" /></div>
         <div class="form-err" id="reg-err"></div>
         <button class="btn-full" id="reg-btn" onclick="doRegister()">Создать аккаунт 🎉</button>
@@ -1341,6 +1343,11 @@ function showMain() {
 // ══════════════════════════════════════════════
 // AUTH
 // ══════════════════════════════════════════════
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
 function switchAuthTab(tab) {
   document.getElementById('tab-login').classList.toggle('active', tab === 'login');
   document.getElementById('tab-register').classList.toggle('active', tab === 'register');
@@ -1352,14 +1359,12 @@ function switchAuthTab(tab) {
 }
 
 async function doLogin() {
-    const emailUser = document.getElementById('login-email-user').value.trim();
-    const emailDomain = document.getElementById('login-email-domain').value;
-    const email = emailUser ? emailUser + '@' + emailDomain : '';
+    const email = document.getElementById('login-email-user').value.trim();
     const password = document.getElementById('login-password').value;
     const errEl = document.getElementById('login-err');
     const btn = document.getElementById('login-btn');
 
-    if (!emailUser || !password) {
+    if (!email || !password) {
         showErr(errEl, 'Заполни все поля');
         return;
     }
@@ -1386,16 +1391,14 @@ async function doLogin() {
 
 async function doRegister() {
   const name = document.getElementById('reg-name').value.trim();
-  const emailUser = document.getElementById('reg-email-user').value.trim();
-  const emailDomain = document.getElementById('reg-email-domain').value;
-  const email = emailUser ? emailUser + '@' + emailDomain : '';
+  const email = document.getElementById('reg-email-user').value.trim();
   const cls = document.getElementById('reg-class').value.trim();
   const password = document.getElementById('reg-password').value;
   const refCode = document.getElementById('reg-ref').value.trim().toUpperCase();
   const errEl = document.getElementById('reg-err');
   const btn = document.getElementById('reg-btn');
-  if (!name || !emailUser || !cls || !password) { showErr(errEl, 'Заполни все поля'); return; }
-  if (!/^[^\s@]+$/.test(emailUser)) { showErr(errEl, 'Некорректное имя пользователя в email'); return; }
+  if (!name || !email || !cls || !password) { showErr(errEl, 'Заполни все поля'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr(errEl, 'Введи корректный email'); return; }
 
   if (cls.length < 2) { showErr(errEl, 'Укажи класс (минимум 2 символа, например 10А)'); return; }
   if (password.length < 6) { showErr(errEl, 'Пароль минимум 6 символов'); return; }
