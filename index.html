@@ -117,6 +117,10 @@
     [data-theme="dark"] .sk-card { background: var(--card); border-color: var(--border); }
     [data-theme="dark"] .skeleton { background: linear-gradient(90deg, #1e2130 25%, #252838 50%, #1e2130 75%); background-size: 800px 100%; }
     [data-theme="dark"] #chat-messages { background: #13151f !important; }
+    [data-theme="dark"] #dm-messages { background: #13151f !important; }
+    [data-theme="dark"] .comment-text { background: #13151f; }
+    [data-theme="dark"] .notif-item { background: var(--card); border-color: var(--border); }
+    [data-theme="dark"] .notif-item.unread { background: rgba(255,92,53,0.08); border-color: var(--accent); }
     [data-theme="dark"] .avatar-option { background: #1e2130; border-color: var(--border); }
 
     /* Theme toggle button */
@@ -335,6 +339,63 @@
     /* CHAT */
     #chat-messages::-webkit-scrollbar { width: 4px; }
     #chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+
+    /* DM (личные сообщения) */
+    #dm-messages::-webkit-scrollbar { width: 4px; }
+    #dm-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+
+    /* TikTok badge in profile */
+    .tiktok-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: linear-gradient(135deg, #010101, #2a2a2a);
+      color: #fff; border-radius: 999px; padding: 4px 12px;
+      font-size: 12px; font-weight: 600; margin-top: 4px; cursor: pointer;
+    }
+    .tiktok-badge:hover { opacity: 0.85; }
+    .tiktok-connect-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #010101; color: #fff; border: none; border-radius: 10px;
+      padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Geologica', sans-serif; width: 100%; justify-content: center;
+      margin-bottom: 8px; transition: background 0.15s;
+    }
+    .tiktok-connect-btn:hover { background: #222; }
+    .tiktok-connect-btn.connected { background: linear-gradient(135deg,#ff0050,#00f2ea); color: #fff; }
+    [data-theme="dark"] .tiktok-connect-btn { background: #1a1a1a; border: 1px solid #333; }
+
+    /* ── COMMENTS ── */
+    .comment-item { display:flex; gap:9px; margin-bottom:11px; }
+    .comment-avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--border); }
+    .comment-avatar img { width:100%; height:100%; object-fit:cover; }
+    .comment-bubble { flex:1; min-width:0; }
+    .comment-author { font-size:11px; font-weight:700; color:var(--navy); margin-bottom:2px; cursor:pointer; }
+    .comment-author:hover { color:var(--accent); }
+    .comment-text { font-size:12.5px; color:var(--text); line-height:1.5; background:var(--bg); border-radius:4px 12px 12px 12px; padding:7px 11px; word-break:break-word; }
+    .comment-time { font-size:10px; color:var(--muted); margin-top:3px; }
+    [data-theme="dark"] .comment-text { background:#13151f; }
+    .comment-input-row { display:flex; gap:8px; margin-top:10px; align-items:flex-end; }
+    .comment-input-row textarea { flex:1; border:1.5px solid var(--border); border-radius:10px; padding:8px 12px; font-size:13px; font-family:'Geologica',sans-serif; resize:none; min-height:38px; max-height:90px; outline:none; background:var(--bg); color:var(--text); transition:border-color .15s; }
+    .comment-input-row textarea:focus { border-color:var(--accent); }
+    .comment-send-btn { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:9px 14px; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0; font-family:'Geologica',sans-serif; transition:background .15s; }
+    .comment-send-btn:hover { background:#e0441e; }
+
+    /* ── SUBSCRIPTIONS ── */
+    .sub-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:999px; font-size:12px; font-weight:700; cursor:pointer; font-family:'Geologica',sans-serif; border:2px solid var(--accent); transition:all .15s; }
+    .sub-btn.subscribed { background:var(--accent); color:#fff; }
+    .sub-btn.not-subscribed { background:transparent; color:var(--accent); }
+    .sub-btn:hover { opacity:.85; }
+
+    /* ── NOTIFICATION BADGE ── */
+    .notif-badge { position:absolute; top:-4px; right:-4px; background:#e53935; color:#fff; font-size:9px; font-weight:800; border-radius:999px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 4px; border:2px solid var(--card); animation:urgentPulse 1.4s ease-in-out infinite; }
+    .bnav-item { position:relative; }
+
+    /* ── NOTIFICATIONS PANEL ── */
+    .notif-item { display:flex; align-items:flex-start; gap:10px; padding:10px 12px; border-radius:12px; margin-bottom:6px; cursor:pointer; transition:background .12s; border:1px solid var(--border); background:var(--card); }
+    .notif-item:hover { background:var(--bg); }
+    .notif-item.unread { border-color:var(--accent); background:rgba(255,92,53,0.05); }
+    .notif-icon { font-size:20px; flex-shrink:0; margin-top:1px; }
+    .notif-text { flex:1; font-size:12.5px; color:var(--text); line-height:1.45; }
+    .notif-time { font-size:10px; color:var(--muted); margin-top:3px; }
 
     /* TOAST */
     #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--navy); color: #fff; padding: 10px 22px; border-radius: 999px; font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 9999; pointer-events: none; white-space: nowrap; }
@@ -751,6 +812,78 @@
   </div>
 </div>
 
+<!-- DM (личные сообщения) -->
+<div class="overlay" id="modal-dm" onclick="if(event.target===this)closeDmModal()">
+  <div class="modal modal-wide" style="max-width:560px;display:flex;flex-direction:column;height:85vh;max-height:600px;padding:0;overflow:hidden;border-radius:18px">
+    <div style="padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="dm-partner-avatar" style="width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--border)"></div>
+        <div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:0.9rem;font-weight:700;color:var(--navy)" id="dm-partner-name">Личные сообщения</div>
+          <div style="font-size:11px;color:var(--muted)" id="dm-partner-class"></div>
+        </div>
+      </div>
+      <button onclick="closeDmModal()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    </div>
+    <div id="dm-messages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:8px;background:var(--bg)"></div>
+    <div style="padding:0.8rem 1rem;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:var(--card)">
+      <input type="text" id="dm-input" placeholder="Написать сообщение..." maxlength="500"
+        style="flex:1;border:1.5px solid var(--border);border-radius:10px;padding:9px 13px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;background:var(--bg)"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendDmMsg()}" />
+      <button onclick="sendDmMsg()" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- TIKTOK LINK MODAL -->
+<div class="overlay" id="modal-tiktok" onclick="if(event.target===this)closeModal('tiktok')">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-title">🎵 Привязать TikTok</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.5">Привяжи свой TikTok-аккаунт, чтобы другие пользователи могли тебя найти. Твой никнейм будет отображаться в профиле.</div>
+    <div class="form-group">
+      <label>Никнейм TikTok</label>
+      <div style="position:relative">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px">@</span>
+        <input type="text" id="tiktok-input" placeholder="твой_никнейм" maxlength="40"
+          style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px 10px 30px;font-size:14px;outline:none;font-family:'Geologica',sans-serif;color:var(--text);background:var(--bg)" />
+      </div>
+    </div>
+    <div id="tiktok-err" class="form-err"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('tiktok')">Отмена</button>
+      <button class="btn-post" onclick="saveTikTok()">💾 Сохранить</button>
+    </div>
+    <button id="tiktok-unlink-btn" onclick="unlinkTikTok()" style="display:none;width:100%;margin-top:8px;padding:9px;border-radius:10px;border:1.5px solid #e3e0d8;background:transparent;color:#e24b4a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">🗑️ Отвязать TikTok</button>
+  </div>
+</div>
+
+<!-- COMMENTS MODAL -->
+<div class="overlay" id="modal-comments" onclick="if(event.target===this)closeModal('comments')">
+  <div class="modal modal-wide" style="max-width:520px">
+    <div class="modal-title" id="comments-modal-title">💬 Комментарии</div>
+    <div id="comments-list" style="max-height:340px;overflow-y:auto;margin-bottom:12px;padding-right:2px"></div>
+    <div class="comment-input-row">
+      <textarea id="comment-text" placeholder="Задай вопрос публично..." maxlength="300" rows="1"
+        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitComment()}"></textarea>
+      <button class="comment-send-btn" onclick="submitComment()">➤</button>
+    </div>
+    <button class="btn-cancel" style="width:100%;margin-top:10px" onclick="closeModal('comments')">Закрыть</button>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS MODAL -->
+<div class="overlay" id="modal-notif" onclick="if(event.target===this)closeModal('notif')">
+  <div class="modal modal-wide" style="max-width:480px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+      <div class="modal-title" style="margin-bottom:0">🔔 Уведомления</div>
+      <button onclick="markAllNotifsRead()" style="font-size:11px;font-weight:600;color:var(--accent);background:none;border:none;cursor:pointer;font-family:'Geologica',sans-serif">Прочитать все</button>
+    </div>
+    <div id="notif-list" style="max-height:420px;overflow-y:auto"></div>
+    <button class="btn-cancel" style="width:100%;margin-top:10px" onclick="closeModal('notif')">Закрыть</button>
+  </div>
+</div>
+
 <!-- ADMIN PANEL -->
 <div class="admin-overlay" id="admin-overlay" style="display:none">
   <div class="admin-panel">
@@ -810,6 +943,11 @@
   <button class="bnav-item" id="bnav-chat" onclick="bnavSelect('chat');openChat()">
     <span class="bnav-icon">💬</span>
     <span class="bnav-label">Чат</span>
+  </button>
+  <button class="bnav-item" id="bnav-notif" onclick="bnavSelect('notif');openNotifications()">
+    <span class="bnav-icon">🔔</span>
+    <span id="notif-badge" class="notif-badge" style="display:none">0</span>
+    <span class="bnav-label">Уведомления</span>
   </button>
   <button class="bnav-item" id="bnav-profile" onclick="bnavSelect('profile');openProfileModal()">
     <span class="bnav-icon">👤</span>
@@ -918,6 +1056,10 @@ let _authHandling = false;
           if (data) {
             setProfile(data);
             showMain();
+            // Load social features
+            await loadMySubscriptions();
+            await loadNotifications();
+            subscribeNotifications();
           } else {
             showAuth();
           }
@@ -1023,6 +1165,26 @@ async function doRegister() {
   const errEl = document.getElementById('reg-err');
   const btn = document.getElementById('reg-btn');
   if (!name || !email || !cls || !password) { showErr(errEl, 'Заполни все поля'); return; }
+
+  // ── Строгая проверка email ──
+  const emailLower = email.toLowerCase();
+  // Базовая структура: что-то @ что-то . домен (минимум 2 буквы)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) { showErr(errEl, 'Некорректный email-адрес'); return; }
+  // Список допустимых TLD (блокируем опечатки вроде .con, .cmo, .ogr и т.д.)
+  const validTLDs = ['com','ru','kz','net','org','io','me','co','uk','de','fr','es','it','ua','by','am','ge','az','tm','tj','kg','uz','info','biz','edu','gov','app','dev','ai','mail','gmail','yahoo','yandex','outlook','hotmail','live','icloud','proton','protonmail'];
+  const parts = emailLower.split('@');
+  const domainParts = parts[1] ? parts[1].split('.') : [];
+  const tld = domainParts[domainParts.length - 1] || '';
+  if (!validTLDs.includes(tld) && tld.length < 2) { showErr(errEl, `Похоже, домен .${tld} некорректный. Проверь email`); return; }
+  // Блокируем явные опечатки
+  const typos = ['con','cmo','ogr','omc','ocm','vom','gmal','gmial','gail','gamil','yaho','homail','hotmal','outlok'];
+  if (typos.includes(tld)) { showErr(errEl, `Похоже, ты опечатался: «.${tld}». Возможно, ты имел в виду .com или .net?`); return; }
+  // Должен быть хотя бы 1 символ до @
+  if (parts[0].length < 1) { showErr(errEl, 'Некорректный email-адрес'); return; }
+  // Домен должен содержать хотя бы одну точку
+  if (!parts[1] || !parts[1].includes('.')) { showErr(errEl, 'Некорректный email-адрес (отсутствует домен)'); return; }
+
   if (cls.length < 2) { showErr(errEl, 'Укажи класс (минимум 2 символа, например 10А)'); return; }
   if (password.length < 6) { showErr(errEl, 'Пароль минимум 6 символов'); return; }
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
@@ -1261,6 +1423,7 @@ function renderAds() {
           <div class="ad-footer">
             <div class="ad-price">🪙 ${ad.coins}<small>исполнитель получит ${earn}🪙</small></div>
             <div class="ad-info">
+              <span class="ad-author" style="cursor:pointer;color:var(--muted)" onclick="event.stopPropagation();openComments('${ad.id}','${escHtml(ad.title).replace(/'/g,'\\\'')}')" title="Комментарии">💬</span>
               <span class="ad-author">${escHtml(authorName)}</span>
               <span class="ad-time">${fmtTime(ad.created_at)}</span>
             </div>
@@ -1341,7 +1504,7 @@ function openAdDetail(id) {
     </div>
     <div class="ad-detail-desc">${escHtml(ad.description)}</div>
     <div class="ad-detail-meta">
-      <div class="meta-chip">👤 ${escHtml(authorName)}</div>
+      <div class="meta-chip" style="cursor:pointer" onclick="closeModal('detail');openOtherProfile('${ad.author_id}')">👤 ${escHtml(authorName)}</div>
       <div class="meta-chip">📅 ${fmtTime(ad.created_at)}</div>
       <div class="meta-chip">🪙 ${ad.coins} монет</div>
     </div>
@@ -1351,7 +1514,13 @@ function openAdDetail(id) {
       <div class="deal-row"><span class="deal-label">Исполнитель получит</span><span class="deal-val total">🪙 ${earn}</span></div>
     </div>
     ${actionHtml}
-    ${!isOwn ? `<button onclick="openReportModal('${ad.id}')" style="width:100%;margin-top:6px;padding:9px;border-radius:10px;border:1.5px solid #e3e0d8;background:transparent;color:#e24b4a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">🚩 Пожаловаться на объявление</button>` : ''}
+    ${!isOwn ? `
+    <button onclick="closeModal('detail');openDm('${ad.author_id}')" style="width:100%;margin-top:8px;padding:11px;border-radius:10px;border:none;background:var(--escrow);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">💬 Написать в ЛС автору</button>
+    <button onclick="openReportModal('${ad.id}')" style="width:100%;margin-top:6px;padding:9px;border-radius:10px;border:1.5px solid #e3e0d8;background:transparent;color:#e24b4a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">🚩 Пожаловаться на объявление</button>` : ''}
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button onclick="openComments('${ad.id}','${escHtml(ad.title)}')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);color:var(--navy);font-size:12px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px" id="comments-btn-${ad.id}">💬 Комментарии</button>
+      ${!isOwn ? `<button onclick="toggleSubscribe('${ad.author_id}','${escHtml(authorName)}')" id="sub-btn-${ad.author_id}" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif">🔔 Подписаться</button>` : ''}
+    </div>
     <button class="btn-cancel" style="width:100%;margin-top:8px" onclick="closeModal('detail')">Закрыть</button>
   `;
   openModal('detail');
@@ -1491,6 +1660,9 @@ async function postAd() {
   closeModal('post');
   showToast('\uD83D\uDCCC Объявление опубликовано!');
 
+  // Уведомить подписчиков
+  notifySubscribersNewAd(newAd);
+
   // 4. Фоновый рефреш через 1.5с для синхронизации с сервером
   setTimeout(() => loadAds(true), 1500);
 }
@@ -1531,6 +1703,10 @@ async function openProfileModal(profileData) {
   const profileAds = adsRes.data || [];
   const profileReviews = revRes.data || [];
   renderProfileModal(target, profileAds, profileReviews, 'ads');
+  // Update subscribe button after render
+  if (target.id !== currentProfile.id) {
+    setTimeout(() => updateSubBtnProfile(target.id), 50);
+  }
 }
 
 function renderProfileModal(target, profileAds, profileReviews, activeTab) {
@@ -1557,6 +1733,9 @@ function renderProfileModal(target, profileAds, profileReviews, activeTab) {
         </div>`).join('');
 
   const refCode = isOwn ? generateRefCode(target.id) : null;
+  const tiktokDisplay = target.tiktok_handle
+    ? `<div style="text-align:center;margin-bottom:0.5rem"><a href="https://tiktok.com/@${escHtml(target.tiktok_handle)}" target="_blank" class="tiktok-badge">🎵 @${escHtml(target.tiktok_handle)}</a></div>`
+    : '';
   const ownBtns = isOwn ? `
     <div class="ref-box">
       <div class="ref-box-title">🔗 Твой реферальный код</div>
@@ -1566,18 +1745,24 @@ function renderProfileModal(target, profileAds, profileReviews, activeTab) {
       </div>
       <div class="ref-hint">Поделись кодом с другом — вы оба получите +15 🪙 после его регистрации!</div>
     </div>
+    <button class="tiktok-connect-btn ${target.tiktok_handle ? 'connected' : ''}" onclick="openTikTokModal()">
+      🎵 ${target.tiktok_handle ? `TikTok: @${escHtml(target.tiktok_handle)}` : 'Привязать TikTok'}
+    </button>
     <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="openAvatarPicker()">🎨 Сменить аватарку</button>
     <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="closeModal('profile');openWallet()">🪙 Кошелёк</button>
     <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="closeModal('profile');openOrders('active')">📦 Мои заказы</button>
     <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="openSupportModal()">🛠️ Техническая поддержка</button>
     <button class="btn-cancel" style="width:100%;color:var(--accent);border-color:var(--accent)" onclick="doLogout()">Выйти из аккаунта</button>
-  ` : `<button class="btn-cancel" style="width:100%" onclick="closeModal('profile')">Закрыть</button>`;
+  ` : `<button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="openDm('${target.id}');closeModal('profile')">💬 Написать в ЛС</button>
+  <button id="sub-btn-profile-${target.id}" class="sub-btn not-subscribed" style="width:100%;margin-bottom:8px;justify-content:center" onclick="toggleSubscribe('${target.id}','${escHtml(target.name)}')">🔔 Подписаться</button>
+  <button class="btn-cancel" style="width:100%" onclick="closeModal('profile')">Закрыть</button>`;
 
   document.getElementById('modal-profile-body').innerHTML = `
     <div class="modal-title">👤 Профиль</div>
     <div class="profile-avatar"><img src="${avatarUrl(target.avatar_seed || target.name)}" alt="avatar"></div>
     <div class="profile-name">${escHtml(target.name)}</div>
     <div class="profile-contact">${escHtml(target.email)} · Класс ${target.class || '—'}</div>
+    ${tiktokDisplay}
     <div class="profile-class-badge">${classBadgeHTML(target.coins)}</div>
     <div class="profile-rating">${target.rating ? `⭐ ${target.rating.toFixed(1)} (${target.rating_count} оценок)` : 'Нет оценок'}</div>
     <div class="profile-stats">
@@ -2127,6 +2312,406 @@ function toggleTheme() {
   html.setAttribute('data-theme', next);
   localStorage.setItem('tamox-theme', next);
   document.getElementById('theme-toggle-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
+// ══════════════════════════════════════════════
+// DM — ЛИЧНЫЕ СООБЩЕНИЯ
+// ══════════════════════════════════════════════
+let dmPartnerId = null;
+let dmMessages = [];
+let dmChannel = null;
+let _dmProfileCache = {};
+
+async function openDm(partnerId) {
+  if (!currentProfile) return;
+  if (partnerId === currentProfile.id) { showToast('Нельзя написать самому себе 😅'); return; }
+  dmPartnerId = partnerId;
+  // Load partner profile
+  let partner = _dmProfileCache[partnerId];
+  if (!partner) {
+    const { data } = await supabase.from('profiles').select('id,name,avatar_seed,class').eq('id', partnerId).maybeSingle();
+    if (!data) { showToast('Пользователь не найден'); return; }
+    partner = data;
+    _dmProfileCache[partnerId] = partner;
+  }
+  // Update header
+  document.getElementById('dm-partner-name').textContent = partner.name;
+  document.getElementById('dm-partner-class').textContent = partner.class ? 'Класс ' + partner.class : '';
+  document.getElementById('dm-partner-avatar').innerHTML = `<img src="${avatarUrl(partner.avatar_seed || partner.name)}" style="width:100%;height:100%;object-fit:cover" />`;
+  // Load messages
+  await loadDmMessages();
+  subscribeDm();
+  document.getElementById('modal-dm').classList.add('open');
+  document.getElementById('dm-input').focus();
+}
+
+function closeDmModal() {
+  document.getElementById('modal-dm').classList.remove('open');
+  if (dmChannel) { supabase.removeChannel(dmChannel); dmChannel = null; }
+  dmPartnerId = null;
+  dmMessages = [];
+}
+
+async function loadDmMessages() {
+  if (!dmPartnerId || !currentProfile) return;
+  const myId = currentProfile.id;
+  const { data } = await supabase.from('direct_messages')
+    .select('*')
+    .or(`and(sender_id.eq.${myId},receiver_id.eq.${dmPartnerId}),and(sender_id.eq.${dmPartnerId},receiver_id.eq.${myId})`)
+    .order('created_at', { ascending: true })
+    .limit(100);
+  dmMessages = data || [];
+  renderDmMessages();
+}
+
+function renderDmMessages() {
+  const el = document.getElementById('dm-messages');
+  if (dmMessages.length === 0) {
+    el.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:13px;padding:2rem">Начни переписку! 👋</div>`;
+    return;
+  }
+  const partner = _dmProfileCache[dmPartnerId];
+  el.innerHTML = dmMessages.map(msg => {
+    const isMe = msg.sender_id === currentProfile.id;
+    const avatarSeed = isMe ? (currentProfile.avatar_seed || currentProfile.name) : (partner?.avatar_seed || partner?.name || '?');
+    const avatarHtml = `<img src="${avatarUrl(avatarSeed)}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0" />`;
+    return `
+      <div style="display:flex;gap:8px;align-items:flex-end;${isMe ? 'flex-direction:row-reverse' : ''}">
+        ${avatarHtml}
+        <div style="max-width:72%">
+          <div style="background:${isMe ? 'var(--accent)' : 'var(--card)'};color:${isMe ? '#fff' : 'var(--text)'};padding:8px 12px;border-radius:${isMe ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};font-size:13px;line-height:1.5;word-break:break-word;box-shadow:0 1px 4px rgba(0,0,0,0.08)">${escHtml(msg.text)}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px;${isMe ? 'text-align:right' : ''}">${fmtTime(msg.created_at)}</div>
+        </div>
+      </div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function subscribeDm() {
+  if (dmChannel) { supabase.removeChannel(dmChannel); dmChannel = null; }
+  const myId = currentProfile.id;
+  dmChannel = supabase.channel('dm-' + [myId, dmPartnerId].sort().join('-'))
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'direct_messages' }, async (payload) => {
+      const msg = payload.new;
+      const isRelevant = (msg.sender_id === myId && msg.receiver_id === dmPartnerId) ||
+                         (msg.sender_id === dmPartnerId && msg.receiver_id === myId);
+      if (isRelevant) {
+        dmMessages.push(msg);
+        const modal = document.getElementById('modal-dm');
+        if (modal.classList.contains('open')) renderDmMessages();
+      }
+    })
+    .subscribe();
+}
+
+async function sendDmMsg() {
+  const input = document.getElementById('dm-input');
+  const text = input.value.trim();
+  if (!text || !currentProfile || !dmPartnerId) return;
+  input.value = '';
+  const { error } = await supabase.from('direct_messages').insert({ sender_id: currentProfile.id, receiver_id: dmPartnerId, text });
+  if (error) { showToast('Ошибка отправки'); input.value = text; }
+}
+
+async function openOtherProfile(userId) {
+  if (!userId) return;
+  if (userId === currentProfile.id) { openProfileModal(); return; }
+  const { data: profile } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+  if (!profile) { showToast('Профиль не найден'); return; }
+  openProfileModal(profile);
+}
+
+// ══════════════════════════════════════════════
+// COMMENTS
+// ══════════════════════════════════════════════
+let commentsAdId = null;
+let commentsChannel = null;
+
+async function openComments(adId, adTitle) {
+  commentsAdId = adId;
+  document.getElementById('comments-modal-title').textContent = `💬 Комментарии · ${adTitle.slice(0,30)}`;
+  document.getElementById('comment-text').value = '';
+  document.getElementById('comments-list').innerHTML = '<div style="text-align:center;padding:1rem;color:var(--muted);font-size:13px">Загрузка...</div>';
+  openModal('comments');
+  await loadComments(adId);
+  subscribeComments(adId);
+}
+
+async function loadComments(adId) {
+  const { data } = await supabase.from('ad_comments')
+    .select('*, author:profiles!ad_comments_author_id_fkey(id,name,avatar_seed)')
+    .eq('ad_id', adId)
+    .order('created_at', { ascending: true })
+    .limit(80);
+  renderComments(data || []);
+}
+
+function renderComments(comments) {
+  const el = document.getElementById('comments-list');
+  if (comments.length === 0) {
+    el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">Комментариев пока нет.<br>Будь первым! 💬</div>`;
+    return;
+  }
+  el.innerHTML = comments.map(c => {
+    const isMe = c.author_id === currentProfile.id;
+    return `<div class="comment-item">
+      <div class="comment-avatar"><img src="${avatarUrl(c.author?.avatar_seed || c.author?.name || '?')}" alt=""></div>
+      <div class="comment-bubble">
+        <div class="comment-author" onclick="openOtherProfile('${c.author_id}')">${escHtml(c.author?.name || 'Аноним')}</div>
+        <div class="comment-text">${escHtml(c.text)}</div>
+        <div class="comment-time">${fmtTime(c.created_at)}${isMe ? ' · <span style="color:var(--accent);cursor:pointer" onclick="deleteComment(\''+c.id+'\')">удалить</span>' : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function subscribeComments(adId) {
+  if (commentsChannel) { supabase.removeChannel(commentsChannel); commentsChannel = null; }
+  commentsChannel = supabase.channel('comments-' + adId)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'ad_comments', filter: `ad_id=eq.${adId}` }, async (payload) => {
+      const { data } = await supabase.from('ad_comments')
+        .select('*, author:profiles!ad_comments_author_id_fkey(id,name,avatar_seed)')
+        .eq('id', payload.new.id).maybeSingle();
+      if (data) {
+        const el = document.getElementById('comments-list');
+        // Remove empty placeholder
+        if (el.querySelector('[style*="Комментариев пока нет"]')) el.innerHTML = '';
+        el.innerHTML += `<div class="comment-item">
+          <div class="comment-avatar"><img src="${avatarUrl(data.author?.avatar_seed || data.author?.name || '?')}" alt=""></div>
+          <div class="comment-bubble">
+            <div class="comment-author" onclick="openOtherProfile('${data.author_id}')">${escHtml(data.author?.name || 'Аноним')}</div>
+            <div class="comment-text">${escHtml(data.text)}</div>
+            <div class="comment-time">${fmtTime(data.created_at)}</div>
+          </div>
+        </div>`;
+        el.scrollTop = el.scrollHeight;
+      }
+    })
+    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'ad_comments', filter: `ad_id=eq.${adId}` }, () => {
+      loadComments(adId);
+    })
+    .subscribe();
+}
+
+async function submitComment() {
+  const text = document.getElementById('comment-text').value.trim();
+  if (!text || !commentsAdId) return;
+  if (text.length < 2) { showToast('Слишком короткий комментарий'); return; }
+  document.getElementById('comment-text').value = '';
+  const { error } = await supabase.from('ad_comments').insert({ ad_id: commentsAdId, author_id: currentProfile.id, text });
+  if (error) { showToast('Ошибка отправки'); document.getElementById('comment-text').value = text; }
+  else {
+    // Notify ad author
+    const ad = allAds.find(a => a.id === commentsAdId);
+    if (ad && ad.author_id !== currentProfile.id) {
+      await supabase.from('notifications').insert({
+        user_id: ad.author_id,
+        icon: '💬',
+        text: `${currentProfile.name} прокомментировал твоё объявление «${ad.title.slice(0,30)}»`,
+        link_ad_id: commentsAdId
+      });
+    }
+  }
+}
+
+async function deleteComment(commentId) {
+  if (!confirm('Удалить комментарий?')) return;
+  await supabase.from('ad_comments').delete().eq('id', commentId).eq('author_id', currentProfile.id);
+}
+
+// ══════════════════════════════════════════════
+// SUBSCRIPTIONS
+// ══════════════════════════════════════════════
+let mySubscriptions = new Set(); // set of subscribed-to user IDs
+
+async function loadMySubscriptions() {
+  if (!currentProfile) return;
+  const { data } = await supabase.from('subscriptions').select('target_id').eq('follower_id', currentProfile.id);
+  mySubscriptions = new Set((data || []).map(s => s.target_id));
+}
+
+async function toggleSubscribe(targetId, targetName) {
+  if (!currentProfile) return;
+  if (targetId === currentProfile.id) { showToast('Нельзя подписаться на себя 😅'); return; }
+  const isSub = mySubscriptions.has(targetId);
+  if (isSub) {
+    await supabase.from('subscriptions').delete().eq('follower_id', currentProfile.id).eq('target_id', targetId);
+    mySubscriptions.delete(targetId);
+    showToast('Подписка отменена');
+  } else {
+    await supabase.from('subscriptions').insert({ follower_id: currentProfile.id, target_id: targetId });
+    mySubscriptions.add(targetId);
+    showToast(`🔔 Подписался на ${targetName}!`);
+    // Notify target
+    await supabase.from('notifications').insert({
+      user_id: targetId,
+      icon: '🔔',
+      text: `${currentProfile.name} подписался на тебя!`,
+      link_user_id: currentProfile.id
+    });
+  }
+  updateSubBtnAll(targetId);
+}
+
+function updateSubBtnAll(targetId) {
+  const isSub = mySubscriptions.has(targetId);
+  // In ad detail
+  const btn = document.getElementById('sub-btn-' + targetId);
+  if (btn) {
+    btn.textContent = isSub ? '✅ Подписан' : '🔔 Подписаться';
+    btn.style.background = isSub ? 'var(--green)' : 'transparent';
+    btn.style.color = isSub ? '#fff' : 'var(--accent)';
+    btn.style.borderColor = isSub ? 'var(--green)' : 'var(--accent)';
+  }
+  // In profile
+  const btnP = document.getElementById('sub-btn-profile-' + targetId);
+  if (btnP) {
+    btnP.textContent = isSub ? '✅ Подписан' : '🔔 Подписаться';
+    btnP.className = 'sub-btn ' + (isSub ? 'subscribed' : 'not-subscribed');
+    btnP.style.width = '100%';
+    btnP.style.marginBottom = '8px';
+    btnP.style.justifyContent = 'center';
+  }
+}
+
+async function updateSubBtnProfile(targetId) {
+  await loadMySubscriptions();
+  updateSubBtnAll(targetId);
+}
+
+// On new ad published — notify subscribers
+async function notifySubscribersNewAd(ad) {
+  const { data: subs } = await supabase.from('subscriptions').select('follower_id').eq('target_id', ad.author_id);
+  if (!subs || subs.length === 0) return;
+  const notifs = subs.map(s => ({
+    user_id: s.follower_id,
+    icon: '📌',
+    text: `${currentProfile.name} опубликовал новое объявление: «${ad.title.slice(0,35)}»`,
+    link_ad_id: ad.id
+  }));
+  await supabase.from('notifications').insert(notifs);
+}
+
+// ══════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════
+let allNotifications = [];
+let notifChannel = null;
+
+async function loadNotifications() {
+  if (!currentProfile) return;
+  const { data } = await supabase.from('notifications')
+    .select('*').eq('user_id', currentProfile.id)
+    .order('created_at', { ascending: false }).limit(40);
+  allNotifications = data || [];
+  updateNotifBadge();
+}
+
+function updateNotifBadge() {
+  const unread = allNotifications.filter(n => !n.is_read).length;
+  const badge = document.getElementById('notif-badge');
+  if (!badge) return;
+  badge.style.display = unread > 0 ? 'flex' : 'none';
+  badge.textContent = unread > 9 ? '9+' : unread;
+}
+
+function subscribeNotifications() {
+  if (!currentProfile || notifChannel) return;
+  notifChannel = supabase.channel('notifs-' + currentProfile.id)
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'notifications',
+      filter: `user_id=eq.${currentProfile.id}`
+    }, (payload) => {
+      allNotifications.unshift(payload.new);
+      updateNotifBadge();
+      showToast(payload.new.icon + ' ' + payload.new.text.slice(0, 50));
+    })
+    .subscribe();
+}
+
+async function openNotifications() {
+  await loadNotifications();
+  renderNotifications();
+  openModal('notif');
+}
+
+function renderNotifications() {
+  const el = document.getElementById('notif-list');
+  if (allNotifications.length === 0) {
+    el.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px">🔔 Уведомлений пока нет</div>`;
+    return;
+  }
+  el.innerHTML = allNotifications.map(n => `
+    <div class="notif-item ${n.is_read ? '' : 'unread'}" onclick="handleNotifClick('${n.id}','${n.link_ad_id || ''}','${n.link_user_id || ''}')">
+      <div class="notif-icon">${n.icon || '🔔'}</div>
+      <div style="flex:1">
+        <div class="notif-text">${escHtml(n.text)}</div>
+        <div class="notif-time">${fmtTime(n.created_at)}</div>
+      </div>
+      ${!n.is_read ? '<div style="width:8px;height:8px;background:var(--accent);border-radius:50%;flex-shrink:0;margin-top:4px"></div>' : ''}
+    </div>`).join('');
+}
+
+async function handleNotifClick(notifId, adId, userId) {
+  // Mark as read
+  await supabase.from('notifications').update({ is_read: true }).eq('id', notifId);
+  const n = allNotifications.find(x => x.id === notifId);
+  if (n) n.is_read = true;
+  updateNotifBadge();
+  renderNotifications();
+  // Navigate
+  if (adId) {
+    closeModal('notif');
+    const ad = allAds.find(a => a.id === adId);
+    if (ad) openAdDetail(adId);
+    else { await loadAds(true); setTimeout(() => openAdDetail(adId), 500); }
+  } else if (userId) {
+    closeModal('notif');
+    openOtherProfile(userId);
+  }
+}
+
+async function markAllNotifsRead() {
+  await supabase.from('notifications').update({ is_read: true }).eq('user_id', currentProfile.id).eq('is_read', false);
+  allNotifications.forEach(n => n.is_read = true);
+  updateNotifBadge();
+  renderNotifications();
+  showToast('✅ Все прочитаны');
+}
+
+// ══════════════════════════════════════════════
+// TIKTOK
+// ══════════════════════════════════════════════
+function openTikTokModal() {
+  const handle = currentProfile.tiktok_handle || '';
+  document.getElementById('tiktok-input').value = handle;
+  document.getElementById('tiktok-err').classList.remove('show');
+  document.getElementById('tiktok-unlink-btn').style.display = handle ? '' : 'none';
+  closeModal('profile');
+  openModal('tiktok');
+}
+
+async function saveTikTok() {
+  let handle = document.getElementById('tiktok-input').value.trim().replace(/^@/, '');
+  const errEl = document.getElementById('tiktok-err');
+  if (!handle) { showErr(errEl, 'Введи никнейм'); return; }
+  if (!/^[a-zA-Z0-9._]{2,40}$/.test(handle)) { showErr(errEl, 'Никнейм может содержать только буквы, цифры, точки и подчёркивания (2–40 символов)'); return; }
+  const { error } = await supabase.from('profiles').update({ tiktok_handle: handle }).eq('id', currentProfile.id);
+  if (error) { showErr(errEl, 'Ошибка сохранения'); return; }
+  currentProfile = { ...currentProfile, tiktok_handle: handle };
+  closeModal('tiktok');
+  showToast('🎵 TikTok привязан: @' + handle);
+  openProfileModal();
+}
+
+async function unlinkTikTok() {
+  const { error } = await supabase.from('profiles').update({ tiktok_handle: null }).eq('id', currentProfile.id);
+  if (error) { showToast('Ошибка'); return; }
+  currentProfile = { ...currentProfile, tiktok_handle: null };
+  closeModal('tiktok');
+  showToast('TikTok отвязан');
+  openProfileModal();
 }
 
 // Apply saved theme immediately
