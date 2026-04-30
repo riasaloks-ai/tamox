@@ -504,6 +504,39 @@
     #main-screen .container { padding-bottom: 80px; }
     #main-screen footer { margin-bottom: 62px; }
     #toast { bottom: 80px !important; }
+
+    /* ── GROUPS / CHATS ── */
+    .groups-list { display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow-y:auto; }
+    .group-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:14px; background:var(--bg); border:1px solid var(--border); cursor:pointer; transition:all .15s; }
+    .group-item:hover { border-color:var(--accent); background:var(--card); }
+    .group-avatar { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+    .group-info { flex:1; min-width:0; }
+    .group-name { font-size:13.5px; font-weight:700; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .group-last { font-size:11px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .group-meta { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
+    .group-time { font-size:10px; color:var(--muted); }
+    .group-unread { background:var(--accent); color:#fff; font-size:9px; font-weight:800; border-radius:999px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+    .group-type-badge { font-size:9px; font-weight:700; padding:2px 7px; border-radius:999px; }
+    .group-type-public { background:#e8f3ff; color:#1a6ec9; }
+    .group-type-private { background:#f0ebff; color:#6b3fc9; }
+    .group-type-link { background:#e5f7ee; color:#0f6e56; }
+
+    /* Group Chat Window */
+    .group-chat-header { padding:1rem 1.2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+    .group-chat-info { display:flex; align-items:center; gap:10px; }
+    .group-chat-avatar { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+    .group-members-chip { font-size:10px; color:var(--muted); display:flex; align-items:center; gap:4px; }
+
+    [data-theme="dark"] .group-item { background:var(--card); }
+    [data-theme="dark"] .group-item:hover { background:#1e2130; }
+    [data-theme="dark"] .group-type-public { background:#1a2a3a; color:#4a8af4; }
+    [data-theme="dark"] .group-type-private { background:#20183a; color:#a56fff; }
+    [data-theme="dark"] .group-type-link { background:#0d2a1a; color:#3dcc8a; }
+
+    .groups-filter-btn { padding:5px 12px; border-radius:999px; font-size:11px; font-weight:700; cursor:pointer; border:1.5px solid var(--border); background:var(--bg); color:var(--navy); font-family:'Geologica',sans-serif; transition:all .15s; white-space:nowrap; }
+    .groups-filter-btn.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+    [data-theme="dark"] .groups-filter-btn { background:var(--card); color:var(--text); }
+    [data-theme="dark"] .groups-filter-btn.active { background:var(--accent); border-color:var(--accent); }
   </style>
 </head>
 <body>
@@ -940,6 +973,121 @@
         <button onclick="closeEditBalance()" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #e3e0d8;background:#f5f3ee;cursor:pointer;font-weight:600;font-family:'Geologica',sans-serif;font-size:13px">Отмена</button>
         <button onclick="saveBalance()" style="flex:2;padding:10px;border-radius:10px;border:none;background:#1db87a;color:#fff;cursor:pointer;font-weight:700;font-family:'Geologica',sans-serif;font-size:13px">Сохранить</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- GROUPS / CHATS -->
+<div class="overlay" id="modal-groups" onclick="if(event.target===this)closeModal('groups')">
+  <div class="modal modal-wide" style="max-width:520px;padding:0;overflow:hidden;border-radius:18px">
+    <div style="padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div style="font-family:'Unbounded',sans-serif;font-size:0.95rem;font-weight:700;color:var(--navy)">💬 Чаты</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="openCreateGroupModal()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Geologica',sans-serif">+ Создать</button>
+        <button onclick="closeModal('groups')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+      </div>
+    </div>
+    <div style="padding:0.8rem 1rem;border-bottom:1px solid var(--border)">
+      <div style="display:flex;gap:6px">
+        <button class="groups-filter-btn active" id="gfbtn-all" onclick="setGroupFilter('all')">Все</button>
+        <button class="groups-filter-btn" id="gfbtn-public" onclick="setGroupFilter('public')">🌐 Публичные</button>
+        <button class="groups-filter-btn" id="gfbtn-private" onclick="setGroupFilter('private')">🔒 Приватные</button>
+        <button class="groups-filter-btn" id="gfbtn-my" onclick="setGroupFilter('my')">📌 Мои</button>
+      </div>
+    </div>
+    <div class="groups-list" id="groups-list" style="padding:0.8rem 1rem;max-height:52vh"></div>
+    <div style="padding:0.8rem 1rem;border-top:1px solid var(--border)">
+      <div style="font-size:11px;color:var(--muted);text-align:center">Публичные чаты открыты для всех · Приватные — по паролю · По ссылке — через инвайт</div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE GROUP -->
+<div class="overlay" id="modal-create-group" onclick="if(event.target===this)closeModal('create-group')">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-title">✨ Создать чат / группу</div>
+    <div class="form-group">
+      <label>Название группы</label>
+      <input type="text" id="new-group-name" placeholder="Название чата" maxlength="40" />
+    </div>
+    <div class="form-group">
+      <label>Описание (необязательно)</label>
+      <input type="text" id="new-group-desc" placeholder="О чём этот чат?" maxlength="100" />
+    </div>
+    <div class="form-group">
+      <label>Эмодзи группы</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="group-emoji-picker">
+        ${['💬','🎓','📚','⚽','🎮','🎵','📸','🍕','💡','🏆','🔥','🌍','🎉','💻','🤝'].map(e => `<button onclick="selectGroupEmoji('${e}')" class="group-emoji-opt" style="font-size:22px;width:38px;height:38px;border-radius:10px;border:2px solid var(--border);background:var(--bg);cursor:pointer">${e}</button>`).join('')}
+      </div>
+      <input type="hidden" id="new-group-emoji" value="💬" />
+    </div>
+    <div class="form-group">
+      <label>Тип группы</label>
+      <select id="new-group-type" onchange="toggleGroupPassword()">
+        <option value="public">🌐 Публичная (видна всем, можно вступить)</option>
+        <option value="link">🔗 По ссылке (вступить только по инвайт-ссылке)</option>
+        <option value="private">🔒 Приватная (нужен пароль)</option>
+      </select>
+    </div>
+    <div class="form-group" id="group-password-group" style="display:none">
+      <label>Пароль для вступления</label>
+      <input type="text" id="new-group-password" placeholder="Придумай пароль" maxlength="20" />
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('create-group')">Отмена</button>
+      <button class="btn-post" onclick="createGroup()">Создать 🚀</button>
+    </div>
+  </div>
+</div>
+
+<!-- GROUP CHAT WINDOW -->
+<div class="overlay" id="modal-group-chat" onclick="if(event.target===this)closeGroupChat()">
+  <div class="modal modal-wide" style="max-width:560px;display:flex;flex-direction:column;height:85vh;max-height:620px;padding:0;overflow:hidden;border-radius:18px">
+    <div class="group-chat-header">
+      <div class="group-chat-info">
+        <div class="group-chat-avatar" id="gchat-avatar" style="background:var(--bg)">💬</div>
+        <div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:0.9rem;font-weight:700;color:var(--navy)" id="gchat-name">Чат</div>
+          <div class="group-members-chip" id="gchat-members">👥 0 участников</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="openGroupInfo()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;color:var(--muted);font-family:'Geologica',sans-serif">ℹ️ Инфо</button>
+        <button onclick="closeGroupChat()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+      </div>
+    </div>
+    <div id="group-chat-messages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:8px;background:var(--bg)"></div>
+    <div style="padding:0.8rem 1rem;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:var(--card)">
+      <input type="text" id="group-chat-input" placeholder="Написать сообщение..." maxlength="500"
+        style="flex:1;border:1.5px solid var(--border);border-radius:10px;padding:9px 13px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;background:var(--bg)"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendGroupMsg()}" />
+      <button onclick="sendGroupMsg()" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- GROUP INFO / INVITE -->
+<div class="overlay" id="modal-group-info" onclick="if(event.target===this)closeModal('group-info')">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-title" id="ginfo-title">ℹ️ Информация о группе</div>
+    <div id="ginfo-body"></div>
+    <button class="btn-cancel" style="width:100%;margin-top:1rem" onclick="closeModal('group-info')">Закрыть</button>
+  </div>
+</div>
+
+<!-- JOIN GROUP (password) -->
+<div class="overlay" id="modal-join-group" onclick="if(event.target===this)closeModal('join-group')">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-title">🔒 Приватная группа</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Введи пароль для вступления в группу</div>
+    <div class="form-group">
+      <label>Пароль</label>
+      <input type="text" id="join-group-password" placeholder="Пароль" maxlength="20" onkeydown="if(event.key==='Enter')joinGroupWithPassword()" />
+    </div>
+    <div id="join-group-err" class="form-err"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('join-group')">Отмена</button>
+      <button class="btn-post" onclick="joinGroupWithPassword()">Войти 🔓</button>
     </div>
   </div>
 </div>
@@ -1435,13 +1583,62 @@ function renderAds() {
         </div>
       </div>`;
   }).join('');
+}
+
+function switchProfileTab(tab) {
+  document.getElementById('profile-tab-ads').style.display = tab === 'ads' ? '' : 'none';
+  document.getElementById('profile-tab-reviews').style.display = tab === 'reviews' ? '' : 'none';
+  const accentStyle = 'border:1.5px solid var(--accent);background:var(--accent);color:#fff';
+  const normalStyle = 'border:1.5px solid var(--border);background:var(--bg);color:var(--navy)';
+  document.getElementById('ptab-ads').style.cssText += tab === 'ads' ? accentStyle : normalStyle;
+  document.getElementById('ptab-reviews').style.cssText += tab === 'reviews' ? accentStyle : normalStyle;
+}
+
+// ══════════════════════════════════════════════
+// PROFILE MODAL
+// ══════════════════════════════════════════════
+async function openProfileModal() {
+  if (!currentProfile) return;
+  await _renderProfileModal(currentProfile, true);
+}
+
+async function openOtherProfile(userId) {
+  if (!userId) return;
+  if (userId === currentProfile?.id) { openProfileModal(); return; }
+  const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+  if (!data) { showToast('Профиль не найден'); return; }
+  await _renderProfileModal(data, false);
+}
+
+async function _renderProfileModal(target, isOwn) {
+  const activeTab = 'ads';
+  const [adsRes, revsRes] = await Promise.all([
+    supabase.from('ads').select('*').eq('author_id', target.id).neq('status','deleted').order('created_at',{ascending:false}).limit(10),
+    supabase.from('reviews').select('*, from_user:profiles!reviews_from_user_id_fkey(name)').eq('to_user_id', target.id).order('created_at',{ascending:false}).limit(10),
+  ]);
+  const profileAds = adsRes.data || [];
+  const profileReviews = revsRes.data || [];
+
+  const adsHtml = profileAds.length === 0
+    ? '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">Нет объявлений</div>'
+    : profileAds.map(ad => {
+        const m = CAT_MAP[ad.cat] || CAT_MAP.other;
+        return `<div onclick="closeModal('profile');openAdDetail('${ad.id}')" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid var(--border);margin-bottom:7px;cursor:pointer;background:var(--bg)">
+          <div style="font-size:20px;width:36px;height:36px;border-radius:8px;background:${m.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">${m.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(ad.title)}</div>
+            <div style="font-size:10px;color:var(--muted)">${fmtTime(ad.created_at)}</div>
+          </div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;color:#b38600">🪙 ${ad.coins}</div>
+        </div>`;
+      }).join('');
 
   const revsHtml = profileReviews.length === 0
     ? '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">Нет отзывов</div>'
     : profileReviews.map(r => `
         <div class="review-item">
           <span class="rev-author">${escHtml(r.from_user?.name || '?')}</span>
-          <span class="rev-stars">${'⭐'.repeat(r.stars)}</span><br>${escHtml(r.comment)}
+          <span class="rev-stars">${'⭐'.repeat(r.stars)}</span><br>${escHtml(r.comment || '')}
         </div>`).join('');
 
   const refCode = isOwn ? generateRefCode(target.id) : null;
@@ -1465,7 +1662,8 @@ function renderAds() {
     <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="closeModal('profile');openOrders('active')">📦 Мои заказы</button>
     <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="openSupportModal()">🛠️ Техническая поддержка</button>
     <button class="btn-cancel" style="width:100%;color:var(--accent);border-color:var(--accent)" onclick="doLogout()">Выйти из аккаунта</button>
-  ` : `<button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="openDm('${target.id}');closeModal('profile')">💬 Написать в ЛС</button>
+  ` : `
+  <button class="btn-cancel" style="width:100%;margin-bottom:8px" onclick="openDm('${target.id}');closeModal('profile')">💬 Написать в ЛС</button>
   <button id="sub-btn-profile-${target.id}" class="sub-btn not-subscribed" style="width:100%;margin-bottom:8px;justify-content:center" onclick="toggleSubscribe('${target.id}','${escHtml(target.name)}')">🔔 Подписаться</button>
   <button class="btn-cancel" style="width:100%" onclick="closeModal('profile')">Закрыть</button>`;
 
@@ -1482,31 +1680,22 @@ function renderAds() {
     <div class="profile-rating">${target.rating ? `⭐ ${target.rating.toFixed(1)} (${target.rating_count} оценок)` : 'Нет оценок'}</div>
     <div class="profile-stats">
       <div class="ps-item"><div class="ps-num">${target.coins}</div><div class="ps-label">🪙 монет</div></div>
-      <div class="ps-item"><div class="ps-num">${target.ads_posted}</div><div class="ps-label">Объявлений</div></div>
-      <div class="ps-item"><div class="ps-num">${target.ads_completed}</div><div class="ps-label">Выполнено</div></div>
+      <div class="ps-item"><div class="ps-num">${target.ads_posted || 0}</div><div class="ps-label">Объявлений</div></div>
+      <div class="ps-item"><div class="ps-num">${target.ads_completed || 0}</div><div class="ps-label">Выполнено</div></div>
     </div>
     <div style="display:flex;gap:6px;margin-bottom:10px">
-      <button onclick="switchProfileTab('ads')" id="ptab-ads" style="flex:1;padding:7px;border-radius:8px;border:1.5px solid ${activeTab === 'ads' ? 'var(--accent)' : 'var(--border)'};background:${activeTab === 'ads' ? 'var(--accent)' : 'var(--bg)'};color:${activeTab === 'ads' ? '#fff' : 'var(--navy)'};font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">
+      <button onclick="switchProfileTab('ads')" id="ptab-ads" style="flex:1;padding:7px;border-radius:8px;border:1.5px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">
         📌 Объявления (${profileAds.length})
       </button>
-      <button onclick="switchProfileTab('reviews')" id="ptab-reviews" style="flex:1;padding:7px;border-radius:8px;border:1.5px solid ${activeTab === 'reviews' ? 'var(--accent)' : 'var(--border)'};background:${activeTab === 'reviews' ? 'var(--accent)' : 'var(--bg)'};color:${activeTab === 'reviews' ? '#fff' : 'var(--navy)'};font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">
+      <button onclick="switchProfileTab('reviews')" id="ptab-reviews" style="flex:1;padding:7px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--navy);font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">
         ⭐ Отзывы (${profileReviews.length})
       </button>
     </div>
-    <div id="profile-tab-ads" style="max-height:200px;overflow-y:auto;margin-bottom:1rem;${activeTab !== 'ads' ? 'display:none' : ''}">${adsHtml}</div>
-    <div id="profile-tab-reviews" class="reviews-list" style="${activeTab !== 'reviews' ? 'display:none' : ''}">${revsHtml}</div>
+    <div id="profile-tab-ads" style="max-height:200px;overflow-y:auto;margin-bottom:1rem">${adsHtml}</div>
+    <div id="profile-tab-reviews" class="reviews-list" style="display:none">${revsHtml}</div>
     ${ownBtns}
   `;
   openModal('profile');
-}
-
-function switchProfileTab(tab) {
-  document.getElementById('profile-tab-ads').style.display = tab === 'ads' ? '' : 'none';
-  document.getElementById('profile-tab-reviews').style.display = tab === 'reviews' ? '' : 'none';
-  const accentStyle = 'border:1.5px solid var(--accent);background:var(--accent);color:#fff';
-  const normalStyle = 'border:1.5px solid var(--border);background:var(--bg);color:var(--navy)';
-  document.getElementById('ptab-ads').style.cssText += tab === 'ads' ? accentStyle : normalStyle;
-  document.getElementById('ptab-reviews').style.cssText += tab === 'reviews' ? accentStyle : normalStyle;
 }
 
 // ══════════════════════════════════════════════
@@ -2738,7 +2927,326 @@ async function unlinkTikTok() {
   openProfileModal();
 }
 
-// Apply saved theme immediately
+// ══════════════════════════════════════════════
+// GROUPS / CHATS
+// ══════════════════════════════════════════════
+let allGroups = [];
+let groupFilter = 'all';
+let currentGroupId = null;
+let groupChatChannel = null;
+let groupChatMessages = [];
+let myGroupIds = new Set();
+let pendingJoinGroupId = null;
+
+async function openGroupsModal() {
+  openModal('groups');
+  await loadGroups();
+}
+
+async function loadGroups() {
+  const el = document.getElementById('groups-list');
+  el.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px">Загрузка...</div>`;
+  const { data } = await supabase.from('groups').select('*, creator:profiles!groups_creator_id_fkey(name)').order('created_at', { ascending: false });
+  allGroups = data || [];
+  // Load my memberships
+  if (currentProfile) {
+    const { data: memberships } = await supabase.from('group_members').select('group_id').eq('user_id', currentProfile.id);
+    myGroupIds = new Set((memberships || []).map(m => m.group_id));
+  }
+  renderGroups();
+}
+
+function setGroupFilter(f) {
+  groupFilter = f;
+  document.querySelectorAll('.groups-filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('gfbtn-' + f)?.classList.add('active');
+  renderGroups();
+}
+
+function renderGroups() {
+  const el = document.getElementById('groups-list');
+  let filtered = allGroups;
+  if (groupFilter === 'public') filtered = allGroups.filter(g => g.type === 'public');
+  else if (groupFilter === 'private') filtered = allGroups.filter(g => g.type === 'private');
+  else if (groupFilter === 'my') filtered = allGroups.filter(g => myGroupIds.has(g.id));
+
+  if (filtered.length === 0) {
+    el.innerHTML = `<div style="text-align:center;padding:2.5rem;color:var(--muted)"><div style="font-size:44px;margin-bottom:0.7rem">💬</div><p style="font-size:14px;font-weight:600">Чатов пока нет</p><p style="font-size:12px">Создай первый!</p></div>`;
+    return;
+  }
+  const typeLabels = { public: '<span class="group-type-badge group-type-public">🌐 Публичный</span>', private: '<span class="group-type-badge group-type-private">🔒 Приватный</span>', link: '<span class="group-type-badge group-type-link">🔗 По ссылке</span>' };
+  el.innerHTML = filtered.map(g => {
+    const isMember = myGroupIds.has(g.id);
+    return `<div class="group-item" onclick="openGroup('${g.id}')">
+      <div class="group-avatar" style="background:${groupBg(g.emoji)}">${g.emoji || '💬'}</div>
+      <div class="group-info">
+        <div class="group-name">${escHtml(g.name)}</div>
+        <div class="group-last">${typeLabels[g.type] || ''} · ${g.member_count || 0} участников${g.description ? ' · ' + escHtml(g.description) : ''}</div>
+      </div>
+      <div class="group-meta">
+        <div class="group-time">${fmtTime(g.created_at)}</div>
+        ${isMember ? '<span style="font-size:9px;font-weight:700;color:var(--green)">✓ В группе</span>' : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function groupBg(emoji) {
+  const map = { '💬': '#e8f3ff', '🎓': '#fff0e0', '📚': '#e8f3ff', '⚽': '#e5f7ee', '🎮': '#f0ebff', '🎵': '#fff0eb', '📸': '#f5f0ff', '🍕': '#fff8e0', '💡': '#fffbe0', '🏆': '#fff8e0', '🔥': '#fff0eb', '🌍': '#e5f7ee', '🎉': '#ffe8f0', '💻': '#e8f3ff', '🤝': '#e5f7ee' };
+  return map[emoji] || '#f0f3f8';
+}
+
+async function openGroup(groupId) {
+  const group = allGroups.find(g => g.id === groupId);
+  if (!group) return;
+
+  // Check membership
+  if (!myGroupIds.has(groupId)) {
+    // Need to join first
+    if (group.type === 'public') {
+      await joinGroup(groupId);
+    } else if (group.type === 'private') {
+      pendingJoinGroupId = groupId;
+      document.getElementById('join-group-password').value = '';
+      document.getElementById('join-group-err').classList.remove('show');
+      openModal('join-group');
+      return;
+    } else if (group.type === 'link') {
+      showToast('⛔ Эта группа только по инвайт-ссылке');
+      return;
+    }
+  }
+  openGroupChatWindow(group);
+}
+
+async function joinGroup(groupId) {
+  if (!currentProfile) return;
+  const { error } = await supabase.from('group_members').insert({ group_id: groupId, user_id: currentProfile.id });
+  if (!error) {
+    myGroupIds.add(groupId);
+    await supabase.from('groups').update({ member_count: (allGroups.find(g=>g.id===groupId)?.member_count||0)+1 }).eq('id', groupId);
+    showToast('✅ Ты вступил в группу!');
+    await loadGroups();
+  }
+}
+
+async function joinGroupWithPassword() {
+  if (!pendingJoinGroupId) return;
+  const group = allGroups.find(g => g.id === pendingJoinGroupId);
+  const pw = document.getElementById('join-group-password').value.trim();
+  const errEl = document.getElementById('join-group-err');
+  if (!pw) { showErr(errEl, 'Введи пароль'); return; }
+  if (group?.password !== pw) { showErr(errEl, 'Неверный пароль'); return; }
+  closeModal('join-group');
+  await joinGroup(pendingJoinGroupId);
+  const g = allGroups.find(g => g.id === pendingJoinGroupId);
+  if (g) openGroupChatWindow(g);
+  pendingJoinGroupId = null;
+}
+
+async function openGroupChatWindow(group) {
+  currentGroupId = group.id;
+  closeModal('groups');
+  // Set header
+  document.getElementById('gchat-avatar').textContent = group.emoji || '💬';
+  document.getElementById('gchat-avatar').style.background = groupBg(group.emoji);
+  document.getElementById('gchat-name').textContent = group.name;
+  document.getElementById('gchat-members').textContent = `👥 ${group.member_count || 0} участников`;
+  openModal('group-chat');
+  await loadGroupMessages(group.id);
+  subscribeGroupChat(group.id);
+}
+
+async function loadGroupMessages(groupId) {
+  const el = document.getElementById('group-chat-messages');
+  el.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:12px;padding:1rem">Загрузка...</div>`;
+  const { data } = await supabase.from('group_messages')
+    .select('*, author:profiles(name, avatar_seed, class)')
+    .eq('group_id', groupId)
+    .order('created_at', { ascending: true })
+    .limit(100);
+  groupChatMessages = data || [];
+  renderGroupMessages();
+}
+
+function renderGroupMessages() {
+  const el = document.getElementById('group-chat-messages');
+  if (groupChatMessages.length === 0) {
+    el.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:13px;padding:2rem">Первое сообщение — напиши что-нибудь! 👋</div>`;
+    return;
+  }
+  el.innerHTML = groupChatMessages.map(msg => {
+    const isMe = msg.author_id === currentProfile?.id;
+    const authorName = msg.author?.name || 'Аноним';
+    const cls = msg.author?.class ? `· ${escHtml(msg.author.class)}` : '';
+    const avatar = msg.author?.avatar_seed ? `<img src="${avatarUrl(msg.author.avatar_seed)}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0" />` : '<div style="width:28px;height:28px;border-radius:50%;background:var(--border);flex-shrink:0"></div>';
+    return `
+      <div style="display:flex;gap:8px;align-items:flex-end;${isMe ? 'flex-direction:row-reverse' : ''}">
+        <div onclick="openOtherProfile('${msg.author_id}')" style="cursor:pointer">${avatar}</div>
+        <div style="max-width:72%;${isMe ? 'align-items:flex-end' : ''}">
+          ${!isMe ? `<div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:3px;cursor:pointer" onclick="openOtherProfile('${msg.author_id}')">${escHtml(authorName)}<span style="font-weight:400;color:var(--muted);margin-left:4px">${cls}</span></div>` : ''}
+          <div style="background:${isMe ? 'var(--accent)' : 'var(--card)'};color:${isMe ? '#fff' : 'var(--text)'};padding:8px 12px;border-radius:${isMe ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};font-size:13px;line-height:1.5;word-break:break-word;box-shadow:0 1px 4px rgba(0,0,0,0.08)">${escHtml(msg.text)}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px;${isMe ? 'text-align:right' : ''}">${fmtTime(msg.created_at)}</div>
+        </div>
+      </div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function subscribeGroupChat(groupId) {
+  if (groupChatChannel) { supabase.removeChannel(groupChatChannel); groupChatChannel = null; }
+  groupChatChannel = supabase.channel('group-chat-' + groupId)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'group_messages', filter: `group_id=eq.${groupId}` }, async (payload) => {
+      const { data } = await supabase.from('group_messages').select('*, author:profiles(name, avatar_seed, class)').eq('id', payload.new.id).maybeSingle();
+      if (data) {
+        groupChatMessages.push(data);
+        const modal = document.getElementById('modal-group-chat');
+        if (modal.classList.contains('open')) renderGroupMessages();
+      }
+    })
+    .subscribe();
+}
+
+async function sendGroupMsg() {
+  const input = document.getElementById('group-chat-input');
+  const text = input.value.trim();
+  if (!text || !currentProfile || !currentGroupId) return;
+  input.value = '';
+  const { error } = await supabase.from('group_messages').insert({ group_id: currentGroupId, author_id: currentProfile.id, text });
+  if (error) { showToast('Ошибка отправки'); input.value = text; }
+}
+
+function closeGroupChat() {
+  document.getElementById('modal-group-chat').classList.remove('open');
+  if (groupChatChannel) { supabase.removeChannel(groupChatChannel); groupChatChannel = null; }
+  currentGroupId = null;
+  groupChatMessages = [];
+  bnavSelect('home');
+}
+
+// Create group
+let selectedGroupEmoji = '💬';
+
+function selectGroupEmoji(e) {
+  selectedGroupEmoji = e;
+  document.getElementById('new-group-emoji').value = e;
+  document.querySelectorAll('.group-emoji-opt').forEach(btn => {
+    btn.style.borderColor = btn.textContent === e ? 'var(--accent)' : 'var(--border)';
+    btn.style.background = btn.textContent === e ? 'rgba(255,92,53,0.1)' : 'var(--bg)';
+  });
+}
+
+function toggleGroupPassword() {
+  const type = document.getElementById('new-group-type').value;
+  document.getElementById('group-password-group').style.display = type === 'private' ? '' : 'none';
+}
+
+function openCreateGroupModal() {
+  document.getElementById('new-group-name').value = '';
+  document.getElementById('new-group-desc').value = '';
+  document.getElementById('new-group-type').value = 'public';
+  document.getElementById('new-group-password').value = '';
+  document.getElementById('group-password-group').style.display = 'none';
+  selectedGroupEmoji = '💬';
+  document.querySelectorAll('.group-emoji-opt').forEach(btn => {
+    btn.style.borderColor = 'var(--border)';
+    btn.style.background = 'var(--bg)';
+  });
+  closeModal('groups');
+  openModal('create-group');
+}
+
+async function createGroup() {
+  if (!currentProfile) return;
+  const name = document.getElementById('new-group-name').value.trim();
+  if (!name) { showToast('Введи название группы'); return; }
+  const desc = document.getElementById('new-group-desc').value.trim();
+  const type = document.getElementById('new-group-type').value;
+  const password = type === 'private' ? document.getElementById('new-group-password').value.trim() : null;
+  if (type === 'private' && !password) { showToast('Введи пароль для приватной группы'); return; }
+  const emoji = selectedGroupEmoji || '💬';
+
+  const { data, error } = await supabase.from('groups').insert({
+    name, description: desc || null, type, emoji, password: password || null,
+    creator_id: currentProfile.id, member_count: 1
+  }).select().single();
+
+  if (error) { showToast('Ошибка: ' + error.message); return; }
+  // Auto-join creator
+  await supabase.from('group_members').insert({ group_id: data.id, user_id: currentProfile.id });
+  closeModal('create-group');
+  showToast('🎉 Группа создана!');
+  await loadGroups();
+  openGroupChatWindow(data);
+}
+
+// Group info & invite link
+async function openGroupInfo() {
+  const group = allGroups.find(g => g.id === currentGroupId);
+  if (!group) return;
+  const { data: members } = await supabase.from('group_members').select('*, user:profiles(name, avatar_seed)').eq('group_id', currentGroupId);
+  const memberList = (members || []).map(m => `
+    <div style="display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <img src="${avatarUrl(m.user?.avatar_seed || m.user?.name || '?')}" style="width:28px;height:28px;border-radius:50%">
+      <span style="font-size:13px;font-weight:600">${escHtml(m.user?.name || '?')}</span>
+      ${m.user_id === group.creator_id ? '<span style="font-size:9px;font-weight:700;color:var(--accent);margin-left:auto">Создатель</span>' : ''}
+    </div>`).join('');
+  const inviteLink = group.type === 'link' ? `${location.origin}${location.pathname}?joingroup=${group.id}` : null;
+  document.getElementById('ginfo-title').textContent = `${group.emoji} ${group.name}`;
+  document.getElementById('ginfo-body').innerHTML = `
+    ${group.description ? `<div style="font-size:13px;color:var(--muted);margin-bottom:1rem">${escHtml(group.description)}</div>` : ''}
+    <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap">
+      <span style="padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;${group.type==='public'?'background:#e8f3ff;color:#1a6ec9':group.type==='private'?'background:#f0ebff;color:#6b3fc9':'background:#e5f7ee;color:#0f6e56'}">${group.type==='public'?'🌐 Публичная':group.type==='private'?'🔒 Приватная':'🔗 По ссылке'}</span>
+      <span style="padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:var(--bg);color:var(--muted)">👥 ${members?.length || 0} участников</span>
+    </div>
+    ${inviteLink ? `
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:1rem">
+        <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:5px">🔗 Инвайт-ссылка</div>
+        <div style="font-size:11px;color:var(--muted);word-break:break-all;margin-bottom:6px">${inviteLink}</div>
+        <button onclick="navigator.clipboard.writeText('${inviteLink}').then(()=>showToast('✅ Ссылка скопирована!'))" style="font-size:11px;font-weight:700;color:var(--accent);background:none;border:none;cursor:pointer;font-family:'Geologica',sans-serif">📋 Скопировать</button>
+      </div>` : ''}
+    <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px">Участники (${members?.length||0})</div>
+    <div style="max-height:200px;overflow-y:auto">${memberList || '<div style="color:var(--muted);font-size:12px">Нет участников</div>'}</div>
+    ${currentProfile?.id === group.creator_id ? `
+      <button onclick="closeModal('group-info');deleteGroup('${group.id}')" style="width:100%;margin-top:1rem;padding:9px;border-radius:10px;border:1.5px solid #e3e0d8;background:transparent;color:#e24b4a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">🗑️ Удалить группу</button>` : `
+      <button onclick="leaveGroup('${group.id}')" style="width:100%;margin-top:1rem;padding:9px;border-radius:10px;border:1.5px solid #e3e0d8;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:'Geologica',sans-serif">🚪 Покинуть группу</button>`}
+  `;
+  openModal('group-info');
+}
+
+async function leaveGroup(groupId) {
+  await supabase.from('group_members').delete().eq('group_id', groupId).eq('user_id', currentProfile.id);
+  myGroupIds.delete(groupId);
+  await supabase.from('groups').update({ member_count: Math.max(0,(allGroups.find(g=>g.id===groupId)?.member_count||1)-1) }).eq('id', groupId);
+  closeModal('group-info');
+  closeGroupChat();
+  showToast('Ты покинул группу');
+  await loadGroups();
+  openGroupsModal();
+}
+
+async function deleteGroup(groupId) {
+  if (!confirm) { showToast('Отмена'); return; }
+  await supabase.from('group_messages').delete().eq('group_id', groupId);
+  await supabase.from('group_members').delete().eq('group_id', groupId);
+  await supabase.from('groups').delete().eq('id', groupId);
+  closeGroupChat();
+  showToast('🗑️ Группа удалена');
+  await loadGroups();
+  openGroupsModal();
+}
+
+// Handle invite link on page load
+(function() {
+  const urlParams = new URLSearchParams(location.search);
+  const joinGroupId = urlParams.get('joingroup');
+  if (joinGroupId) {
+    document.addEventListener('DOMContentLoaded', () => {
+      // Will be handled after auth
+      window._pendingJoinGroup = joinGroupId;
+    });
+  }
+})();
 (function() {
   const saved = localStorage.getItem('tamox-theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -2767,6 +3275,11 @@ async function unlinkTikTok() {
   <button class="bnav-item bnav-post-btn" id="bnav-post" onclick="openPostModal()">
     <span class="bnav-icon bnav-plus-circle">＋</span>
     <span class="bnav-label">Добавить</span>
+  </button>
+  <button class="bnav-item" id="bnav-groups" onclick="bnavSelect('groups');openGroupsModal()" style="position:relative">
+    <span class="bnav-icon">💬</span>
+    <span class="bnav-label">Чаты</span>
+    <span id="groups-badge" class="notif-badge" style="position:absolute;top:4px;right:8px;display:none">0</span>
   </button>
   <button class="bnav-item bnav-admin" id="bnav-admin" style="display:none" onclick="bnavSelect('admin');openAdminPanel()">
     <span class="bnav-icon">⚙️</span>
