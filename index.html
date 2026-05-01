@@ -339,17 +339,44 @@
     .load-more-btn { display: block; margin: 0 auto 2rem; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 30px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; color: var(--navy); transition: all 0.15s; }
     .load-more-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 1rem; }
+    .overlay { 
+      position: fixed; inset: 0; 
+      background: rgba(8, 10, 20, 0.65); 
+      backdrop-filter: blur(16px) saturate(1.3);
+      -webkit-backdrop-filter: blur(16px) saturate(1.3);
+      z-index: 300; display: flex; align-items: center; justify-content: center; 
+      opacity: 0; pointer-events: none; transition: opacity 0.25s; padding: 1rem; 
+    }
     .overlay.open { opacity: 1; pointer-events: all; }
-    .modal { background: var(--card); border-radius: 18px; padding: 1.8rem; width: 100%; max-width: 460px; max-height: 92vh; overflow-y: auto; transform: scale(0.95) translateY(20px); transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1); }
+    .modal { 
+      background: var(--card); 
+      border-radius: 24px; 
+      padding: 1.8rem; 
+      width: 100%; max-width: 460px; max-height: 92vh; overflow-y: auto; 
+      transform: scale(0.94) translateY(24px); 
+      transition: transform 0.3s cubic-bezier(0.34,1.46,0.64,1);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05) inset;
+      position: relative;
+      overflow: hidden;
+    }
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--gold), var(--escrow));
+      opacity: 0.7;
+      pointer-events: none;
+    }
     .overlay.open .modal { transform: scale(1) translateY(0); }
     .modal-wide { max-width: 580px; }
     .modal-title { font-family: 'Unbounded', sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 1.3rem; }
     .modal-btns { display: flex; gap: 10px; margin-top: 1.2rem; }
-    .btn-cancel { flex: 1; background: var(--bg); color: var(--navy); border: 1.5px solid var(--border); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; }
-    .btn-post { flex: 2; background: var(--accent); color: #fff; border: none; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; }
-    .btn-post:hover { background: #e0441e; }
-    .coin-preview { background: #fffbea; border: 1px solid rgba(255,186,0,0.4); border-radius: 10px; padding: 9px 13px; font-size: 12px; color: #7a5500; margin-top: 6px; line-height: 1.5; }
+    .btn-cancel { flex: 1; background: var(--bg); color: var(--navy); border: 1.5px solid var(--border); padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; transition: all .15s; }
+    .btn-cancel:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-post { flex: 2; background: linear-gradient(135deg, var(--accent), #e0441e); color: #fff; border: none; padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; box-shadow: 0 4px 14px rgba(255,92,53,0.35); transition: all .15s; }
+    .btn-post:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,92,53,0.45); }
+    .coin-preview { background: linear-gradient(135deg, #fffbea, #fff7d0); border: 1px solid rgba(255,186,0,0.4); border-radius: 12px; padding: 9px 13px; font-size: 12px; color: #7a5500; margin-top: 6px; line-height: 1.5; }
 
     .deal-box { background: #fffbea; border: 1.5px solid rgba(255,186,0,0.4); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
     .deal-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 5px; }
@@ -381,12 +408,12 @@
     .tx-amt.plus { color: var(--green); }
     .tx-amt.minus { color: var(--accent); }
 
-    .profile-avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 0.5rem; overflow: hidden; border: 3px solid var(--border); }
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--gold)); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 0.5rem; overflow: hidden; border: 3px solid transparent; background-clip: padding-box; box-shadow: 0 0 0 3px rgba(255,92,53,0.3), 0 8px 24px rgba(255,92,53,0.2); }
     .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .profile-name { font-family: 'Unbounded', sans-serif; font-size: 1rem; font-weight: 700; text-align: center; color: var(--navy); }
     .profile-contact { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 0.5rem; }
     .profile-class-badge { text-align: center; margin-bottom: 1rem; }
-    .profile-stats { display: flex; background: var(--bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 1.2rem; }
+    .profile-stats { display: flex; background: linear-gradient(135deg, var(--bg), rgba(255,92,53,0.03)); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 1.2rem; box-shadow: 0 2px 10px var(--shadow); }
     .ps-item { flex: 1; text-align: center; padding: 0.8rem; border-right: 1px solid var(--border); }
     .ps-item:last-child { border-right: none; }
     .ps-num { font-family: 'Unbounded', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); }
@@ -496,13 +523,14 @@
     #loading-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #1a2744; }
 
     /* ADMIN PANEL */
-    .admin-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 400; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-    .admin-panel { background: #1a2744; border-radius: 18px; width: 100%; max-width: 700px; max-height: 92vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
-    .admin-header { padding: 1.1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-    .admin-tabs { display: flex; gap: 8px; padding: 0.8rem 1.5rem 0; overflow-x: auto; flex-shrink: 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .admin-overlay { position: fixed; inset: 0; background: rgba(4,5,12,0.75); backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3); z-index: 400; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .admin-panel { background: #0f1117; border-radius: 24px; width: 100%; max-width: 700px; max-height: 92vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1.5px rgba(255,186,0,0.15) inset; border: 1.5px solid rgba(255,255,255,0.07); }
+    .admin-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .admin-tabs { display: flex; gap: 6px; padding: 0; overflow-x: auto; flex-shrink: 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .admin-tabs::-webkit-scrollbar { display: none; }
-    .admin-tab { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: 'Geologica', sans-serif; background: rgba(255,255,255,0.1); color: #aab3cc; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
-    .admin-tab.active { background: var(--accent); color: #fff; }
+    .admin-tab { padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid transparent; font-family: 'Geologica', sans-serif; background: rgba(255,255,255,0.07); color: #8090b0; transition: all 0.18s; white-space: nowrap; flex-shrink: 0; }
+    .admin-tab:hover { background: rgba(255,255,255,0.12); color: #c0cce8; border-color: rgba(255,255,255,0.1); }
+    .admin-tab.active { background: linear-gradient(135deg, rgba(255,186,0,0.2), rgba(255,140,0,0.12)); color: var(--gold); border-color: rgba(255,186,0,0.35); box-shadow: 0 0 12px rgba(255,186,0,0.15); }
     .admin-content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 1.5rem 1.5rem; -webkit-overflow-scrolling: touch; }
     .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; color: #fff; }
     .admin-table th { padding: 8px 10px; text-align: left; color: #aab3cc; font-weight: 600; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -713,8 +741,8 @@
 
     /* ── GROUPS / CHATS ── */
     .groups-list { display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow-y:auto; }
-    .group-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:14px; background:var(--bg); border:1px solid var(--border); cursor:pointer; transition:all .15s; }
-    .group-item:hover { border-color:var(--accent); background:var(--card); }
+    .group-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:16px; background:var(--bg); border:1.5px solid var(--border); cursor:pointer; transition:all .18s; }
+    .group-item:hover { border-color:var(--escrow); background:var(--card); transform:translateY(-1px); box-shadow:0 4px 14px rgba(45,108,223,0.12); }
     .group-avatar { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
     .group-info { flex:1; min-width:0; }
     .group-name { font-size:13.5px; font-weight:700; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -971,17 +999,25 @@
 <!-- WALLET -->
 <div class="overlay" id="modal-wallet" onclick="if(event.target===this)closeModal('wallet')">
   <div class="modal">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
-      <div class="modal-title" style="margin-bottom:0">🪙 Кошелёк</div>
-      <button onclick="closeModal('wallet')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);position:relative">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#e0a800);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 14px rgba(255,186,0,0.4)">🪙</div>
+        <div>
+          <div class="modal-title" style="margin-bottom:0">Кошелёк</div>
+          <div style="font-size:10px;color:var(--muted)">Твои монеты и транзакции</div>
+        </div>
+      </div>
+      <button onclick="closeModal('wallet')" style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">✕</button>
     </div>
-    <div class="wallet-balance" id="wallet-balance">0</div>
-    <div class="wallet-sub">монет на счету</div>
+    <div style="background:linear-gradient(135deg,rgba(255,186,0,0.12),rgba(255,140,0,0.06));border:1.5px solid rgba(255,186,0,0.25);border-radius:18px;padding:1.2rem;margin-bottom:1rem;text-align:center">
+      <div class="wallet-balance" id="wallet-balance">0</div>
+      <div class="wallet-sub">монет на счету</div>
+    </div>
     <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px">История транзакций</div>
     <div class="wallet-history" id="wallet-history"></div>
-    <div style="margin-top:1rem;background:var(--bg);border-radius:10px;padding:0.9rem">
-      <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:6px">Как заработать монеты</div>
-      <div style="font-size:11.5px;color:#555;line-height:1.8">
+    <div style="margin-top:1rem;background:linear-gradient(135deg,rgba(29,184,122,0.07),rgba(29,184,122,0.03));border:1.5px solid rgba(29,184,122,0.2);border-radius:14px;padding:0.9rem">
+      <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px">Как заработать монеты</div>
+      <div style="font-size:11.5px;color:var(--text);line-height:1.8;opacity:0.75">
         ✅ Выполнить задание → монеты −10% комиссии<br>
         ⭐ Получить 5★ оценку → +20 🪙<br>
         🎉 Приветственный бонус → +100 🪙<br>
@@ -1015,9 +1051,15 @@
 <!-- LEADERBOARD -->
 <div class="overlay" id="modal-lb" onclick="if(event.target===this)closeModal('lb')">
   <div class="modal">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-      <div class="modal-title" style="margin-bottom:0">🏆 Топ-10 пользователей</div>
-      <button onclick="closeModal('lb')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#e0a800);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 14px rgba(255,186,0,0.4)">🏆</div>
+        <div>
+          <div class="modal-title" style="margin-bottom:0">Топ-10 игроков</div>
+          <div style="font-size:10px;color:var(--muted)">Рейтинг по монетам</div>
+        </div>
+      </div>
+      <button onclick="closeModal('lb')" style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">✕</button>
     </div>
     <div id="lb-list"></div>
     <button class="btn-cancel" style="width:100%;margin-top:1rem" onclick="closeModal('lb')">Закрыть</button>
@@ -1133,23 +1175,25 @@
 
 <!-- DM (личные сообщения) -->
 <div class="overlay" id="modal-dm" onclick="if(event.target===this)closeDmModal()">
-  <div class="modal modal-wide" style="max-width:560px;display:flex;flex-direction:column;height:85vh;max-height:600px;padding:0;overflow:hidden;border-radius:18px">
-    <div style="padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+  <div class="modal modal-wide" style="max-width:560px;display:flex;flex-direction:column;height:85vh;max-height:600px;padding:0;overflow:hidden;border-radius:24px">
+    <div style="padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:linear-gradient(135deg,rgba(255,92,53,0.07),rgba(255,186,0,0.04));position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--gold));opacity:0.8"></div>
       <div style="display:flex;align-items:center;gap:10px">
-        <div id="dm-partner-avatar" style="width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--border)"></div>
+        <div id="dm-partner-avatar" style="width:38px;height:38px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--gold));border:2px solid rgba(255,92,53,0.3);box-shadow:0 3px 10px rgba(255,92,53,0.25)"></div>
         <div>
           <div style="font-family:'Unbounded',sans-serif;font-size:0.9rem;font-weight:700;color:var(--navy)" id="dm-partner-name">Личные сообщения</div>
           <div style="font-size:11px;color:var(--muted)" id="dm-partner-class"></div>
         </div>
       </div>
-      <button onclick="closeDmModal()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+      <button onclick="closeDmModal()" style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">✕</button>
     </div>
     <div id="dm-messages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:8px;background:var(--bg)"></div>
     <div style="padding:0.8rem 1rem;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:var(--card)">
       <input type="text" id="dm-input" placeholder="Написать сообщение..." maxlength="500"
-        style="flex:1;border:1.5px solid var(--border);border-radius:10px;padding:9px 13px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;background:var(--bg)"
+        style="flex:1;border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;background:var(--bg);transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendDmMsg()}" />
-      <button onclick="sendDmMsg()" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif">➤</button>
+      <button onclick="sendDmMsg()" style="background:linear-gradient(135deg,var(--accent),#e0441e);color:#fff;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif;box-shadow:0 3px 10px rgba(255,92,53,0.4);transition:all .15s" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">➤</button>
     </div>
   </div>
 </div>
@@ -1200,9 +1244,15 @@
 <!-- NOTIFICATIONS MODAL -->
 <div class="overlay" id="modal-notif" onclick="if(event.target===this)closeModal('notif')">
   <div class="modal modal-wide" style="max-width:480px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
-      <div class="modal-title" style="margin-bottom:0">🔔 Уведомления</div>
-      <button onclick="markAllNotifsRead()" style="font-size:11px;font-weight:600;color:var(--accent);background:none;border:none;cursor:pointer;font-family:'Geologica',sans-serif">Прочитать все</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--green),#17a36c);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 14px rgba(29,184,122,0.4)">🔔</div>
+        <div>
+          <div class="modal-title" style="margin-bottom:0">Уведомления</div>
+          <div style="font-size:10px;color:var(--muted)">Новости и алерты</div>
+        </div>
+      </div>
+      <button onclick="markAllNotifsRead()" style="font-size:11px;font-weight:600;color:var(--accent);background:rgba(255,92,53,0.08);border:1.5px solid rgba(255,92,53,0.2);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.background='rgba(255,92,53,0.15)'" onmouseout="this.style.background='rgba(255,92,53,0.08)'">✓ Прочитать все</button>
     </div>
     <div id="notif-list" style="max-height:420px;overflow-y:auto"></div>
     <button class="btn-cancel" style="width:100%;margin-top:10px" onclick="closeModal('notif')">Закрыть</button>
@@ -1212,34 +1262,39 @@
 <!-- ADMIN PANEL -->
 <div class="admin-overlay" id="admin-overlay" style="display:none">
   <div class="admin-panel">
-    <div class="admin-header">
-      <div>
-        <div style="font-family:'Unbounded',sans-serif;font-size:1rem;font-weight:700;color:#ffba00">⚙️ Панель администратора</div>
-        <div style="font-size:11px;color:#aab3cc;margin-top:3px">Только для авторизованных администраторов</div>
+    <div class="admin-header" style="background:linear-gradient(135deg,#0f1117 0%,#1a1d27 40%,#1a2200 100%);position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 100% at 10% 0%,rgba(255,186,0,0.15),transparent 60%),radial-gradient(ellipse 50% 80% at 90% 100%,rgba(255,92,53,0.1),transparent 55%);pointer-events:none"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--accent),var(--escrow));opacity:0.9"></div>
+      <div style="position:relative;z-index:1">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:3px">
+          <div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#e0a800);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px rgba(255,186,0,0.4)">⚙️</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:1rem;font-weight:700;color:var(--gold)">Панель администратора</div>
+        </div>
+        <div style="font-size:11px;color:#aab3cc;margin-top:3px;padding-left:2px">Только для авторизованных администраторов</div>
       </div>
-      <button onclick="document.getElementById('admin-overlay').style.display='none'" style="background:rgba(255,255,255,0.1);border:none;color:#fff;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:14px">✕</button>
+      <button onclick="document.getElementById('admin-overlay').style.display='none'" style="background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.18);color:#fff;border-radius:10px;padding:7px 12px;cursor:pointer;font-size:14px;transition:all .15s;position:relative;z-index:1" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">✕</button>
     </div>
-    <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchAdminTab('stats')">📊 Статистика</button>
-      <button class="admin-tab" onclick="switchAdminTab('users')">👥 Пользователи</button>
-      <button class="admin-tab" onclick="switchAdminTab('ads')">🗂️ Объявления</button>
-      <button class="admin-tab" onclick="switchAdminTab('reports')">🚩 Жалобы</button>
-      <button class="admin-tab" onclick="switchAdminTab('support')">🛠️ Тикеты</button>
+    <div class="admin-tabs" style="background:#13151f;border-bottom:1px solid rgba(255,255,255,0.08);padding:8px 12px;display:flex;gap:6px;overflow-x:auto">
+      <button class="admin-tab active" onclick="switchAdminTab('stats')" style="white-space:nowrap">📊 Статистика</button>
+      <button class="admin-tab" onclick="switchAdminTab('users')" style="white-space:nowrap">👥 Пользователи</button>
+      <button class="admin-tab" onclick="switchAdminTab('ads')" style="white-space:nowrap">🗂️ Объявления</button>
+      <button class="admin-tab" onclick="switchAdminTab('reports')" style="white-space:nowrap">🚩 Жалобы</button>
+      <button class="admin-tab" onclick="switchAdminTab('support')" style="white-space:nowrap">🛠️ Тикеты</button>
     </div>
     <div class="admin-content" id="admin-content"></div>
   </div>
   <!-- Edit Balance Sub-modal -->
   <div id="edit-balance-modal" style="display:none;position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:10">
-    <div style="background:var(--card);border-radius:16px;padding:1.5rem;width:320px;box-shadow:0 8px 40px rgba(0,0,0,0.3)">
+    <div style="background:var(--card);border-radius:20px;padding:1.5rem;width:320px;box-shadow:0 8px 40px rgba(0,0,0,0.3);border:1.5px solid rgba(255,255,255,0.1)">
       <div style="font-family:'Unbounded',sans-serif;font-size:0.9rem;font-weight:700;color:#1a2744;margin-bottom:1rem">✏️ Редактировать баланс</div>
-      <div id="edit-balance-user-info" style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding:10px;background:var(--bg);border-radius:10px"></div>
+      <div id="edit-balance-user-info" style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding:10px;background:var(--bg);border-radius:12px"></div>
       <div class="form-group">
         <label>Новый баланс (монеты 🪙)</label>
         <input type="number" id="edit-coins-input" min="0" style="width:100%" />
       </div>
       <div style="display:flex;gap:8px;margin-top:1rem">
-        <button onclick="closeEditBalance()" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #e3e0d8;background:#f5f3ee;cursor:pointer;font-weight:600;font-family:'Geologica',sans-serif;font-size:13px">Отмена</button>
-        <button onclick="saveBalance()" style="flex:2;padding:10px;border-radius:10px;border:none;background:#1db87a;color:#fff;cursor:pointer;font-weight:700;font-family:'Geologica',sans-serif;font-size:13px">Сохранить</button>
+        <button onclick="closeEditBalance()" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-weight:600;font-family:'Geologica',sans-serif;font-size:13px">Отмена</button>
+        <button onclick="saveBalance()" style="flex:2;padding:10px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--green),#17a36c);color:#fff;cursor:pointer;font-weight:700;font-family:'Geologica',sans-serif;font-size:13px;box-shadow:0 3px 10px rgba(29,184,122,0.35)">Сохранить</button>
       </div>
     </div>
   </div>
@@ -1247,15 +1302,22 @@
 
 <!-- GROUPS / CHATS -->
 <div class="overlay" id="modal-groups" onclick="if(event.target===this)closeModal('groups')">
-  <div class="modal modal-wide" style="max-width:520px;padding:0;overflow:hidden;border-radius:18px">
-    <div style="padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-      <div style="font-family:'Unbounded',sans-serif;font-size:0.95rem;font-weight:700;color:var(--navy)">💬 Чаты</div>
+  <div class="modal modal-wide" style="max-width:520px;padding:0;overflow:hidden;border-radius:24px">
+    <div style="padding:1.3rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:linear-gradient(135deg,rgba(45,108,223,0.08),rgba(29,184,122,0.05));position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--escrow),var(--green));opacity:0.8"></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--escrow),#1a56c2);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(45,108,223,0.35)">💬</div>
+        <div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:0.95rem;font-weight:700;color:var(--navy)">Чаты</div>
+          <div style="font-size:10px;color:var(--muted)">Группы · Личные сообщения</div>
+        </div>
+      </div>
       <div style="display:flex;gap:8px">
-        <button onclick="openCreateGroupModal()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Geologica',sans-serif">+ Создать</button>
-        <button onclick="closeModal('groups')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+        <button onclick="openCreateGroupModal()" style="background:linear-gradient(135deg,var(--accent),#e0441e);color:#fff;border:none;border-radius:10px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Geologica',sans-serif;box-shadow:0 3px 10px rgba(255,92,53,0.35)">+ Создать</button>
+        <button onclick="closeModal('groups')" style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">✕</button>
       </div>
     </div>
-    <div style="padding:0.8rem 1rem;border-bottom:1px solid var(--border)">
+    <div style="padding:0.8rem 1rem;border-bottom:1px solid var(--border);background:var(--card)">
       <div style="display:flex;gap:6px">
         <button class="groups-filter-btn active" id="gfbtn-all" onclick="setGroupFilter('all')">Все</button>
         <button class="groups-filter-btn" id="gfbtn-public" onclick="setGroupFilter('public')">🌐 Публичные</button>
@@ -1264,7 +1326,7 @@
       </div>
     </div>
     <div class="groups-list" id="groups-list" style="padding:0.8rem 1rem;max-height:52vh"></div>
-    <div style="padding:0.8rem 1rem;border-top:1px solid var(--border)">
+    <div style="padding:0.8rem 1rem;border-top:1px solid var(--border);background:var(--card)">
       <div style="font-size:11px;color:var(--muted);text-align:center">Публичные чаты открыты для всех · Приватные — по паролю · По ссылке — через инвайт</div>
     </div>
   </div>
@@ -1313,26 +1375,28 @@
 
 <!-- GROUP CHAT WINDOW -->
 <div class="overlay" id="modal-group-chat" onclick="if(event.target===this)closeGroupChat()">
-  <div class="modal modal-wide" style="max-width:560px;display:flex;flex-direction:column;height:85vh;max-height:620px;padding:0;overflow:hidden;border-radius:18px">
-    <div class="group-chat-header">
+  <div class="modal modal-wide" style="max-width:560px;display:flex;flex-direction:column;height:85vh;max-height:620px;padding:0;overflow:hidden;border-radius:24px">
+    <div class="group-chat-header" style="background:linear-gradient(135deg,rgba(45,108,223,0.07),rgba(29,184,122,0.04));position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--escrow),var(--green));opacity:0.8"></div>
       <div class="group-chat-info">
-        <div class="group-chat-avatar" id="gchat-avatar" style="background:var(--bg)">💬</div>
+        <div class="group-chat-avatar" id="gchat-avatar" style="background:linear-gradient(135deg,var(--escrow),#1a56c2);color:#fff;box-shadow:0 3px 10px rgba(45,108,223,0.3)">💬</div>
         <div>
           <div style="font-family:'Unbounded',sans-serif;font-size:0.9rem;font-weight:700;color:var(--navy)" id="gchat-name">Чат</div>
           <div class="group-members-chip" id="gchat-members">👥 0 участников</div>
         </div>
       </div>
       <div style="display:flex;gap:6px">
-        <button onclick="openGroupInfo()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;color:var(--muted);font-family:'Geologica',sans-serif">ℹ️ Инфо</button>
-        <button onclick="closeGroupChat()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+        <button onclick="openGroupInfo()" style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:5px 12px;cursor:pointer;font-size:12px;color:var(--muted);font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--escrow)'" onmouseout="this.style.borderColor='var(--border)'">ℹ️ Инфо</button>
+        <button onclick="closeGroupChat()" style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">✕</button>
       </div>
     </div>
     <div id="group-chat-messages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:8px;background:var(--bg)"></div>
     <div style="padding:0.8rem 1rem;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:var(--card)">
       <input type="text" id="group-chat-input" placeholder="Написать сообщение..." maxlength="500"
-        style="flex:1;border:1.5px solid var(--border);border-radius:10px;padding:9px 13px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;background:var(--bg)"
+        style="flex:1;border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:13px;outline:none;font-family:'Geologica',sans-serif;background:var(--bg);transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--escrow)'" onblur="this.style.borderColor='var(--border)'"
         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendGroupMsg()}" />
-      <button onclick="sendGroupMsg()" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif">➤</button>
+      <button onclick="sendGroupMsg()" style="background:linear-gradient(135deg,var(--escrow),#1a56c2);color:#fff;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Geologica',sans-serif;box-shadow:0 3px 10px rgba(45,108,223,0.4);transition:all .15s" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">➤</button>
     </div>
   </div>
 </div>
