@@ -465,285 +465,7 @@
     .admin-table th { padding: 8px 10px; text-align: left; color: #aab3cc; font-weight: 600; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.1); }
     .admin-table td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
 
-    /* ══════════════════════════════════════════
-       GLOBAL UI UPGRADE
-    ══════════════════════════════════════════ */
-
-    /* Better overlay backdrop */
-    .overlay {
-      background: rgba(0,0,0,0.55) !important;
-      backdrop-filter: blur(6px) !important;
-      -webkit-backdrop-filter: blur(6px) !important;
-    }
-
-    /* Nicer modals */
-    .modal {
-      border-radius: 24px !important;
-      padding: 1.6rem !important;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.3) !important;
-      border: 1px solid var(--border);
-    }
-    [data-theme="dark"] .modal {
-      box-shadow: 0 32px 80px rgba(0,0,0,0.7) !important;
-      border: 1px solid rgba(255,255,255,0.07);
-    }
-
-    /* Animated modal entry */
-    .overlay.open .modal {
-      transform: scale(1) translateY(0) !important;
-    }
-
-    /* Modal title */
-    .modal-title {
-      font-size: 1.05rem !important;
-      letter-spacing: -0.01em;
-    }
-
-    /* Buttons upgrade */
-    .btn-full, .btn-post, .btn-deal {
-      border-radius: 14px !important;
-      letter-spacing: 0.01em;
-      transition: all 0.18s !important;
-    }
-    .btn-full:hover:not(:disabled), .btn-post:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(255,92,53,0.4);
-    }
-    .btn-cancel {
-      border-radius: 12px !important;
-      transition: all 0.15s !important;
-    }
-    .btn-cancel:hover { background: var(--bg) !important; }
-
-    /* Form inputs upgrade */
-    .form-group input, .form-group select, .form-group textarea {
-      border-radius: 12px !important;
-      font-size: 14px !important;
-      padding: 11px 15px !important;
-      transition: all 0.2s !important;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      box-shadow: 0 0 0 3px rgba(255,92,53,0.15) !important;
-    }
-
-    /* Nav upgrade */
-    nav:first-of-type {
-      background: rgba(26,39,68,0.97) !important;
-      backdrop-filter: blur(20px) !important;
-      -webkit-backdrop-filter: blur(20px) !important;
-      border-bottom: 1px solid rgba(255,255,255,0.06) !important;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.2) !important;
-    }
-    [data-theme="dark"] nav:first-of-type {
-      background: rgba(15,17,23,0.97) !important;
-    }
-
-    /* Nav coin badge upgrade */
-    .nav-coin-badge {
-      background: linear-gradient(135deg, rgba(255,186,0,0.2), rgba(255,186,0,0.08)) !important;
-      border: 1px solid rgba(255,186,0,0.4) !important;
-      border-radius: 14px !important;
-      font-weight: 800 !important;
-      padding: 6px 14px !important;
-      transition: all 0.18s !important;
-    }
-    .nav-coin-badge:hover {
-      background: rgba(255,186,0,0.25) !important;
-      transform: scale(1.03);
-    }
-
-    /* Hero upgrade */
-    .hero {
-      background: linear-gradient(145deg, #0d1a36 0%, #1a2744 60%, #1e3060 100%) !important;
-      padding: 2.8rem 1.5rem 4rem !important;
-    }
-    .hero h1 { font-size: 2.1rem !important; letter-spacing: -0.03em !important; }
-    .hero-search {
-      border-radius: 16px !important;
-      overflow: hidden;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.35) !important;
-      max-width: 480px;
-    }
-    .hero-search input { padding: 15px 20px !important; font-size: 14px !important; }
-    .hero-search button {
-      padding: 0 24px !important;
-      font-weight: 700 !important;
-      letter-spacing: 0.02em;
-      transition: background 0.18s !important;
-    }
-    .hero-badge {
-      border-radius: 10px !important;
-      font-size: 10px !important;
-      letter-spacing: 0.08em !important;
-      padding: 6px 16px !important;
-    }
-
-    /* Stats bar upgrade */
-    .stats-bar {
-      border-radius: 18px !important;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06) !important;
-    }
-    .stat-num { font-size: 1.5rem !important; }
-
-    /* Category pills upgrade */
-    .cat-pill {
-      border-radius: 12px !important;
-      padding: 8px 16px !important;
-      font-size: 12px !important;
-      transition: all 0.18s !important;
-    }
-    .cat-pill:hover { transform: translateY(-1px); }
-    .cat-pill.active { box-shadow: 0 4px 14px rgba(255,92,53,0.35) !important; }
-
-    /* Feed tabs upgrade */
-    .feed-tab {
-      border-radius: 12px !important;
-      padding: 8px 18px !important;
-      font-size: 12px !important;
-      transition: all 0.18s !important;
-    }
-    .feed-tab.active {
-      box-shadow: 0 4px 14px rgba(26,39,68,0.25) !important;
-    }
-    [data-theme="dark"] .feed-tab.active {
-      box-shadow: 0 4px 14px rgba(255,92,53,0.25) !important;
-    }
-
-    /* Ad cards upgrade */
-    .ad-card {
-      border-radius: 18px !important;
-      border-width: 1.5px !important;
-      transition: all 0.2s cubic-bezier(0.34,1.1,0.64,1) !important;
-      overflow: hidden;
-    }
-    .ad-card:hover {
-      transform: translateY(-3px) !important;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.12) !important;
-      border-color: var(--accent) !important;
-    }
-    [data-theme="dark"] .ad-card:hover {
-      box-shadow: 0 12px 32px rgba(0,0,0,0.5) !important;
-    }
-    .ad-card-body { padding: 1.1rem !important; }
-    .ad-emoji { border-radius: 14px !important; }
-    .ad-title { font-size: 14px !important; }
-    .fav-btn {
-      border-radius: 10px !important;
-      width: 34px !important;
-      height: 34px !important;
-      backdrop-filter: blur(8px) !important;
-      -webkit-backdrop-filter: blur(8px) !important;
-      transition: transform 0.2s !important;
-    }
-
-    /* Filters bar upgrade */
-    .filters-bar {
-      border-radius: 16px !important;
-      padding: 1rem 1.2rem !important;
-    }
-    .filter-select {
-      border-radius: 10px !important;
-      padding: 7px 12px !important;
-      font-size: 12px !important;
-    }
-
-    /* How-to cards upgrade */
-    .how-card {
-      border-radius: 18px !important;
-      padding: 1.4rem !important;
-      transition: transform 0.18s !important;
-    }
-    .how-card:hover { transform: translateY(-2px); }
-
-    /* Wallet modal upgrade */
-    .wallet-balance { font-size: 3rem !important; }
-    .tx-row {
-      padding: 10px 0 !important;
-      border-bottom: 1px solid var(--border) !important;
-      transition: background 0.12s;
-    }
-    .tx-row:hover { background: var(--bg); border-radius: 8px; padding: 10px 8px !important; margin: 0 -8px; }
-    .tx-amt { font-size: 14px !important; }
-
-    /* Leaderboard upgrade */
-    .lb-row {
-      border-radius: 14px !important;
-      padding: 12px 14px !important;
-      margin-bottom: 8px !important;
-      transition: transform 0.15s !important;
-    }
-    .lb-row:hover { transform: translateX(3px); }
-
-    /* Profile modal upgrade */
-    .profile-avatar { width: 80px !important; height: 80px !important; border-radius: 50% !important; border: 3px solid var(--accent) !important; box-shadow: 0 0 0 4px rgba(255,92,53,0.15) !important; }
-    .profile-stats { border-radius: 16px !important; }
-    .profile-name { font-size: 1.1rem !important; margin-bottom: 4px !important; }
-
-    /* Urgent block upgrade */
-    .urgent-block { border-radius: 18px !important; }
-    .urgent-card { border-radius: 12px !important; }
-
-    /* Group items upgrade */
-    .group-item { border-radius: 16px !important; transition: all 0.18s !important; }
-    .group-item:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-
-    /* Comment bubbles upgrade */
-    .comment-text { border-radius: 6px 16px 16px 16px !important; }
-
-    /* Section title upgrade */
-    .section-title { font-size: 1rem !important; letter-spacing: -0.01em !important; }
-
-    /* Footer upgrade */
-    footer { background: var(--card) !important; border-radius: 0 !important; padding: 2rem !important; }
-
-    /* Announce bar upgrade */
-    .announce-bar { border-radius: 18px !important; }
-
-    /* Social chips upgrade */
-    .social-chip {
-      border-radius: 14px !important;
-      padding: 8px 16px !important;
-      font-size: 12.5px !important;
-      font-weight: 700 !important;
-      transition: all 0.18s !important;
-    }
-    .social-chip:hover {
-      transform: translateY(-2px) !important;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.1) !important;
-    }
-
-    /* bnav pill upgrade */
-    .bnav-pill {
-      border-radius: 28px !important;
-      padding: 8px 12px !important;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.2) !important;
-    }
-    .bnav-item { border-radius: 20px !important; transition: all 0.2s !important; }
-    .bnav-item.active { background: rgba(255,255,255,0.15) !important; }
-    .bnav-plus-circle {
-      width: 44px !important; height: 44px !important;
-      box-shadow: 0 6px 20px rgba(255,92,53,0.6) !important;
-    }
-
-    /* Deal box upgrade */
-    .deal-box { border-radius: 16px !important; }
-    .btn-deal { border-radius: 14px !important; font-size: 15px !important; padding: 14px !important; }
-    .escrow-status { border-radius: 14px !important; }
-
-    /* Auth box upgrade */
-    .auth-box { border-radius: 26px !important; padding: 2.4rem !important; }
-    .auth-tab { border-radius: 10px !important; }
-    .auth-logo { font-size: 30px !important; }
-
-    /* ══════════════════════════════════════════
-       WALLET MODAL REDESIGN
-    ══════════════════════════════════════════ */
-    #modal-wallet .modal {
-      max-width: 440px !important;
-    }
-    .wallet-history { max-height: 280px !important; }
-
+    /* ── SOCIAL NETWORK STYLES ── */
     /* Stories / Quick Profiles bar */
     .stories-bar {
       display: flex; gap: 12px; overflow-x: auto; padding: 1rem 0 0.5rem;
@@ -1197,42 +919,23 @@
 <!-- WALLET -->
 <div class="overlay" id="modal-wallet" onclick="if(event.target===this)closeModal('wallet')">
   <div class="modal">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
       <div class="modal-title" style="margin-bottom:0">🪙 Кошелёк</div>
-      <button onclick="closeModal('wallet')" style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
+      <button onclick="closeModal('wallet')" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--muted)">✕</button>
     </div>
-    <!-- Balance card -->
-    <div style="background:linear-gradient(135deg,#1a2744,#2d6cdf);border-radius:20px;padding:1.4rem;text-align:center;margin-bottom:1.2rem;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-15px;right:-15px;font-size:90px;opacity:0.08;line-height:1">🪙</div>
-      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Баланс</div>
-      <div class="wallet-balance" id="wallet-balance" style="color:#fff;font-size:2.8rem;text-shadow:0 2px 20px rgba(255,186,0,0.4)">0</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px">монет на счету</div>
-    </div>
-    <!-- How to earn -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.2rem">
-      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-        <span style="font-size:18px">✅</span>
-        <div><div style="font-size:11px;font-weight:700;color:var(--text)">Задание</div><div style="font-size:10px;color:var(--muted)">−10% комиссия</div></div>
-      </div>
-      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-        <span style="font-size:18px">⭐</span>
-        <div><div style="font-size:11px;font-weight:700;color:var(--text)">5★ отзыв</div><div style="font-size:10px;color:var(--muted)">+20 🪙 бонус</div></div>
-      </div>
-      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-        <span style="font-size:18px">🎉</span>
-        <div><div style="font-size:11px;font-weight:700;color:var(--text)">Бонус старта</div><div style="font-size:10px;color:var(--muted)">+100 🪙</div></div>
-      </div>
-      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-        <span style="font-size:18px">🔗</span>
-        <div><div style="font-size:11px;font-weight:700;color:var(--text)">Реферал</div><div style="font-size:10px;color:var(--muted)">+15 🪙 обоим</div></div>
-      </div>
-    </div>
-    <!-- History -->
-    <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px">
-      <span>История транзакций</span>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-    </div>
+    <div class="wallet-balance" id="wallet-balance">0</div>
+    <div class="wallet-sub">монет на счету</div>
+    <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px">История транзакций</div>
     <div class="wallet-history" id="wallet-history"></div>
+    <div style="margin-top:1rem;background:var(--bg);border-radius:10px;padding:0.9rem">
+      <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:6px">Как заработать монеты</div>
+      <div style="font-size:11.5px;color:#555;line-height:1.8">
+        ✅ Выполнить задание → монеты −10% комиссии<br>
+        ⭐ Получить 5★ оценку → +20 🪙<br>
+        🎉 Приветственный бонус → +100 🪙<br>
+        🔗 Пригласить друга по реферальной ссылке → +15 🪙 тебе и +15 🪙 другу
+      </div>
+    </div>
     <button class="btn-cancel" style="width:100%;margin-top:1rem" onclick="closeModal('wallet')">Закрыть</button>
   </div>
 </div>
@@ -3061,34 +2764,6 @@ function closeActivityMenu() {
 }
 
 // ══════════════════════════════════════════════
-// WALLET
-// ══════════════════════════════════════════════
-async function openWallet() {
-  if (!currentProfile) return;
-  document.getElementById('wallet-balance').textContent = currentProfile.coins;
-  const histEl = document.getElementById('wallet-history');
-  histEl.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--muted);font-size:12px">Загрузка...</div>';
-  openModal('wallet');
-  const { data } = await supabase.from('transactions')
-    .select('*').eq('user_id', currentProfile.id)
-    .order('created_at', { ascending: false }).limit(30);
-  const txs = data || [];
-  if (txs.length === 0) {
-    histEl.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">Транзакций пока нет</div>';
-    return;
-  }
-  histEl.innerHTML = txs.map(tx => `
-    <div class="tx-row">
-      <div class="tx-icon">${tx.icon || '🪙'}</div>
-      <div class="tx-desc">
-        <div style="font-size:12.5px;font-weight:600;color:var(--text)">${escHtml(tx.description)}</div>
-        <div class="tx-time">${fmtTime(tx.created_at)}</div>
-      </div>
-      <div class="tx-amt ${tx.amount >= 0 ? 'plus' : 'minus'}">${tx.amount >= 0 ? '+' : ''}${tx.amount}🪙</div>
-    </div>`).join('');
-}
-
-// ══════════════════════════════════════════════
 // LOGOUT
 // ══════════════════════════════════════════════
 async function doLogout() {
@@ -3950,7 +3625,7 @@ async function deleteGroup(groupId) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px 0">
 
       <!-- Топ игроков -->
-      <button onclick="closeActivityMenu();setTimeout(()=>{bnavSelect('top');openLeaderboard()},350)" style="
+      <button onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()" style="
         display:flex;flex-direction:column;align-items:flex-start;gap:0;
         padding:0;border-radius:20px;border:none;
         background:linear-gradient(135deg,#1a2744 0%,#2d6cdf 100%);
@@ -3969,7 +3644,7 @@ async function deleteGroup(groupId) {
       </button>
 
       <!-- Мои заказы -->
-      <button onclick="closeActivityMenu();setTimeout(()=>{bnavSelect('orders');openOrders('active')},350)" style="
+      <button onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')" style="
         display:flex;flex-direction:column;align-items:flex-start;
         padding:0;border-radius:20px;border:none;
         background:linear-gradient(135deg,#0f6e56 0%,#1db87a 100%);
@@ -3988,7 +3663,7 @@ async function deleteGroup(groupId) {
       </button>
 
       <!-- Общий чат -->
-      <button onclick="closeActivityMenu();setTimeout(()=>{bnavSelect('chat');openChat()},350)" style="
+      <button onclick="closeActivityMenu();bnavSelect('chat');openChat()" style="
         display:flex;flex-direction:column;align-items:flex-start;
         padding:0;border-radius:20px;border:none;
         background:linear-gradient(135deg,#7a3500 0%,#ff5c35 100%);
@@ -4007,7 +3682,7 @@ async function deleteGroup(groupId) {
       </button>
 
       <!-- Уведомления -->
-      <button onclick="closeActivityMenu();setTimeout(()=>{bnavSelect('notif');openNotifications()},350)" style="
+      <button onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="
         display:flex;flex-direction:column;align-items:flex-start;
         padding:0;border-radius:20px;border:none;
         background:linear-gradient(135deg,#7a5500 0%,#ffba00 100%);
@@ -4028,7 +3703,7 @@ async function deleteGroup(groupId) {
 
     <!-- Wide button: Кошелёк -->
     <div style="padding:12px 20px 0">
-      <button onclick="closeActivityMenu();setTimeout(openWallet,350)" style="
+      <button onclick="closeActivityMenu();openWallet()" style="
         width:100%;padding:16px 20px;border-radius:20px;border:none;
         background:linear-gradient(135deg,#1a1a2e 0%,#4a3000 50%,#1a1a2e 100%);
         cursor:pointer;font-family:'Geologica',sans-serif;
