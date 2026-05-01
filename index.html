@@ -555,21 +555,20 @@
 
     /* ── BOTTOM NAVIGATION (Telegram style) ── */
     #bottom-nav {
-      position: fixed !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      top: auto !important;
-      height: auto !important;
-      background: transparent !important;
-      border-top: none !important;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: auto;
+      height: auto;
+      background: transparent;
+      border-top: none;
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 9000;
-      padding: 0 12px env(safe-area-inset-bottom, 12px) 12px;
-      padding-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
-      box-shadow: none !important;
+      padding: 0 12px 12px 12px;
+      box-shadow: none;
       pointer-events: none;
     }
     /* The pill container */
@@ -2706,8 +2705,12 @@ function bnavSelect(tab) {
 
 function showBottomNav(show) {
   const bnav = document.getElementById('bottom-nav');
-  bnav.style.setProperty('display', show ? 'flex' : 'none', 'important');
-  if (!show) closeActivityMenu();
+  if (show) {
+    bnav.style.cssText = 'display:flex!important;position:fixed!important;bottom:0!important;left:0!important;right:0!important;top:auto!important;z-index:9000!important;align-items:center!important;justify-content:center!important;padding:0 12px 12px 12px!important;pointer-events:none!important;background:transparent!important;border:none!important;box-shadow:none!important;height:auto!important;';
+  } else {
+    bnav.style.cssText = 'display:none!important;';
+    closeActivityMenu();
+  }
 }
 
 function openActivityMenu() {
@@ -3541,7 +3544,7 @@ async function deleteGroup(groupId) {
 </script>
 
 <!-- BOTTOM NAV (Telegram pill style) -->
-<nav id="bottom-nav" style="display:none">
+<nav id="bottom-nav">
   <div class="bnav-pill">
     <button class="bnav-item active" id="bnav-home" onclick="bnavSelect('home');window.scrollTo(0,0)">
       <span class="bnav-icon">🏠</span>
