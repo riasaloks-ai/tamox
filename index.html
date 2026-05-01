@@ -25,11 +25,24 @@
     .screen.active { display: block; }
     #auth-screen.active { display: flex; flex-direction: column; }
 
-    nav { background: var(--navy); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 58px; position: sticky; top: 0; z-index: 100; }
+    nav { 
+      background: linear-gradient(135deg, #1a2744 0%, #0f1a38 100%); 
+      padding: 0 1.5rem; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      height: 58px; 
+      position: sticky; 
+      top: 0; 
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+    }
     .nav-logo { font-family: 'Unbounded', sans-serif; font-size: 21px; font-weight: 800; color: #fff; letter-spacing: -0.5px; cursor: pointer; }
     .nav-logo span { color: var(--accent); }
     .nav-right { display: flex; gap: 8px; align-items: center; }
-    .nav-coin-badge { display: flex; align-items: center; gap: 6px; background: rgba(255,186,0,0.15); border: 1px solid rgba(255,186,0,0.3); border-radius: 999px; padding: 5px 14px; font-size: 13px; font-weight: 700; color: var(--gold); cursor: pointer; }
+    .nav-coin-badge { display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(255,186,0,0.2), rgba(255,140,0,0.12)); border: 1px solid rgba(255,186,0,0.4); border-radius: 999px; padding: 5px 14px; font-size: 13px; font-weight: 700; color: var(--gold); cursor: pointer; transition: all .18s; box-shadow: 0 0 12px rgba(255,186,0,0.15); }
+    .nav-coin-badge:hover { background: linear-gradient(135deg, rgba(255,186,0,0.3), rgba(255,140,0,0.2)); box-shadow: 0 0 20px rgba(255,186,0,0.3); }
     .btn-sm { padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; border: none; transition: background 0.15s; }
     .btn-accent { background: var(--accent); color: #fff; }
     .btn-accent:hover { background: #e0441e; }
@@ -63,7 +76,7 @@
     .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; }
     @keyframes spin { to { transform: rotate(360deg); } }
     /* ── DARK THEME OVERRIDES ── */
-    [data-theme="dark"] nav { background: #13151f; border-bottom: 1px solid var(--border); }
+    [data-theme="dark"] nav { background: linear-gradient(135deg, #13151f 0%, #0d0f1a 100%); border-bottom: 1px solid var(--border); }
     [data-theme="dark"] .hero { background: #13151f; }
     [data-theme="dark"] .hero::after { background: var(--bg); }
     [data-theme="dark"] .auth-wrap { background: #0a0c12; }
@@ -164,21 +177,51 @@
 
 
 
-    .hero { background: var(--navy); padding: 2.5rem 1.5rem 3.5rem; text-align: center; position: relative; overflow: hidden; }
+    .hero { 
+      background: var(--navy); 
+      padding: 2.5rem 1.5rem 3.5rem; 
+      text-align: center; 
+      position: relative; 
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 80% at 10% 20%, rgba(255,92,53,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 70% at 85% 70%, rgba(45,108,223,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 60% at 50% 100%, rgba(255,186,0,0.12) 0%, transparent 55%);
+      pointer-events: none;
+    }
     .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 38px; background: var(--bg); border-radius: 38px 38px 0 0; }
     .hero-badge { display: inline-block; background: rgba(255,92,53,0.2); color: var(--accent); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 14px; border-radius: 999px; margin-bottom: 1rem; border: 1px solid rgba(255,92,53,0.35); }
     .hero h1 { font-family: 'Unbounded', sans-serif; font-size: 2rem; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 0.7rem; }
     .hero h1 em { color: var(--accent); font-style: normal; }
     .hero p { font-size: 14px; color: #aab3cc; max-width: 420px; margin: 0 auto 1.8rem; line-height: 1.6; }
-    .hero-search { display: flex; max-width: 500px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.25); }
-    .hero-search input { flex: 1; border: none; outline: none; padding: 13px 18px; font-size: 14px; font-family: 'Geologica', sans-serif; color: var(--text); }
-    .hero-search button { background: var(--accent); color: #fff; border: none; padding: 0 22px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; }
+    .hero-search { 
+      display: flex; 
+      max-width: 500px; 
+      margin: 0 auto; 
+      background: rgba(255,255,255,0.12); 
+      border-radius: 16px; 
+      overflow: hidden; 
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .hero-search input { flex: 1; border: none; outline: none; padding: 14px 18px; font-size: 14px; font-family: 'Geologica', sans-serif; color: #fff; background: transparent; }
+    .hero-search input::placeholder { color: rgba(255,255,255,0.5); }
+    .hero-search button { background: var(--accent); color: #fff; border: none; padding: 0 24px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Geologica', sans-serif; border-radius: 0 14px 14px 0; transition: background .15s; }
+    .hero-search button:hover { background: #e0441e; }
 
     .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 3rem; }
     .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
     .section-title { font-family: 'Unbounded', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy); }
 
-    .stats-bar { display: flex; background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin: 2rem auto 1.8rem; max-width: 600px; }
+    .stats-bar { display: flex; background: var(--card); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin: 2rem auto 1.8rem; max-width: 600px; box-shadow: 0 4px 20px var(--shadow); position: relative; }
+    .stats-bar::before { content:''; position:absolute; inset:0; background: linear-gradient(135deg, rgba(255,92,53,0.05) 0%, transparent 50%, rgba(45,108,223,0.05) 100%); pointer-events:none; }
     .stat-item { flex: 1; text-align: center; padding: 1rem; border-right: 1px solid var(--border); }
     .stat-item:last-child { border-right: none; }
     .stat-num { font-family: 'Unbounded', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--navy); }
@@ -198,8 +241,8 @@
     .feed-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
 
     .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 13px; margin-bottom: 1.5rem; }
-    .ad-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s; position: relative; }
-    .ad-card:hover { border-color: #c8c4bb; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .ad-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; cursor: pointer; transition: box-shadow 0.22s, border-color 0.22s, transform 0.22s; position: relative; }
+    .ad-card:hover { border-color: rgba(255,92,53,0.35); box-shadow: 0 12px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,92,53,0.15); }
     .ad-card-img { width: 100%; height: 130px; object-fit: cover; display: block; background: #f0f0f0; }
     .ad-card-body { padding: 1rem; }
     .ad-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 9px; }
@@ -501,11 +544,17 @@
     .social-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
     .social-chip {
       display: flex; align-items: center; gap: 6px; background: var(--card);
-      border: 1.5px solid var(--border); border-radius: 999px; padding: 6px 14px;
+      border: 1.5px solid var(--border); border-radius: 999px; padding: 7px 16px;
       font-size: 12px; font-weight: 600; color: var(--navy); cursor: pointer;
-      transition: all .15s;
+      transition: all .2s;
+      box-shadow: 0 2px 8px var(--shadow);
     }
-    .social-chip:hover { border-color: var(--accent); color: var(--accent); }
+    .social-chip:hover { 
+      border-color: var(--accent); color: var(--accent); 
+      background: linear-gradient(135deg, rgba(255,92,53,0.06), rgba(255,140,0,0.04));
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(255,92,53,0.15);
+    }
     [data-theme="dark"] .social-chip { color: var(--text); }
 
     /* Messenger-style DM preview list */
@@ -525,10 +574,11 @@
 
     /* Announcement badge */
     .announce-bar {
-      background: linear-gradient(135deg, var(--navy), #2d4a8a);
-      border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.3rem;
+      background: linear-gradient(135deg, #1a2744 0%, #2d4a8a 60%, #1a3a6a 100%);
+      border-radius: 18px; padding: 1rem 1.2rem; margin-bottom: 1.3rem;
       color: #fff; display: flex; align-items: center; gap: 14px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 4px 20px rgba(26,39,68,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
     }
     .announce-icon { font-size: 28px; flex-shrink: 0; }
     .announce-text { flex: 1; }
@@ -582,18 +632,19 @@
       display: flex;
       align-items: center;
       justify-content: space-around;
-      background: #1c2333;
+      background: linear-gradient(135deg, #1c2537 0%, #141b2e 100%);
       border-radius: 999px;
       padding: 7px 10px;
       gap: 4px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
       pointer-events: all;
       width: 100%;
       max-width: 440px;
+      border: 1px solid rgba(255,255,255,0.09);
     }
     [data-theme="light"] .bnav-pill {
-      background: #1a2744;
-      box-shadow: 0 8px 32px rgba(26,39,68,0.28), 0 2px 8px rgba(0,0,0,0.15);
+      background: linear-gradient(135deg, #1a2744 0%, #0f1a38 100%);
+      box-shadow: 0 8px 40px rgba(26,39,68,0.35), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.12);
     }
     .bnav-item {
       flex: 1;
@@ -616,7 +667,8 @@
     .bnav-item:hover { color: rgba(255,255,255,0.8); }
     .bnav-item.active {
       color: #fff;
-      background: rgba(255,255,255,0.12);
+      background: linear-gradient(135deg, rgba(255,92,53,0.25), rgba(255,140,0,0.15));
+      box-shadow: 0 0 12px rgba(255,92,53,0.2);
     }
     .bnav-item.active .bnav-icon { transform: translateY(-1px); }
     .bnav-icon { font-size: 20px; line-height: 1; transition: transform 0.18s; }
@@ -2715,9 +2767,9 @@ function showBottomNav(show) {
 
 function openActivityMenu() {
   const menu = document.getElementById('activity-menu');
-  const isOpen = menu.style.display === 'block' || menu.style.display === '';
+  const isOpen = menu.classList.contains('open');
   if (isOpen) { closeActivityMenu(); return; }
-  menu.style.display = 'block';
+  menu.classList.add('open');
   // Render status progress bar
   if (currentProfile) {
     const uc = getUserClass(currentProfile.coins);
@@ -2728,16 +2780,26 @@ function openActivityMenu() {
       if (nextUc) {
         const progress = Math.min(100, Math.round(((currentProfile.coins - uc.minCoins) / (nextUc.minCoins - uc.minCoins)) * 100));
         barEl.innerHTML = `
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:12px;font-weight:700;color:var(--navy)">${uc.emoji} ${uc.name}</span>
-            <span style="font-size:11px;color:var(--muted)">До ${nextUc.emoji} ${nextUc.name}: ${nextUc.minCoins - currentProfile.coins}🪙</span>
-          </div>
-          <div style="background:var(--border);border-radius:999px;height:8px;overflow:hidden">
-            <div style="background:linear-gradient(90deg,var(--accent),var(--gold));height:100%;width:${progress}%;border-radius:999px;transition:width .5s ease"></div>
-          </div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;text-align:right">${progress}% до следующего статуса</div>`;
+          <div class="act-status-glass">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <span style="font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px">
+                <span style="font-size:16px">${uc.emoji}</span> ${uc.name}
+              </span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.08);padding:3px 9px;border-radius:999px">
+                До ${nextUc.emoji} ${nextUc.name}: <strong style="color:var(--gold)">${nextUc.minCoins - currentProfile.coins}🪙</strong>
+              </span>
+            </div>
+            <div style="background:rgba(255,255,255,0.1);border-radius:999px;height:6px;overflow:hidden">
+              <div style="background:linear-gradient(90deg,var(--accent),var(--gold));height:100%;width:${progress}%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px rgba(255,186,0,0.5)"></div>
+            </div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:5px;text-align:right">${progress}% до следующего статуса</div>
+          </div>`;
       } else {
-        barEl.innerHTML = `<div style="text-align:center;font-size:13px;font-weight:700;color:var(--gold)">👑 Максимальный статус достигнут!</div>`;
+        barEl.innerHTML = `
+          <div class="act-status-glass" style="text-align:center">
+            <span style="font-size:22px">👑</span>
+            <div style="font-size:13px;font-weight:700;color:var(--gold);margin-top:4px">Максимальный статус достигнут!</div>
+          </div>`;
       }
     }
   }
@@ -2745,7 +2807,7 @@ function openActivityMenu() {
 
 function closeActivityMenu() {
   const menu = document.getElementById('activity-menu');
-  if (menu) menu.style.display = 'none';
+  if (menu) menu.classList.remove('open');
   // Deselect activity tab if it was active
   const actBtn = document.getElementById('bnav-activity');
   if (actBtn) actBtn.classList.remove('active');
@@ -3576,37 +3638,338 @@ async function deleteGroup(groupId) {
 </nav>
 
 <!-- ACTIVITY POPUP MENU -->
-<div id="activity-menu" onclick="closeActivityMenu()" style="display:none;position:fixed;inset:0;z-index:499;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px)">
-  <div onclick="event.stopPropagation()" style="position:absolute;bottom:74px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:24px;padding:12px;box-shadow:0 -8px 60px rgba(0,0,0,0.35);min-width:300px;max-width:94vw">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 14px 12px">
-      <div style="font-size:13px;font-weight:800;color:var(--navy);font-family:'Unbounded',sans-serif">📊 Активность</div>
-      <button onclick="closeActivityMenu()" style="background:var(--bg);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center">✕</button>
+<style>
+  /* ── ACTIVITY MENU – REDESIGN ── */
+  #activity-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 499;
+    background: rgba(10, 12, 24, 0.6);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 80px;
+  }
+  #activity-menu.open { display: flex; }
+
+  .act-sheet {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    border-radius: 30px 30px 26px 26px;
+    overflow: hidden;
+    box-shadow:
+      0 -4px 60px rgba(255,92,53,0.18),
+      0 30px 80px rgba(0,0,0,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.12);
+    animation: actSlideUp 0.38s cubic-bezier(0.34,1.46,0.64,1) both;
+  }
+  @keyframes actSlideUp {
+    from { transform: translateY(60px) scale(0.97); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);    opacity: 1; }
+  }
+
+  /* Glass background layers */
+  .act-sheet::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(255,92,53,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 100%, rgba(45,108,223,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255,186,0,0.07) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .act-sheet::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(0px);
+    border: 1.5px solid rgba(255,255,255,0.13);
+    border-radius: 30px 30px 26px 26px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  [data-theme="light"] .act-sheet::before {
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(255,92,53,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 100%, rgba(45,108,223,0.10) 0%, transparent 55%);
+  }
+  [data-theme="light"] .act-sheet::after {
+    background: rgba(255,255,255,0.78);
+    border-color: rgba(255,255,255,0.5);
+  }
+
+  .act-bg {
+    position: absolute;
+    inset: 0;
+    background: #0f1117;
+    z-index: -1;
+  }
+  [data-theme="light"] .act-bg { background: #f0eee8; }
+
+  .act-inner {
+    position: relative;
+    z-index: 1;
+    padding: 20px 18px 22px;
+  }
+
+  /* Header */
+  .act-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding: 0 4px;
+  }
+  .act-title-wrap { display: flex; align-items: center; gap: 10px; }
+  .act-title-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #ff5c35, #ff8c35);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(255,92,53,0.45);
+  }
+  .act-title-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+  [data-theme="light"] .act-title-text { color: var(--navy); }
+  .act-title-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 500;
+    margin-top: 1px;
+  }
+  [data-theme="light"] .act-title-sub { color: var(--muted); }
+
+  .act-close {
+    width: 34px; height: 34px;
+    background: rgba(255,255,255,0.09);
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    display: flex; align-items: center; justify-content: center;
+    transition: all .18s;
+    backdrop-filter: blur(6px);
+  }
+  .act-close:hover { background: rgba(255,255,255,0.18); color: #fff; transform: rotate(90deg); }
+  [data-theme="light"] .act-close { background: rgba(0,0,0,0.07); border-color: rgba(0,0,0,0.12); color: var(--muted); }
+  [data-theme="light"] .act-close:hover { background: rgba(0,0,0,0.14); color: var(--navy); }
+
+  /* Grid of action cards */
+  .act-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .act-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 18px 16px 16px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(255,255,255,0.09);
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    font-family: 'Geologica', sans-serif;
+    transition: all 0.22s cubic-bezier(0.34,1.4,0.64,1);
+    overflow: hidden;
+    text-align: left;
+  }
+  [data-theme="light"] .act-card {
+    background: rgba(255,255,255,0.72);
+    border-color: rgba(255,255,255,0.6);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .act-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .22s;
+    border-radius: 20px;
+  }
+  .act-card:hover { transform: translateY(-3px) scale(1.02); border-color: rgba(255,255,255,0.22); }
+  .act-card:hover::before { opacity: 1; }
+  .act-card:active { transform: translateY(0) scale(0.98); }
+
+  /* Per-card accent colors */
+  .act-card-top    { --ac: #ffba00; --ag: linear-gradient(135deg,rgba(255,186,0,0.25),rgba(255,140,0,0.10)); }
+  .act-card-orders { --ac: #ff5c35; --ag: linear-gradient(135deg,rgba(255,92,53,0.25),rgba(255,60,30,0.10)); }
+  .act-card-chat   { --ac: #2d6cdf; --ag: linear-gradient(135deg,rgba(45,108,223,0.25),rgba(30,80,200,0.10)); }
+  .act-card-notif  { --ac: #1db87a; --ag: linear-gradient(135deg,rgba(29,184,122,0.25),rgba(10,160,90,0.10)); }
+
+  .act-card::before { background: var(--ag); }
+  .act-card:hover { border-color: var(--ac) !important; box-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 0 0 1px var(--ac) inset; }
+
+  .act-card-emoji-wrap {
+    width: 52px; height: 52px;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    margin-bottom: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    transition: transform .22s;
+    position: relative;
+    z-index: 1;
+  }
+  [data-theme="light"] .act-card-emoji-wrap {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.08);
+  }
+  .act-card:hover .act-card-emoji-wrap { transform: scale(1.12) rotate(-4deg); }
+
+  .act-card-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    position: relative; z-index: 1;
+  }
+  [data-theme="light"] .act-card-label { color: var(--navy); }
+
+  .act-card-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 400;
+    position: relative; z-index: 1;
+  }
+  [data-theme="light"] .act-card-sub { color: var(--muted); }
+
+  .act-card-arrow {
+    position: absolute;
+    top: 14px; right: 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    transition: color .18s, transform .18s;
+    z-index: 1;
+  }
+  .act-card:hover .act-card-arrow { color: var(--ac); transform: translate(2px,-2px); }
+  [data-theme="light"] .act-card-arrow { color: rgba(0,0,0,0.2); }
+
+  /* Accent dot on emoji */
+  .act-card-dot {
+    position: absolute;
+    top: -2px; right: -2px;
+    width: 10px; height: 10px;
+    background: var(--ac);
+    border-radius: 50%;
+    border: 2px solid var(--card);
+    box-shadow: 0 0 6px var(--ac);
+  }
+
+  /* Divider */
+  .act-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1) 30%, rgba(255,255,255,0.1) 70%, transparent);
+    margin: 0 4px 14px;
+  }
+  [data-theme="light"] .act-divider {
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.1) 70%, transparent);
+  }
+
+  /* Status bar at bottom */
+  #activity-status-bar {
+    padding: 2px 4px 0;
+  }
+  .act-status-glass {
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.09);
+    border-radius: 14px;
+    padding: 10px 14px;
+    backdrop-filter: blur(8px);
+  }
+  [data-theme="light"] .act-status-glass {
+    background: rgba(255,255,255,0.6);
+    border-color: rgba(255,255,255,0.7);
+  }
+
+  /* Drag handle */
+  .act-handle {
+    width: 36px; height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 999px;
+    margin: 0 auto 16px;
+  }
+  [data-theme="light"] .act-handle { background: rgba(0,0,0,0.12); }
+</style>
+
+<div id="activity-menu" onclick="if(event.target===this)closeActivityMenu()">
+  <div class="act-sheet" onclick="event.stopPropagation()">
+    <div class="act-bg"></div>
+    <div class="act-inner">
+      <div class="act-handle"></div>
+
+      <!-- Header -->
+      <div class="act-header">
+        <div class="act-title-wrap">
+          <div class="act-title-icon">📊</div>
+          <div>
+            <div class="act-title-text">Активность</div>
+            <div class="act-title-sub">Твоя биржа · Сделки · Рейтинг</div>
+          </div>
+        </div>
+        <button class="act-close" onclick="closeActivityMenu()">✕</button>
+      </div>
+
+      <!-- 2×2 Action Grid -->
+      <div class="act-grid">
+        <button class="act-card act-card-top" onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()">
+          <div class="act-card-emoji-wrap">
+            🏆
+            <div class="act-card-dot"></div>
+          </div>
+          <div class="act-card-label">Топ игроков</div>
+          <div class="act-card-sub">Рейтинг недели</div>
+          <span class="act-card-arrow">↗</span>
+        </button>
+
+        <button class="act-card act-card-orders" onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')">
+          <div class="act-card-emoji-wrap">📦</div>
+          <div class="act-card-label">Мои заказы</div>
+          <div class="act-card-sub">Активные сделки</div>
+          <span class="act-card-arrow">↗</span>
+        </button>
+
+        <button class="act-card act-card-chat" onclick="closeActivityMenu();bnavSelect('chat');openChat()">
+          <div class="act-card-emoji-wrap">💬</div>
+          <div class="act-card-label">Общий чат</div>
+          <div class="act-card-sub">Школьный чат</div>
+          <span class="act-card-arrow">↗</span>
+        </button>
+
+        <button class="act-card act-card-notif" onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="position:relative">
+          <div class="act-card-emoji-wrap">🔔</div>
+          <div class="act-card-label">Уведомления</div>
+          <div class="act-card-sub">Новости · Алерты</div>
+          <span class="act-card-arrow">↗</span>
+        </button>
+      </div>
+
+      <div class="act-divider"></div>
+
+      <!-- Status progress bar -->
+      <div id="activity-status-bar"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 4px">
-      <button onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-        <span style="font-size:30px">🏆</span>
-        <span style="font-size:13px;font-weight:700;color:var(--navy)">Топ игроков</span>
-        <span style="font-size:10px;color:var(--muted)">Рейтинг недели</span>
-      </button>
-      <button onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-        <span style="font-size:30px">📦</span>
-        <span style="font-size:13px;font-weight:700;color:var(--navy)">Мои заказы</span>
-        <span style="font-size:10px;color:var(--muted)">Активные сделки</span>
-      </button>
-      <button onclick="closeActivityMenu();bnavSelect('chat');openChat()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--escrow)'" onmouseout="this.style.borderColor='var(--border)'">
-        <span style="font-size:30px">💬</span>
-        <span style="font-size:13px;font-weight:700;color:var(--navy)">Общий чат</span>
-        <span style="font-size:10px;color:var(--muted)">Школьный чат</span>
-      </button>
-      <button onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s;position:relative" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
-        <span style="font-size:30px">🔔</span>
-        <span style="font-size:13px;font-weight:700;color:var(--navy)">Уведомления</span>
-        <span style="font-size:10px;color:var(--muted)">Новости и алерты</span>
-      </button>
-    </div>
-    <div style="margin:10px 8px 6px;height:1px;background:var(--border)"></div>
-    <!-- Status progress bar -->
-    <div id="activity-status-bar" style="padding:8px 12px 4px"></div>
   </div>
 </div>
 </body>
