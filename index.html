@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tamox — школьная доска объявлений</title>
+  <title>tamox — школьная соцсеть-биржа · Алматы</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Geologica:wght@300;400;500;600&display=swap');
 
@@ -465,7 +465,86 @@
     .admin-table th { padding: 8px 10px; text-align: left; color: #aab3cc; font-weight: 600; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.1); }
     .admin-table td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
 
-    @media (max-width: 600px) {
+    /* ── SOCIAL NETWORK STYLES ── */
+    /* Stories / Quick Profiles bar */
+    .stories-bar {
+      display: flex; gap: 12px; overflow-x: auto; padding: 1rem 0 0.5rem;
+      margin-bottom: 0.5rem; scrollbar-width: none;
+    }
+    .stories-bar::-webkit-scrollbar { display: none; }
+    .story-item {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .story-avatar-ring {
+      width: 54px; height: 54px; border-radius: 50%; padding: 2.5px;
+      background: linear-gradient(135deg, var(--accent), var(--gold));
+      position: relative;
+    }
+    .story-avatar-ring.online::after {
+      content: ''; position: absolute; bottom: 2px; right: 2px;
+      width: 11px; height: 11px; background: var(--green);
+      border-radius: 50%; border: 2px solid var(--card);
+    }
+    .story-avatar-ring img {
+      width: 100%; height: 100%; border-radius: 50%; border: 2.5px solid var(--card);
+      object-fit: cover; display: block;
+    }
+    .story-name {
+      font-size: 10px; font-weight: 600; color: var(--text);
+      max-width: 54px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      text-align: center;
+    }
+    [data-theme="dark"] .story-avatar-ring img { border-color: var(--card); }
+
+    /* Social stat chips */
+    .social-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+    .social-chip {
+      display: flex; align-items: center; gap: 6px; background: var(--card);
+      border: 1.5px solid var(--border); border-radius: 999px; padding: 6px 14px;
+      font-size: 12px; font-weight: 600; color: var(--navy); cursor: pointer;
+      transition: all .15s;
+    }
+    .social-chip:hover { border-color: var(--accent); color: var(--accent); }
+    [data-theme="dark"] .social-chip { color: var(--text); }
+
+    /* Messenger-style DM preview list */
+    .dm-preview-list { display: flex; flex-direction: column; gap: 4px; }
+    .dm-preview-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: 12px; cursor: pointer; transition: background .12s;
+    }
+    .dm-preview-item:hover { background: var(--bg); }
+
+    /* Post card improvements */
+    .ad-card { transition: box-shadow 0.18s, border-color 0.18s, transform 0.18s; }
+    .ad-card:hover { transform: translateY(-2px); }
+
+    /* Nav logo glow */
+    .nav-logo span { color: var(--accent); text-shadow: 0 0 20px rgba(255,92,53,0.4); }
+
+    /* Announcement badge */
+    .announce-bar {
+      background: linear-gradient(135deg, var(--navy), #2d4a8a);
+      border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.3rem;
+      color: #fff; display: flex; align-items: center; gap: 14px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .announce-icon { font-size: 28px; flex-shrink: 0; }
+    .announce-text { flex: 1; }
+    .announce-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+    .announce-sub { font-size: 11px; opacity: 0.75; line-height: 1.4; }
+
+    /* Status leaderboard pill */
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 700;
+      border: 1.5px solid rgba(255,186,0,0.35); background: rgba(255,186,0,0.1);
+      color: var(--gold); cursor: pointer; transition: all .15s;
+    }
+    .status-pill:hover { background: rgba(255,186,0,0.2); }
+
+    /* ── SOCIAL NETWORK STYLES END ── */
       .hero h1 { font-size: 1.5rem; }
       nav { padding: 0 0.75rem; height: auto; min-height: 52px; flex-wrap: nowrap; gap: 6px; }
       .nav-logo { font-size: 17px; flex-shrink: 0; }
@@ -632,7 +711,7 @@
   <div class="auth-wrap">
     <div class="auth-box">
       <div class="auth-logo">tam<span>ox</span></div>
-      <div class="auth-sub">Школьная доска объявлений · Алматы</div>
+      <div class="auth-sub">Соцсеть-биржа · Мессенджер · Объявления · Алматы</div>
       <div class="auth-tabs">
         <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Войти</div>
         <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Регистрация</div>
@@ -698,16 +777,34 @@
   </nav>
 
   <div class="hero">
-    <div class="hero-badge">Только монеты · Эскроу · Комиссия 10%</div>
-    <h1>Нужна помощь?<br />Найди её <em>здесь</em></h1>
-    <p>Сгонять в магаз, продать учебник, помочь с учёбой — всё за монеты Tamox</p>
+    <div class="hero-badge">✨ Социальная биржа · Алматы · Монеты · Эскроу</div>
+    <h1>Находи людей.<br />Делай <em>дела</em>.</h1>
+    <p>Tamox — это школьная соцсеть-биржа. Объявления, чаты, переписка и монеты за реальные задания</p>
     <div class="hero-search">
-      <input type="text" id="search-input" placeholder="Найти объявление..." oninput="renderAds()" />
+      <input type="text" id="search-input" placeholder="Найти объявление или человека..." oninput="renderAds()" />
       <button onclick="renderAds()">Найти</button>
     </div>
   </div>
 
   <div class="container">
+    <!-- SOCIAL ANNOUNCE BAR -->
+    <div class="announce-bar" id="announce-bar" style="display:none">
+      <div class="announce-icon">📣</div>
+      <div class="announce-text">
+        <div class="announce-title">Добро пожаловать в Tamox!</div>
+        <div class="announce-sub">Объявления · Чаты · ЛС · Топ игроков · Эскроу-сделки</div>
+      </div>
+      <button onclick="document.getElementById('announce-bar').style.display='none'" style="background:rgba(255,255,255,0.1);border:none;border-radius:8px;color:#fff;padding:6px 10px;cursor:pointer;font-size:12px">✕</button>
+    </div>
+
+    <!-- SOCIAL CHIPS -->
+    <div class="social-chips">
+      <div class="social-chip" onclick="openLeaderboard()">🏆 Топ игроков</div>
+      <div class="social-chip" onclick="openOrders('active')">📦 Мои заказы</div>
+      <div class="social-chip" onclick="openChat()">💬 Общий чат</div>
+      <div class="social-chip" onclick="openNotifications()">🔔 Уведомления</div>
+    </div>
+
     <div class="stats-bar">
       <div class="stat-item"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Объявлений</div></div>
       <div class="stat-item"><div class="stat-num" id="stat-done">0</div><div class="stat-label">Выполнено</div></div>
@@ -767,7 +864,7 @@
     </div>
   </div>
 
-  <footer>© 2026 <strong>tamox</strong> — школьная доска объявлений · Алматы</footer>
+  <footer>© 2026 <strong>tamox</strong> — школьная соцсеть-биржа · Алматы · Объявления · Чаты · Монеты</footer>
 </div>
 
 <!-- ══════════ MODALS ══════════ -->
@@ -1251,12 +1348,18 @@ const AVATAR_SEEDS = [
 ];
 
 const USER_CLASSES = [
-  { name: 'Новичок',   emoji: '🌱', minCoins: 0,    cls: 'novice' },
-  { name: 'Фрилансер', emoji: '💼', minCoins: 200,  cls: 'freelancer' },
-  { name: 'Воркер',    emoji: '⚡', minCoins: 500,  cls: 'worker' },
-  { name: 'Профи',     emoji: '🔥', minCoins: 1000, cls: 'pro' },
-  { name: 'Акула',     emoji: '🦈', minCoins: 2000, cls: 'shark' },
-  { name: 'mister money',     emoji: '🤑', minCoins: 10000, cls: 'mister money' },
+  { name: 'Новичок',        emoji: '🌱', minCoins: 0,     cls: 'novice' },
+  { name: 'Фрилансер',      emoji: '💼', minCoins: 200,   cls: 'freelancer' },
+  { name: 'Воркер',         emoji: '⚡', minCoins: 500,   cls: 'worker' },
+  { name: 'Профи',          emoji: '🔥', minCoins: 1000,  cls: 'pro' },
+  { name: 'Акула',          emoji: '🦈', minCoins: 2000,  cls: 'shark' },
+  { name: 'Хантер',         emoji: '🎯', minCoins: 3500,  cls: 'hunter' },
+  { name: 'Боец',           emoji: '🥊', minCoins: 5000,  cls: 'fighter' },
+  { name: 'Легенда',        emoji: '👑', minCoins: 7500,  cls: 'legend' },
+  { name: 'Криптан',        emoji: '🪙', minCoins: 9000,  cls: 'cryptan' },
+  { name: 'Мистер деньги',  emoji: '🤑', minCoins: 10000, cls: 'mistermoney' },
+  { name: 'Олигарх',        emoji: '💎', minCoins: 20000, cls: 'oligarch' },
+  { name: 'Босс',           emoji: '🦁', minCoins: 50000, cls: 'boss' },
 ];
 
 function getUserClass(coins) {
@@ -1282,14 +1385,20 @@ function fmtTime(ts) {
 function classBadgeHTML(coins) {
   const uc = getUserClass(coins);
   const styles = {
-    novice:     'background:#f0f3f8;color:#666',
-    freelancer: 'background:#e8f3ff;color:#1a6ec9',
-    worker:     'background:#e5f7ee;color:#0f6e56',
-    pro:        'background:#fff0e0;color:#b36000',
-    shark:      'background:linear-gradient(135deg,#1a2744,#2d6cdf);color:#fff',
-    mistermoney: 'background:linear-gradient(135deg,#1a2744,#2d6cdf);color:#ffba00',
+    novice:      'background:#f0f3f8;color:#666',
+    freelancer:  'background:#e8f3ff;color:#1a6ec9',
+    worker:      'background:#e5f7ee;color:#0f6e56',
+    pro:         'background:#fff0e0;color:#b36000',
+    shark:       'background:linear-gradient(135deg,#1a2744,#2d6cdf);color:#fff',
+    hunter:      'background:linear-gradient(135deg,#2d1a44,#8b3cd8);color:#fff',
+    fighter:     'background:linear-gradient(135deg,#7f0000,#c62828);color:#fff',
+    legend:      'background:linear-gradient(135deg,#7a5500,#ffba00);color:#fff',
+    cryptan:     'background:linear-gradient(135deg,#0d2a1a,#1db87a);color:#fff',
+    mistermoney: 'background:linear-gradient(135deg,#5c3a00,#ff9900);color:#fff',
+    oligarch:    'background:linear-gradient(135deg,#1a1a2e,#4facf7);color:#fff',
+    boss:        'background:linear-gradient(135deg,#1a0a00,#ff5c35);color:#fff;box-shadow:0 0 8px rgba(255,92,53,0.4)',
   };
-  return `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;${styles[uc.cls]}">${uc.emoji} ${uc.name}</span>`;
+  return `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;${styles[uc.cls]||styles.novice}">${uc.emoji} ${uc.name}</span>`;
 }
 
 // ══════════════════════════════════════════════
@@ -1384,6 +1493,12 @@ function showMain() {
   document.getElementById('main-screen').classList.add('active');
   showBottomNav(true);
   loadAds(true);
+  // Show announce bar on first visit this session
+  if (!sessionStorage.getItem('tamox-welcomed')) {
+    const bar = document.getElementById('announce-bar');
+    if (bar) bar.style.display = 'flex';
+    sessionStorage.setItem('tamox-welcomed', '1');
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -2598,7 +2713,31 @@ function showBottomNav(show) {
 function openActivityMenu() {
   const menu = document.getElementById('activity-menu');
   const isOpen = menu.style.display === 'block' || menu.style.display === '';
-  menu.style.display = isOpen ? 'none' : 'block';
+  if (isOpen) { closeActivityMenu(); return; }
+  menu.style.display = 'block';
+  // Render status progress bar
+  if (currentProfile) {
+    const uc = getUserClass(currentProfile.coins);
+    const ucIdx = USER_CLASSES.indexOf(uc);
+    const nextUc = USER_CLASSES[ucIdx + 1];
+    const barEl = document.getElementById('activity-status-bar');
+    if (barEl) {
+      if (nextUc) {
+        const progress = Math.min(100, Math.round(((currentProfile.coins - uc.minCoins) / (nextUc.minCoins - uc.minCoins)) * 100));
+        barEl.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:700;color:var(--navy)">${uc.emoji} ${uc.name}</span>
+            <span style="font-size:11px;color:var(--muted)">До ${nextUc.emoji} ${nextUc.name}: ${nextUc.minCoins - currentProfile.coins}🪙</span>
+          </div>
+          <div style="background:var(--border);border-radius:999px;height:8px;overflow:hidden">
+            <div style="background:linear-gradient(90deg,var(--accent),var(--gold));height:100%;width:${progress}%;border-radius:999px;transition:width .5s ease"></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;text-align:right">${progress}% до следующего статуса</div>`;
+      } else {
+        barEl.innerHTML = `<div style="text-align:center;font-size:13px;font-weight:700;color:var(--gold)">👑 Максимальный статус достигнут!</div>`;
+      }
+    }
+  }
 }
 
 function closeActivityMenu() {
@@ -2960,10 +3099,12 @@ async function loadNotifications() {
 
 function updateNotifBadge() {
   const unread = allNotifications.filter(n => !n.is_read).length;
+  // Badge on activity nav button
   const badge = document.getElementById('notif-badge');
-  if (!badge) return;
-  badge.style.display = unread > 0 ? 'flex' : 'none';
-  badge.textContent = unread > 9 ? '9+' : unread;
+  if (badge) {
+    badge.style.display = unread > 0 ? 'flex' : 'none';
+    badge.textContent = unread > 9 ? '9+' : unread;
+  }
 }
 
 function subscribeNotifications() {
@@ -3415,6 +3556,11 @@ async function deleteGroup(groupId) {
       <span class="bnav-icon bnav-plus-circle">＋</span>
       <span class="bnav-label">Добавить</span>
     </button>
+    <button class="bnav-item" id="bnav-activity" onclick="bnavSelect('activity');openActivityMenu()" style="position:relative">
+      <span class="bnav-icon">📊</span>
+      <span class="bnav-label">Активность</span>
+      <span id="notif-badge" class="notif-badge" style="display:none">0</span>
+    </button>
     <button class="bnav-item bnav-admin" id="bnav-admin" style="display:none" onclick="bnavSelect('admin');openAdminPanel()">
       <span class="bnav-icon">⚙️</span>
       <span class="bnav-label">Админ</span>
@@ -3427,24 +3573,37 @@ async function deleteGroup(groupId) {
 </nav>
 
 <!-- ACTIVITY POPUP MENU -->
-<div id="activity-menu" onclick="closeActivityMenu()" style="display:none;position:fixed;inset:0;z-index:499;background:rgba(0,0,0,0.35)">
-  <div onclick="event.stopPropagation()" style="position:absolute;bottom:74px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:20px;padding:10px;box-shadow:0 -8px 40px rgba(0,0,0,0.25);min-width:280px;max-width:92vw">
-    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 14px 8px">Активность</div>
-    <button onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
-      <span style="font-size:24px;width:36px;text-align:center">🏆</span> Топ пользователей
-    </button>
-    <button onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
-      <span style="font-size:24px;width:36px;text-align:center">📦</span> Мои заказы
-    </button>
-    <button onclick="closeActivityMenu();bnavSelect('chat');openChat()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
-      <span style="font-size:24px;width:36px;text-align:center">💬</span> Общий чат
-    </button>
-    <button onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:none;background:transparent;cursor:pointer;font-family:'Geologica',sans-serif;font-size:16px;font-weight:600;color:var(--text);width:100%;text-align:left">
-      <span style="font-size:24px;width:36px;text-align:center">🔔</span> Уведомления
-      <span id="notif-badge" class="notif-badge" style="position:static;margin-left:auto;display:none">0</span>
-    </button>
-    <div style="margin:6px 8px 2px;height:1px;background:var(--border)"></div>
-    <button onclick="closeActivityMenu()" style="display:flex;align-items:center;justify-content:center;padding:12px;border-radius:12px;border:none;background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;font-size:14px;font-weight:600;color:var(--muted);width:100%;margin-top:4px">Закрыть</button>
+<div id="activity-menu" onclick="closeActivityMenu()" style="display:none;position:fixed;inset:0;z-index:499;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px)">
+  <div onclick="event.stopPropagation()" style="position:absolute;bottom:74px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:24px;padding:12px;box-shadow:0 -8px 60px rgba(0,0,0,0.35);min-width:300px;max-width:94vw">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 14px 12px">
+      <div style="font-size:13px;font-weight:800;color:var(--navy);font-family:'Unbounded',sans-serif">📊 Активность</div>
+      <button onclick="closeActivityMenu()" style="background:var(--bg);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 4px">
+      <button onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="font-size:30px">🏆</span>
+        <span style="font-size:13px;font-weight:700;color:var(--navy)">Топ игроков</span>
+        <span style="font-size:10px;color:var(--muted)">Рейтинг недели</span>
+      </button>
+      <button onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="font-size:30px">📦</span>
+        <span style="font-size:13px;font-weight:700;color:var(--navy)">Мои заказы</span>
+        <span style="font-size:10px;color:var(--muted)">Активные сделки</span>
+      </button>
+      <button onclick="closeActivityMenu();bnavSelect('chat');openChat()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--escrow)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="font-size:30px">💬</span>
+        <span style="font-size:13px;font-weight:700;color:var(--navy)">Общий чат</span>
+        <span style="font-size:10px;color:var(--muted)">Школьный чат</span>
+      </button>
+      <button onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s;position:relative" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="font-size:30px">🔔</span>
+        <span style="font-size:13px;font-weight:700;color:var(--navy)">Уведомления</span>
+        <span style="font-size:10px;color:var(--muted)">Новости и алерты</span>
+      </button>
+    </div>
+    <div style="margin:10px 8px 6px;height:1px;background:var(--border)"></div>
+    <!-- Status progress bar -->
+    <div id="activity-status-bar" style="padding:8px 12px 4px"></div>
   </div>
 </div>
 </body>
