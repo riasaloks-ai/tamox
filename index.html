@@ -2715,38 +2715,50 @@ function showBottomNav(show) {
 
 function openActivityMenu() {
   const menu = document.getElementById('activity-menu');
-  const isOpen = menu.style.display === 'block' || menu.style.display === '';
+  const sheet = document.getElementById('activity-sheet');
+  const isOpen = menu.style.display === 'block';
   if (isOpen) { closeActivityMenu(); return; }
   menu.style.display = 'block';
-  // Render status progress bar
-  if (currentProfile) {
+  requestAnimationFrame(() => {
+    sheet.style.transform = 'translateY(0)';
+  });
+
+  // Render status card
+  const barEl = document.getElementById('activity-status-bar');
+  if (barEl && currentProfile) {
     const uc = getUserClass(currentProfile.coins);
-    const ucIdx = USER_CLASSES.indexOf(uc);
+    const ucIdx = USER_CLASSES.findIndex(c => c.cls === uc.cls);
     const nextUc = USER_CLASSES[ucIdx + 1];
-    const barEl = document.getElementById('activity-status-bar');
-    if (barEl) {
-      if (nextUc) {
-        const progress = Math.min(100, Math.round(((currentProfile.coins - uc.minCoins) / (nextUc.minCoins - uc.minCoins)) * 100));
-        barEl.innerHTML = `
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:12px;font-weight:700;color:var(--navy)">${uc.emoji} ${uc.name}</span>
-            <span style="font-size:11px;color:var(--muted)">До ${nextUc.emoji} ${nextUc.name}: ${nextUc.minCoins - currentProfile.coins}🪙</span>
+    const progress = nextUc
+      ? Math.min(100, Math.round(((currentProfile.coins - uc.minCoins) / (nextUc.minCoins - uc.minCoins)) * 100))
+      : 100;
+    barEl.innerHTML = `
+      <div style="background:linear-gradient(135deg,rgba(255,92,53,0.1),rgba(255,186,0,0.1));border:1.5px solid rgba(255,186,0,0.2);border-radius:18px;padding:14px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="font-size:28px;line-height:1">${uc.emoji}</div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:800;color:var(--text)">${uc.name}</div>
+            <div style="font-size:11px;color:var(--muted)">🪙 ${currentProfile.coins} монет</div>
           </div>
-          <div style="background:var(--border);border-radius:999px;height:8px;overflow:hidden">
-            <div style="background:linear-gradient(90deg,var(--accent),var(--gold));height:100%;width:${progress}%;border-radius:999px;transition:width .5s ease"></div>
-          </div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;text-align:right">${progress}% до следующего статуса</div>`;
-      } else {
-        barEl.innerHTML = `<div style="text-align:center;font-size:13px;font-weight:700;color:var(--gold)">👑 Максимальный статус достигнут!</div>`;
-      }
-    }
+          ${nextUc ? `<div style="font-size:11px;color:var(--muted);text-align:right">до ${nextUc.emoji}<br><b style="color:var(--text)">${nextUc.minCoins - currentProfile.coins}🪙</b></div>` : '<div style="font-size:20px">👑</div>'}
+        </div>
+        <div style="background:rgba(255,255,255,0.1);border-radius:999px;height:8px;overflow:hidden">
+          <div style="background:linear-gradient(90deg,var(--accent),var(--gold));height:100%;width:${progress}%;border-radius:999px;transition:width .8s ease"></div>
+        </div>
+        ${nextUc
+          ? `<div style="display:flex;justify-content:space-between;margin-top:5px"><span style="font-size:10px;color:var(--muted)">${uc.emoji} ${uc.name}</span><span style="font-size:10px;color:var(--muted)">${nextUc.emoji} ${nextUc.name}</span></div>`
+          : `<div style="text-align:center;font-size:11px;font-weight:700;color:var(--gold);margin-top:6px">Максимальный статус! 🎉</div>`}
+      </div>`;
   }
 }
 
 function closeActivityMenu() {
   const menu = document.getElementById('activity-menu');
-  if (menu) menu.style.display = 'none';
-  // Deselect activity tab if it was active
+  const sheet = document.getElementById('activity-sheet');
+  if (sheet) sheet.style.transform = 'translateY(100%)';
+  setTimeout(() => {
+    if (menu) menu.style.display = 'none';
+  }, 320);
   const actBtn = document.getElementById('bnav-activity');
   if (actBtn) actBtn.classList.remove('active');
 }
@@ -3576,37 +3588,140 @@ async function deleteGroup(groupId) {
 </nav>
 
 <!-- ACTIVITY POPUP MENU -->
-<div id="activity-menu" onclick="closeActivityMenu()" style="display:none;position:fixed;inset:0;z-index:499;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px)">
-  <div onclick="event.stopPropagation()" style="position:absolute;bottom:74px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:24px;padding:12px;box-shadow:0 -8px 60px rgba(0,0,0,0.35);min-width:300px;max-width:94vw">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 14px 12px">
-      <div style="font-size:13px;font-weight:800;color:var(--navy);font-family:'Unbounded',sans-serif">📊 Активность</div>
-      <button onclick="closeActivityMenu()" style="background:var(--bg);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center">✕</button>
+<div id="activity-menu" onclick="closeActivityMenu()" style="display:none;position:fixed;inset:0;z-index:499;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px)">
+  <div onclick="event.stopPropagation()" id="activity-sheet" style="
+    position:absolute;bottom:0;left:0;right:0;
+    background:var(--card);
+    border-radius:28px 28px 0 0;
+    padding:0 0 90px 0;
+    box-shadow:0 -20px 80px rgba(0,0,0,0.5);
+    transform:translateY(100%);
+    transition:transform 0.35s cubic-bezier(0.34,1.1,0.64,1);
+    max-height:88vh;
+    overflow-y:auto;
+  ">
+    <!-- Handle bar -->
+    <div style="display:flex;justify-content:center;padding:12px 0 0">
+      <div style="width:40px;height:4px;background:var(--border);border-radius:999px"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 4px">
-      <button onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-        <span style="font-size:30px">🏆</span>
-        <span style="font-size:13px;font-weight:700;color:var(--navy)">Топ игроков</span>
-        <span style="font-size:10px;color:var(--muted)">Рейтинг недели</span>
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0">
+      <div>
+        <div style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:800;color:var(--text)">Активность</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Всё в одном месте</div>
+      </div>
+      <button onclick="closeActivityMenu()" style="
+        background:var(--bg);border:1.5px solid var(--border);border-radius:50%;
+        width:36px;height:36px;cursor:pointer;font-size:18px;color:var(--muted);
+        display:flex;align-items:center;justify-content:center;flex-shrink:0;
+      ">✕</button>
+    </div>
+
+    <!-- Status card -->
+    <div id="activity-status-bar" style="padding:16px 20px 0"></div>
+
+    <!-- Main grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px 0">
+
+      <!-- Топ игроков -->
+      <button onclick="closeActivityMenu();bnavSelect('top');openLeaderboard()" style="
+        display:flex;flex-direction:column;align-items:flex-start;gap:0;
+        padding:0;border-radius:20px;border:none;
+        background:linear-gradient(135deg,#1a2744 0%,#2d6cdf 100%);
+        cursor:pointer;font-family:'Geologica',sans-serif;
+        overflow:hidden;position:relative;
+        box-shadow:0 8px 24px rgba(45,108,223,0.35);
+        transition:transform .18s,box-shadow .18s;
+        min-height:130px;
+      " onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform='scale(1)'">
+        <div style="position:absolute;top:-10px;right:-10px;font-size:70px;opacity:0.18;line-height:1">🏆</div>
+        <div style="padding:18px 16px;width:100%;box-sizing:border-box">
+          <div style="font-size:36px;margin-bottom:10px;line-height:1">🏆</div>
+          <div style="font-size:14px;font-weight:800;color:#fff;text-align:left">Топ игроков</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.65);margin-top:3px;text-align:left">Рейтинг по монетам</div>
+        </div>
       </button>
-      <button onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-        <span style="font-size:30px">📦</span>
-        <span style="font-size:13px;font-weight:700;color:var(--navy)">Мои заказы</span>
-        <span style="font-size:10px;color:var(--muted)">Активные сделки</span>
+
+      <!-- Мои заказы -->
+      <button onclick="closeActivityMenu();bnavSelect('orders');openOrders('active')" style="
+        display:flex;flex-direction:column;align-items:flex-start;
+        padding:0;border-radius:20px;border:none;
+        background:linear-gradient(135deg,#0f6e56 0%,#1db87a 100%);
+        cursor:pointer;font-family:'Geologica',sans-serif;
+        overflow:hidden;position:relative;
+        box-shadow:0 8px 24px rgba(29,184,122,0.35);
+        transition:transform .18s;
+        min-height:130px;
+      " onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform='scale(1)'">
+        <div style="position:absolute;top:-10px;right:-10px;font-size:70px;opacity:0.18;line-height:1">📦</div>
+        <div style="padding:18px 16px;width:100%;box-sizing:border-box">
+          <div style="font-size:36px;margin-bottom:10px;line-height:1">📦</div>
+          <div style="font-size:14px;font-weight:800;color:#fff;text-align:left">Мои заказы</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.65);margin-top:3px;text-align:left">Активные сделки</div>
+        </div>
       </button>
-      <button onclick="closeActivityMenu();bnavSelect('chat');openChat()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--escrow)'" onmouseout="this.style.borderColor='var(--border)'">
-        <span style="font-size:30px">💬</span>
-        <span style="font-size:13px;font-weight:700;color:var(--navy)">Общий чат</span>
-        <span style="font-size:10px;color:var(--muted)">Школьный чат</span>
+
+      <!-- Общий чат -->
+      <button onclick="closeActivityMenu();bnavSelect('chat');openChat()" style="
+        display:flex;flex-direction:column;align-items:flex-start;
+        padding:0;border-radius:20px;border:none;
+        background:linear-gradient(135deg,#7a3500 0%,#ff5c35 100%);
+        cursor:pointer;font-family:'Geologica',sans-serif;
+        overflow:hidden;position:relative;
+        box-shadow:0 8px 24px rgba(255,92,53,0.35);
+        transition:transform .18s;
+        min-height:130px;
+      " onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform='scale(1)'">
+        <div style="position:absolute;top:-10px;right:-10px;font-size:70px;opacity:0.18;line-height:1">💬</div>
+        <div style="padding:18px 16px;width:100%;box-sizing:border-box">
+          <div style="font-size:36px;margin-bottom:10px;line-height:1">💬</div>
+          <div style="font-size:14px;font-weight:800;color:#fff;text-align:left">Общий чат</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.65);margin-top:3px;text-align:left">Весь класс онлайн</div>
+        </div>
       </button>
-      <button onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Geologica',sans-serif;transition:all .15s;position:relative" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
-        <span style="font-size:30px">🔔</span>
-        <span style="font-size:13px;font-weight:700;color:var(--navy)">Уведомления</span>
-        <span style="font-size:10px;color:var(--muted)">Новости и алерты</span>
+
+      <!-- Уведомления -->
+      <button onclick="closeActivityMenu();bnavSelect('notif');openNotifications()" style="
+        display:flex;flex-direction:column;align-items:flex-start;
+        padding:0;border-radius:20px;border:none;
+        background:linear-gradient(135deg,#7a5500 0%,#ffba00 100%);
+        cursor:pointer;font-family:'Geologica',sans-serif;
+        overflow:hidden;position:relative;
+        box-shadow:0 8px 24px rgba(255,186,0,0.35);
+        transition:transform .18s;
+        min-height:130px;
+      " onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform='scale(1)'">
+        <div style="position:absolute;top:-10px;right:-10px;font-size:70px;opacity:0.18;line-height:1">🔔</div>
+        <div style="padding:18px 16px;width:100%;box-sizing:border-box">
+          <div style="font-size:36px;margin-bottom:10px;line-height:1">🔔</div>
+          <div style="font-size:14px;font-weight:800;color:#fff;text-align:left">Уведомления</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.65);margin-top:3px;text-align:left">Новости и алерты</div>
+        </div>
       </button>
     </div>
-    <div style="margin:10px 8px 6px;height:1px;background:var(--border)"></div>
-    <!-- Status progress bar -->
-    <div id="activity-status-bar" style="padding:8px 12px 4px"></div>
+
+    <!-- Wide button: Кошелёк -->
+    <div style="padding:12px 20px 0">
+      <button onclick="closeActivityMenu();openWallet()" style="
+        width:100%;padding:16px 20px;border-radius:20px;border:none;
+        background:linear-gradient(135deg,#1a1a2e 0%,#4a3000 50%,#1a1a2e 100%);
+        cursor:pointer;font-family:'Geologica',sans-serif;
+        display:flex;align-items:center;gap:14px;
+        box-shadow:0 4px 20px rgba(255,186,0,0.2);
+        border:1.5px solid rgba(255,186,0,0.25);
+        transition:transform .18s;
+        position:relative;overflow:hidden;
+      " onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+        <div style="font-size:32px;line-height:1;flex-shrink:0">🪙</div>
+        <div style="text-align:left">
+          <div style="font-size:15px;font-weight:800;color:var(--gold)">Мой кошелёк</div>
+          <div style="font-size:11px;color:rgba(255,186,0,0.65);margin-top:2px">История транзакций и баланс</div>
+        </div>
+        <div style="margin-left:auto;font-size:20px;color:rgba(255,186,0,0.5)">›</div>
+      </button>
+    </div>
+
   </div>
 </div>
 </body>
